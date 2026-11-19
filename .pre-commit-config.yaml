@@ -1,5 +1,9 @@
 repos:
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.0   # then run: pre-commit autoupdate
+  - repo: local
     hooks:
       - id: gitleaks
+        name: Detect hardcoded secrets (gitleaks)
+        # Calls the installed gitleaks.exe (winget install Gitleaks.Gitleaks); nothing is built.
+        entry: gitleaks git --pre-commit --staged --redact --verbose
+        language: system
+        pass_filenames: false
