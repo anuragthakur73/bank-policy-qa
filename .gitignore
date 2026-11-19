@@ -1,0 +1,7 @@
+.env
+.venv/
+data/raw/
+data/parsed/
+logs/
+notes/interviews/
+__pycache__/
