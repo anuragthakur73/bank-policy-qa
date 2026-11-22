@@ -35,6 +35,7 @@ One YAML file per product, e.g. `policy/demo_bank/home_loan_v1.yaml`.
 | `vs_rbi` | conditional | `equal` \| `stricter` \| `not_applicable`. The conflict check flags anything else, e.g. a rule `looser` than RBI |
 | `design_basis` | yes | Study source IDs that informed the value, plus `synthetic` where the value is invented |
 | `review` | yes | `needs_review` (synthetic value an experienced banker should sanity-check) or `ok` |
+| `review_note` | no | One line on what the reviewer decided and why (kept / changed what) |
 
 ## Rules for writing rules
 

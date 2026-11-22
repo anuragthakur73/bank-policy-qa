@@ -80,7 +80,8 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S2, ICICI-S3, ICICI-S6, ICICI-S8, synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Kept: 65 for non-pension salaried is a deliberate prudence choice"
 
   - rule_id: DB-HL-005
     section: eligibility
@@ -96,34 +97,42 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [ICICI-S3, synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Kept: 6 months with current employer and self-employed floor confirmed"
 
   - rule_id: DB-HL-006
     section: eligibility
     title: Co-applicants and co-owners
     rule: >-
-      Every co-owner of the property must be a co-applicant. A spouse, parent, son,
-      daughter or sibling may join as co-applicant. The income of an earning co-applicant
-      may be added to the applicant's income for eligibility, provided the co-applicant
-      is also a co-owner or guarantor.
-    params: {allowed_relationships: [spouse, parent, son, daughter, sibling], co_owner_must_be_co_applicant: true}
+      Every co-owner of the property must be a co-applicant. A spouse, parent,
+      grandparent, son, daughter, grandchild or sibling may join as co-applicant. The
+      income of any earning co-applicant may be added to the applicant's income for
+      eligibility, whether or not the co-applicant is a co-owner. A guarantor's income is
+      never added.
+    params:
+      allowed_relationships: [spouse, parent, grandparent, son, daughter, grandchild, sibling]
+      co_owner_must_be_co_applicant: true
+      income_clubbing: {co_applicant: true, requires_co_ownership: false, guarantor: false}
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S5, ICICI-S3, synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Changed: grandparents and grandchildren added; any co-applicant's income clubbed, co-owner or not; guarantor income never"
 
   - rule_id: DB-HL-007
     section: eligibility
     title: Credit score
     rule: >-
       The minimum credit bureau score is 700. Applicants with no credit history
-      (new to credit) may be considered at the 700-749 pricing band. Scores from 680 to
+      (new to credit) are treated as meeting the 700 minimum and are priced at the
+      700-749 band. Scores from 680 to
       699 need a deviation approval (DB-HL-030). Scores below 680 are declined.
     params: {min_score: 700, ntc_band: "700-749", deviation_floor: 680}
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [ICICI-S5, SBI-S15, synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Changed: new-to-credit treated as meeting the 700 minimum"
 
   # ---------------- AMOUNT AND LTV ----------------
   - rule_id: DB-HL-008
@@ -136,7 +145,7 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [ICICI-S3, synthetic]
-    review: needs_review
+    review: ok
 
   - rule_id: DB-HL-009
     section: amount_ltv
@@ -187,7 +196,8 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S5, ICICI-S5, synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Kept: FOIR bands confirmed realistic"
 
   - rule_id: DB-HL-012
     section: amount_ltv
@@ -209,8 +219,8 @@ rules:
       All home loans are floating rate, linked to the RBI policy repo rate. The rate is
       the repo rate plus a spread fixed at sanction by credit score: 800 and above, 2.40%;
       750-799, 2.60%; 700-749 and new to credit, 2.90%. Self-employed borrowers pay 0.10%
-      more. A woman sole or joint owner gets 0.05% off. The spread does not change for the
-      life of the loan unless the borrower's credit score falls below 700.
+      more. A woman sole or joint owner gets 0.05% off. The spread is fixed at sanction for
+      the life of the loan and is not reviewed afterwards; only the repo rate moves.
     params:
       benchmark: rbi_repo_rate
       spread_by_score: {"800+": 2.40, "750-799": 2.60, "700-749": 2.90, "ntc": 2.90}
@@ -219,7 +229,8 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S3, SBI-S5, ICICI-S1, synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Changed: spread fixed for life, no post-sanction review"
 
   - rule_id: DB-HL-014
     section: pricing
@@ -249,7 +260,7 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S1, SBI-S2, ICICI-S1, ICICI-S4, synthetic]
-    review: needs_review
+    review: ok
 
   - rule_id: DB-HL-016
     section: charges
@@ -262,7 +273,7 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S2, ICICI-S4, synthetic]
-    review: needs_review
+    review: ok
 
   - rule_id: DB-HL-017
     section: charges
@@ -291,20 +302,31 @@ rules:
     bank_discretion: false
     vs_rbi: equal
     design_basis: [SBI-S2, ICICI-S2, ICICI-S4, synthetic]
-    review: needs_review
+    review: ok
 
   - rule_id: DB-HL-019
     section: charges
     title: Dishonour and switch charges
     rule: >-
       A dishonoured cheque, NACH or standing instruction costs Rs 500 plus GST per
-      instance. Switching an existing loan to Demo Bank's current spread costs Rs 3,000
+      instance. At login the applicant pays, along with the processing fee, a refundable
+      dishonour deposit of Rs 2,500. Each dishonour charge is deducted from this deposit
+      and the borrower is told of every deduction. Once the deposit is used up, further
+      dishonour charges are recovered from the borrower's repayment account. The unused
+      balance is refunded at loan closure, together with the return of property
+      documents (DB-HL-028). The deposit and its use are stated in the Key Facts
+      Statement. Switching an existing loan to Demo Bank's current spread costs Rs 3,000
       plus GST.
-    params: {dishonour: 500, switch_fee: 3000}
+    params:
+      dishonour: 500
+      dishonour_deposit: {amount: 2500, refundable: true, collected_at: login, refund_at: loan_closure}
+      switch_fee: 3000
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S2, ICICI-S4, synthetic]
+    rbi_ref: {direction: RBC, para: "348(5)", note: "Deposit and deductions must be in the KFS"}
     review: needs_review
+    review_note: "Changed: refundable dishonour deposit at login, refunded at closure (structure decided by reviewer; Rs 2,500 amount to confirm)"
 
   # ---------------- PROPERTY ----------------
   - rule_id: DB-HL-020
@@ -328,12 +350,13 @@ rules:
       For a resale property, the building's residual life, as assessed by the bank's
       valuer, must be at least the loan tenure plus 5 years. Buildings older than 25
       years need a structural stability certificate from a licensed engineer. Buildings
-      older than 40 years are not financed.
-    params: {min_residual_life_over_tenure_years: 5, structural_cert_above_age: 25, max_building_age: 40}
+      older than 70 years are not financed.
+    params: {min_residual_life_over_tenure_years: 5, structural_cert_above_age: 25, max_building_age: 70}
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Changed: maximum building age 70 years (was 40)"
 
   - rule_id: DB-HL-022
     section: property
@@ -411,7 +434,7 @@ rules:
     bank_discretion: false
     vs_rbi: equal
     design_basis: [SBI-S2, ICICI-S5, SBI-S17, synthetic]
-    review: needs_review
+    review: ok
 
   - rule_id: DB-HL-027
     section: process
@@ -424,7 +447,7 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-S5, ICICI-S4, synthetic]
-    review: needs_review
+    review: ok
 
   - rule_id: DB-HL-028
     section: process
@@ -475,7 +498,7 @@ rules:
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [synthetic]
-    review: needs_review
+    review: ok
 
   - rule_id: DB-HL-031
     section: governance
@@ -484,11 +507,15 @@ rules:
       A complaint may be raised at the branch, through customer care or online. If it is
       not resolved, it is escalated to the Nodal Officer and then the Principal Nodal
       Officer; any dispute about a decision is heard at least one level above the officer
-      who made it. If the complaint is not resolved within 30 days, or the reply is
-      unsatisfactory, the customer may approach the RBI Ombudsman under the Integrated
-      Ombudsman Scheme.
-    rbi_ref: {direction: RBC, para: "346", note: "Ombudsman scheme reference to be verified against the current RBI scheme"}
+      who made it. If Demo Bank gives no reply within 30 days of receiving the complaint,
+      or the customer is not satisfied with the reply, the customer may complain to the
+      RBI Ombudsman under the Reserve Bank - Integrated Ombudsman Scheme, 2026, online at
+      cms.rbi.org.in, within 90 days of the later of the end of those 30 days or Demo
+      Bank's last reply. The scheme is free for the customer.
+    params: {bank_reply_days: 30, ombudsman_filing_window_days: 90, scheme: "RB-IOS 2026 (from 2026-07-01)"}
+    rbi_ref: {direction: "RBC; Reserve Bank - Integrated Ombudsman Scheme, 2026", para: "RBC 346; RB-IOS 2026 FAQ Q17 (updated as on 2026-07-01)", note: "RB-IOS 2026 replaced RB-IOS 2021 from 1 July 2026"}
     bank_discretion: false
     vs_rbi: equal
     design_basis: [SBI-S2, SBI-S18, synthetic]
-    review: needs_review
+    review: ok
+    review_note: "Changed: updated to RB-IOS 2026 (30-day bank reply, 90-day filing window)"
