@@ -11,3 +11,26 @@ documents:
     source_url: "https://www.rbi.org.in/ScriptS/BS_ViewMasDirections.aspx?id=13156"
     raw_path: "data/raw/credit_facilities_2025.html"
     terms_note: "RBI: all rights reserved; deep links need prior permission (checked 19 Nov 2026). Raw and parsed text not committed."
+
+# Published bank pages used to DESIGN the fictional Demo Bank policy (policy/demo_bank/).
+# Reference only: not ingested, not quoted. Studies: SBI https://claude.ai/artifact/AzsXVTVrcwHF2j6xp8oH8K
+# ICICI https://claude.ai/artifact/UJK9ZrACsDFPRvJ8hy5gRD (accessed 23 Nov 2026).
+bank_published:
+  sbi:
+    bank: State Bank of India
+    terms_note: "Site reuse terms not yet checked - link only, do not reproduce text."
+    pages:
+      - {study_id: SBI-S1, title: "Processing Fee - Card Rates (PDF)", url: "https://homeloans.sbi.bank.in/downloads/Processing-Fee-Card-Rates.pdf", effective: null}
+      - {study_id: SBI-S2, title: "Home Loan Most Important Terms and Conditions (PDF)", url: "https://homeloans.sbi.bank.in/downloads/Terms-and-Conditions.pdf", effective: null}
+      - {study_id: SBI-S3, title: "Home loan interest rates - current", url: "https://sbi.bank.in/web/interest-rates/interest-rates/loan-schemes-interest-rates/home-loans-interest-rates-current", effective: "2026-10-15"}
+      - {study_id: SBI-S4, title: "Home loans portal - product list", url: "https://homeloans.sbi.bank.in/", effective: null}
+      - {study_id: SBI-S5, title: "Home loan FAQs", url: "https://homeloans.sbi.bank.in/faq", effective: null}
+  icici:
+    bank: ICICI Bank
+    terms_note: "Site reuse terms not yet checked - link only, do not reproduce text."
+    pages:
+      - {study_id: ICICI-S1, title: "Home Loan Interest Rates", url: "https://icici.bank.in/personal-banking/loans/home-loan/interest-rates", effective: "2026-10-08", valid_till: "2026-11-30"}
+      - {study_id: ICICI-S2, title: "Home Loan Penal and Service Charges", url: "https://www.icici.bank.in/personal-banking/loans/home-loan/penal-and-service-charges", effective: "2024-05-01"}
+      - {study_id: ICICI-S3, title: "Home Loan", url: "https://www.icici.bank.in/personal-banking/loans/home-loan", effective: null}
+      - {study_id: ICICI-S4, title: "Home Loan Processing Fees and Service Charges", url: "https://www.icici.bank.in/personal-banking/loans/home-loan/service-charges", effective: "2026-01-01"}
+      - {study_id: ICICI-S5, title: "Home Loan FAQs", url: "https://www.icici.bank.in/personal-banking/loans/home-loan/faqs", effective: null}

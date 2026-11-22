@@ -1,0 +1,35 @@
+# TEST FIXTURES ONLY - not part of Demo Bank policy.
+# Deliberately non-compliant rules for testing the bank-vs-RBI conflict check (Session 4).
+# Each one should be flagged. Rules marked "real_world_echo" mirror wording seen in
+# published bank documents during the SBI/ICICI studies.
+fixtures:
+  - fixture_id: FX-001
+    expect: looser_than_rbi
+    rule: "Loans of Rs 50 lakh may be sanctioned up to 85% of property cost."
+    rbi_ref: {direction: CF, para: "111"}
+    why: "RBI caps loans above Rs 30 lakh up to Rs 75 lakh at 80% LTV."
+
+  - fixture_id: FX-002
+    expect: looser_than_rbi
+    rule: "A foreclosure charge of 2% applies if a floating-rate home loan is closed within 3 years."
+    rbi_ref: {direction: RBC, para: "353"}
+    why: "No pre-payment charge or lock-in on floating-rate non-business loans to individuals."
+
+  - fixture_id: FX-003
+    expect: looser_than_rbi
+    rule: "Stamp duty and registration charges are added to the property cost for LTV on all loans."
+    rbi_ref: {direction: CF, para: "113"}
+    why: "Allowed only where the dwelling unit costs up to Rs 10 lakh."
+
+  - fixture_id: FX-004
+    expect: possible_conflict
+    real_world_echo: true
+    rule: "After a change in the interest rate, the bank has the option to increase the EMI, extend the tenure, or both."
+    rbi_ref: {direction: RBC, para: "349(3)"}
+    why: "The borrower, not only the bank, must be given the choice at reset."
+
+  - fixture_id: FX-005
+    expect: looser_than_rbi
+    rule: "Original title deeds are returned within 45 days of loan closure."
+    rbi_ref: {direction: RBC, para: "354"}
+    why: "RBI limit is 30 days."

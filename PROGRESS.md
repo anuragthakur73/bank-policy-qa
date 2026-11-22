@@ -47,3 +47,7 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Eval golden_v0 with answer-v1: hit@5 8/8 · cited 8/8 · refusal 10/10 · manual review 8/8 (v0 was 7/8). Avg 7.8 s (v0 11.4 s); $0.00645 for 10 questions.
 - Reports: eval/reports/2026-11-22_answer-v0.json vs 2026-11-22_answer-v1.json.
 - Still slow outliers: g001 17.7 s, g006 16.1 s, g009 13.3 s.
+
+## Discovery round 1 + decision (22 Nov 2026)
+- 7 interviews: H1 failed on frequency (3/7 costly incidents), H2 failed (0/7 mainly public docs), H3 failed as worded. 7/7 learn RBI changes via internal circulars; 7/7 can't use outside AI tools; 7/7 English.
+- Decision: Option C (ADR-004) — fictional Demo Bank policy layer now; head-office user tested with 2–3 interviews.
