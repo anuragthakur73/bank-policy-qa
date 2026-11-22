@@ -1,0 +1,13 @@
+documents:
+  credit_facilities:
+    doc_id: RBI-CB-CREDIT-FAC-2025
+    title: "Reserve Bank of India (Commercial Banks – Credit Facilities) Directions, 2025"
+    issuer: RBI
+    applies_to: [commercial_banks]
+    version_label: "updated as on October 1, 2026"
+    version_as_on: "2026-10-01"
+    effective_from: "2025-11-28"     # issued 28 Nov 2025; para 2: in effect on issue
+    effective_to: null               # null = in force today
+    source_url: "https://www.rbi.org.in/ScriptS/BS_ViewMasDirections.aspx?id=13156"
+    raw_path: "data/raw/credit_facilities_2025.html"
+    terms_note: "RBI: all rights reserved; deep links need prior permission (checked 19 Nov 2026). Raw and parsed text not committed."
