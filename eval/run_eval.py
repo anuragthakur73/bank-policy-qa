@@ -1,7 +1,7 @@
 # run: python -m eval.run_eval
 # Scores retrieval (hit@5), citation (cited the expected clause) and refusal on the golden set.
 import json, datetime, pathlib
-from app.generate import answer, REFUSAL
+from app.generate import answer, REFUSAL, PROMPT_VERSION
 
 rows = [json.loads(l) for l in open("eval/golden_v0.jsonl", encoding="utf-8")]
 out = []
@@ -28,8 +28,9 @@ summary = {k: score(k) for k in ("hit_at_5", "cited_ok", "refusal_ok")}
 summary["total_cost_usd"] = round(sum(o["cost_usd"] for o in out), 5)
 summary["avg_latency_s"] = round(sum(o["latency_ms"] for o in out) / len(out) / 1000, 1)
 summary["golden_set"] = "golden_v0"
+summary["prompt_version"] = PROMPT_VERSION
 pathlib.Path("eval/reports").mkdir(parents=True, exist_ok=True)
-path = f"eval/reports/{datetime.date.today()}.json"
+path = f"eval/reports/{datetime.date.today()}_{PROMPT_VERSION}.json"   # one file per prompt version, never overwritten by another
 with open(path, "w", encoding="utf-8") as f:
     json.dump({"summary": summary, "rows": out}, f, indent=2, ensure_ascii=False)
 print("\n", summary, "\nreport:", path)

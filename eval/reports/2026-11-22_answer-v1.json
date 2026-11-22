@@ -1,0 +1,211 @@
+{
+  "summary": {
+    "hit_at_5": "8/8",
+    "cited_ok": "8/8",
+    "refusal_ok": "10/10",
+    "total_cost_usd": 0.00645,
+    "avg_latency_s": 7.8,
+    "golden_set": "golden_v0"
+  },
+  "rows": [
+    {
+      "id": "g001",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "44",
+        "219G",
+        "45",
+        "35",
+        "33"
+      ],
+      "cited": [
+        "44"
+      ],
+      "answer": "The maximum LTV is **80 per cent**.\n\nParagraph 44 of Chapter IV sets the ceiling by the borrower's total consumption loan amount, and a ₹4 lakh personal-use loan falls in the middle band. Sanctioning a loan for personal use puts this case in the consumption-loan category, so the 80 per cent cap appl",
+      "expected_answer": "80 per cent",
+      "cost_usd": 0.000654,
+      "latency_ms": 17734
+    },
+    {
+      "id": "g002",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "39",
+        "60K",
+        "35",
+        "60L",
+        "4(v)"
+      ],
+      "cited": [
+        "35",
+        "39"
+      ],
+      "answer": "The maximum tenor is 12 months. Under Chapter IV (Lending against Gold and Silver Collateral), consumption loans in the nature of bullet repayment loans are capped at 12 months, and the cap can be exceeded only through renewal under para 35.\n\nRenewal is conditional. A bank may renew such a loan only",
+      "expected_answer": "12 months, renewable per para 35",
+      "cost_usd": 0.000669,
+      "latency_ms": 4622
+    },
+    {
+      "id": "g003",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "40",
+        "33",
+        "38",
+        "37",
+        "49"
+      ],
+      "cited": [
+        "40"
+      ],
+      "answer": "**The total is capped at 1 kilogram of gold ornaments per borrower.**\n\nParagraph 40(1) of the gold and silver collateral chapter sets this limit across all of a borrower's loans, not loan by loan. The aggregate weight of ornaments pledged for all loans to a borrower shall not exceed 1 kilogram for g",
+      "expected_answer": "1 kg gold ornaments (gold coins 50 g)",
+      "cost_usd": 0.000635,
+      "latency_ms": 4291
+    },
+    {
+      "id": "g004",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "41",
+        "42",
+        "43",
+        "60E",
+        "60L"
+      ],
+      "cited": [
+        "41",
+        "42"
+      ],
+      "answer": "The pledged gold should be valued at the lower of its 30-day average closing price and its previous day's closing price, both for the gold's actual caratage. Under para 41, that lower figure is taken from the reference price for the collateral's actual purity, as published by the India Bullion and J",
+      "expected_answer": "Lower of 30-day average closing price or previous day's closing price for that purity",
+      "cost_usd": 0.000598,
+      "latency_ms": 4004
+    },
+    {
+      "id": "g005",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "44",
+        "219G",
+        "111",
+        "45",
+        "112"
+      ],
+      "cited": [
+        "111"
+      ],
+      "answer": "The maximum LTV for a ₹50 lakh individual home loan is 80 per cent. A ₹50 lakh loan falls in the band above ₹30 lakh and up to ₹75 lakh, where the cap is ≤80 per cent. The bank shall abide by the following Loan to Value (LTV) and Risk Weights (RWs) while deciding the quantum of loan to be granted as",
+      "expected_answer": "80 per cent",
+      "cost_usd": 0.000827,
+      "latency_ms": 5850
+    },
+    {
+      "id": "g006",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "215",
+        "219B",
+        "216",
+        "219J",
+        "219C"
+      ],
+      "cited": [
+        "215"
+      ],
+      "answer": "**No.** Lending staff cannot approve a facility secured by another bank's fixed deposit receipt. The bank shall desist from sanctioning advances against FDRs or other term deposits of other banks. Because an FDR is a term deposit, a receipt issued by another bank falls within this prohibition.",
+      "expected_answer": "No",
+      "cost_usd": 0.000658,
+      "latency_ms": 16084
+    },
+    {
+      "id": "g007",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "11",
+        "27",
+        "4(xi)",
+        "21",
+        "9"
+      ],
+      "cited": [
+        "11"
+      ],
+      "answer": "The minimum cooling-off period for a digital loan is **one day**.\n\nUnder para 11(1), a borrower may leave a digital loan without penalty during the initial window by repaying the principal and proportionate APR. The cooling off period shall be determined by the bank in terms of its credit policy, su",
+      "expected_answer": "Not less than one day; set by the bank's credit policy",
+      "cost_usd": 0.000666,
+      "latency_ms": 4423
+    },
+    {
+      "id": "g008",
+      "hit_at_5": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "35",
+        "4(xxxvi)",
+        "60L",
+        "36",
+        "31"
+      ],
+      "cited": [
+        "35",
+        "4(xxxvi)"
+      ],
+      "answer": "Yes, a top-up can be sanctioned on an existing gold loan, but only if the conditions in paragraph 35 are met. A top-up is an additional loan sanctioned over and above an outstanding loan, during the tenor of the original loan, based on the strength of the collateral already pledged for the existing ",
+      "expected_answer": "Yes, on formal request, after credit assessment, within permissible LTV, loan must be standard",
+      "cost_usd": 0.000927,
+      "latency_ms": 5969
+    },
+    {
+      "id": "g009",
+      "hit_at_5": null,
+      "cited_ok": null,
+      "refusal_ok": true,
+      "retrieved": [
+        "124",
+        "219K",
+        "219J",
+        "34",
+        "8"
+      ],
+      "cited": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Refusal",
+      "cost_usd": 0.000336,
+      "latency_ms": 13347
+    },
+    {
+      "id": "g010",
+      "hit_at_5": null,
+      "cited_ok": null,
+      "refusal_ok": true,
+      "retrieved": [
+        "13",
+        "9",
+        "15",
+        "14",
+        "8"
+      ],
+      "cited": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Refusal (KYC Directions not indexed yet)",
+      "cost_usd": 0.000477,
+      "latency_ms": 2164
+    }
+  ]
+}

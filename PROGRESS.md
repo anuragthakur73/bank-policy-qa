@@ -42,3 +42,8 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Split para 4 definitions; strip amendment markers ("17 [").
 - Interviews: >=3 booked (Week 1 done-list item still open).
 - Demo video v1 (22 Nov 2026, 67 s, local only): answer + para 44/33 highlights + KYC refusal work. Answer hedged ("do not expressly confirm gold loan is a consumption loan") because para 4(viii) definition wasn't retrieved and chapter context isn't in the prompt. Re-record after Week 2 fixes.
+## Fix round after demo v1 (22 Nov 2026) — prompt answer-v1
+- Para 4 split into 45 definitions (e.g. 4(viii) Consumption Loan); chapter > section header embedded with each clause; search-result titles carry chapter/section; prompt answer-v1 (answer first, max one caveat); thinking effort low.
+- Eval golden_v0 with answer-v1: hit@5 8/8 · cited 8/8 · refusal 10/10 · manual review 8/8 (v0 was 7/8). Avg 7.8 s (v0 11.4 s); $0.00645 for 10 questions.
+- Reports: eval/reports/2026-11-22_answer-v0.json vs 2026-11-22_answer-v1.json.
+- Still slow outliers: g001 17.7 s, g006 16.1 s, g009 13.3 s.
