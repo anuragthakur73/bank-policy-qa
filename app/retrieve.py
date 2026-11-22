@@ -6,6 +6,8 @@ from functools import lru_cache
 from dotenv import load_dotenv; load_dotenv()
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
+from qdrant_client.http.exceptions import ResponseHandlingException
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 CONTRACT_VERSION = "v0"
 FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor",
@@ -19,8 +21,15 @@ def _store():
         collection_name="clauses_v1",
         url=os.environ["QDRANT_URL"], api_key=os.environ["QDRANT_API_KEY"])
 
+# Transient network/DNS failures reaching Qdrant (e.g. "getaddrinfo failed" on a flaky hotspot)
+# are retried; any other error fails immediately.
+@retry(retry=retry_if_exception_type(ResponseHandlingException), stop=stop_after_attempt(4),
+       wait=wait_exponential(multiplier=1, max=8), reraise=True)
+def _search(question: str, k: int):
+    return _store().similarity_search_with_score(question, k=k)
+
 def retrieve(question: str, k: int = 5) -> list[dict]:
-    hits = _store().similarity_search_with_score(question, k=k)
+    hits = _search(question, k)
     return [{**{f: d.metadata.get(f) for f in FIELDS},
              "score": round(float(s), 4), "text": d.page_content} for d, s in hits]
 
