@@ -1,6 +1,7 @@
-# run: python -m app.generate   (smoke test: one answerable, one out-of-scope question)
-# Retrieves clauses, asks Claude to answer ONLY from them with native citations,
-# refuses when they don't answer, and appends one audit record per query to logs/audit.jsonl.
+# run: python -m app.generate   (smoke test: RBI question, policy question, out-of-scope question)
+# Retrieves Demo Bank rules (with their traced RBI paragraphs) and RBI clauses, asks Claude to answer ONLY
+# from them with native citations, refuses when they don't answer, and appends one audit record per query
+# to logs/audit.jsonl.
 import json, os, time, uuid, datetime
 from urllib.parse import quote
 from dotenv import load_dotenv; load_dotenv()
@@ -8,33 +9,68 @@ import anthropic
 from app.retrieve import retrieve, CONTRACT_VERSION
 
 cl = anthropic.Anthropic()
-PROMPT_VERSION = "answer-v1"
+PROMPT_VERSION = "answer-v2"
 REFUSAL = "Not covered by the indexed documents."
 SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the search results provided. "
-          "Each result's title gives its chapter and section; a clause applies to the subject of the chapter "
-          "it sits in (e.g. a clause in 'Lending against Gold and Silver Collateral' applies to gold loans). "
-          "Definitions (para 4 sub-clauses) are part of the same directions: use them to classify the case. "
-          "Start with the direct answer in one sentence (the figure or yes/no), then the clause, then at most "
-          "one caveat that the results actually require. Cite the clause for every statement. "
-          "Quote figures (percentages, amounts, days) exactly. "
+          "There are two kinds of result. 'DEMO BANK RULE' results are the policy of Demo Bank, a fictional bank: "
+          "they say what this bank does. 'RBI' results are clauses of RBI Master Directions: they say what every "
+          "bank must do. Each result's title gives its chapter and section; a clause applies to the subject of the "
+          "chapter it sits in. Definitions are part of the same directions: use them to classify the case. "
+          "If a Demo Bank rule answers the question, start with that rule's answer in one sentence (the figure or "
+          "yes/no) and name the rule ID, then cite the RBI clause it implements, or say it is a bank-discretion "
+          "rule with no RBI requirement. If only RBI results answer it, answer from RBI. If a Demo Bank rule and an "
+          "RBI clause disagree, give both and say so. At most one caveat that the results actually require. "
+          "Cite a result for every statement. Quote figures (percentages, amounts, days) exactly. "
           f"If the search results do not answer the question, reply exactly: '{REFUSAL}' "
           "Do not use outside knowledge, and do not guess.")
 PRICE_IN, PRICE_OUT = 0.10, 0.50   # USD per 1M tokens, Claude Haiku 5.5 (financial-viability doc, 18 Nov 2026)
 
 def clause_link(h: dict) -> str:
-    """Opens the RBI page and highlights the clause (text fragment). Skips the '44.' number."""
+    """RBI: opens the page and highlights the clause (text fragment), skipping the '44.' number.
+    Demo Bank: the rule's place in the policy file (a fictional bank has no web page)."""
+    if h.get("layer") == "policy":
+        return f'{h["source_url"]}#{h["rule_id"]}'
     words = " ".join(h["text"].split()[1:9])
     return h["source_url"] + "#:~:text=" + quote(words, safe="").replace("-", "%2D")
 
 def section_link(h: dict) -> str:
     """Fallback: RBI's own section anchor, e.g. #C4D."""
+    if h.get("layer") == "policy":
+        return clause_link(h)
     return h["source_url"] + ("#" + h["section_anchor"] if h.get("section_anchor") else "")
 
-def answer(q: str, k: int = 5, caller: str = "cli"):
+def _title(h: dict) -> str:
+    if h.get("layer") == "policy":
+        ref = h.get("rbi_ref") or {}
+        basis = (f'implements {ref.get("direction")} para {ref.get("para")}' if not h.get("bank_discretion")
+                 else "bank discretion (no RBI requirement)")
+        return (f'DEMO BANK RULE {h["rule_id"]} | {h["chapter"]} > {h["section"]} | '
+                f'{h["version_label"]} | {basis}')
+    return (f'RBI | {h["title"]} | {h.get("chapter") or ""} > {h.get("section") or ""} | '
+            f'para {h["clause_no"]} ({h["version_label"]})')
+
+def _sources(hits: list[dict]) -> list[dict]:
+    """Policy rules, then the RBI paragraphs they trace to, then searched RBI clauses; no duplicates."""
+    out, seen = [], set()
+    def add(h):
+        key = (h["doc_id"], h["clause_no"])
+        if key not in seen:
+            seen.add(key); out.append(h)
+    for h in hits:
+        if h.get("layer") == "policy":
+            add(h)
+            for t in h.get("trace") or []:
+                if t["status"] == "found":
+                    add({**t["clause"], "layer": "rbi", "score": None, "traced_from": h["rule_id"]})
+    for h in hits:
+        if h.get("layer") != "policy":
+            add(h)
+    return out
+
+def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi")):
     t0, rid = time.time(), str(uuid.uuid4())
-    hits = retrieve(q, k)
-    results = [{"type": "search_result", "source": clause_link(h),
-                "title": f'{h["title"]} | {h.get("chapter") or ""} > {h.get("section") or ""} | para {h["clause_no"]} ({h["version_label"]})',
+    hits = _sources(retrieve(q, k, layers=layers))
+    results = [{"type": "search_result", "source": clause_link(h), "title": _title(h),
                 "content": [{"type": "text", "text": h["text"]}],
                 "citations": {"enabled": True}} for h in hits]
     model = os.environ.get("DEFAULT_MODEL", "claude-haiku-5-5")
@@ -55,18 +91,23 @@ def answer(q: str, k: int = 5, caller: str = "cli"):
             src = getattr(c, "source", "")
             h = by_source.get(src, {})
             cites.append({"title": getattr(c, "title", ""), "source": src,
-                          "fallback": section_link(h) if h else "",
-                          "clause_no": h.get("clause_no"), "cited_text": getattr(c, "cited_text", "")})
+                          "fallback": section_link(h) if h else "", "layer": h.get("layer"),
+                          "doc_id": h.get("doc_id"), "clause_no": h.get("clause_no"),
+                          "rule_id": h.get("rule_id"), "cited_text": getattr(c, "cited_text", "")})
     u = msg.usage
     rec = {"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
-           "caller": caller, "question": q, "contract": CONTRACT_VERSION,
-           "retrieved": [{"doc_id": h["doc_id"], "clause_no": h["clause_no"],
-                          "version_as_on": h["version_as_on"], "score": h["score"]} for h in hits],
+           "caller": caller, "question": q, "contract": CONTRACT_VERSION, "layers": list(layers),
+           "retrieved": [{"layer": h.get("layer"), "doc_id": h["doc_id"], "clause_no": h["clause_no"],
+                          "version_as_on": h["version_as_on"], "score": h["score"],
+                          "traced_from": h.get("traced_from")} for h in hits],
            "model": model, "prompt_version": PROMPT_VERSION, "stop_reason": msg.stop_reason,
            "tokens_in": u.input_tokens, "tokens_out": u.output_tokens,
            "cost_usd": round((u.input_tokens * PRICE_IN + u.output_tokens * PRICE_OUT) / 1e6, 6),
            "latency_ms": int((time.time() - t0) * 1000),
-           "refused": REFUSAL in text, "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"]}),
+           "refused": REFUSAL in text,
+           "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"] and c["layer"] != "policy"}),
+           "cited_rbi": sorted({f'{c["doc_id"]}:{c["clause_no"]}' for c in cites if c["layer"] == "rbi"}),
+           "cited_rules": sorted({c["rule_id"] for c in cites if c["layer"] == "policy"}),
            "human_action": None}
     os.makedirs("logs", exist_ok=True)
     with open("logs/audit.jsonl", "a", encoding="utf-8") as f:
@@ -75,9 +116,13 @@ def answer(q: str, k: int = 5, caller: str = "cli"):
 
 if __name__ == "__main__":
     for q in ["What is the maximum loan-to-value ratio for a gold loan of 3 lakh rupees?",
-              "What documents are needed for video KYC?"]:   # 2nd should refuse: KYC not indexed yet
+              "What is the maximum LTV for a home loan of Rs 50 lakh?",
+              "Can my customer's grandfather be a co-applicant on her home loan?",
+              "What documents are needed for video KYC?"]:   # last one should refuse: KYC not indexed
         text, cites, rec = answer(q)
         print("Q:", q); print("A:", text)
         for c in cites:
-            print(f'  -> para {c["clause_no"]}: "{c["cited_text"][:70]}..."\n     {c["source"]}')
-        print(f'  [{rec["latency_ms"]} ms | {rec["tokens_in"]} in / {rec["tokens_out"]} out | ${rec["cost_usd"]:.5f} | refused={rec["refused"]}]\n')
+            label = f'rule {c["rule_id"]}' if c["layer"] == "policy" else f'{c["doc_id"]} para {c["clause_no"]}'
+            print(f'  -> {label}: "{c["cited_text"][:70]}..."')
+        print(f'  [{rec["latency_ms"]} ms | {rec["tokens_in"]} in / {rec["tokens_out"]} out | '
+              f'${rec["cost_usd"]:.5f} | refused={rec["refused"]} | rules {rec["cited_rules"]} | rbi {rec["cited_rbi"]}]\n')

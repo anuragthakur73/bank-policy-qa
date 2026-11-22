@@ -23,7 +23,7 @@ def test_required_fields():
         for f in ("section", "title", "rule", "bank_discretion", "vs_rbi", "design_basis", "review"):
             assert f in r, (r["rule_id"], f)
         if not r["bank_discretion"]:
-            assert r.get("rbi_ref"), r["rule_id"] + ": RBI-bound rule needs rbi_ref"
+            assert r.get("rbi_ref") or r.get("scheme_ref"), r["rule_id"] + ": needs rbi_ref or scheme_ref"
 
 def test_never_looser_than_rbi():
     assert {r["vs_rbi"] for r in load()["rules"]} <= {"equal", "stricter", "not_applicable"}

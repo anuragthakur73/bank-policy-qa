@@ -1,4 +1,4 @@
-# run: python -m ingest.index credit_facilities
+# run: python -m ingest.index credit_facilities responsible_business_conduct   (ALL documents: the collection is recreated)
 # Embeds every live clause (omitted "*****" paragraphs skipped) and loads it into Qdrant via LangChain.
 import json, os, sys, uuid
 from dotenv import load_dotenv; load_dotenv()
@@ -26,4 +26,10 @@ QdrantVectorStore.from_documents(
     docs, OpenAIEmbeddings(model="text-embedding-3-small"), ids=ids,
     url=os.environ["QDRANT_URL"], api_key=os.environ["QDRANT_API_KEY"],
     collection_name=COLLECTION, force_recreate=True)
-print("indexed", len(docs), "clauses into", COLLECTION)
+# force_recreate drops payload indexes: rebuild the ones the policy trace uses (ADR-005)
+from qdrant_client import QdrantClient
+from qdrant_client.http import models as qm
+client = QdrantClient(url=os.environ["QDRANT_URL"], api_key=os.environ["QDRANT_API_KEY"])
+for field in ("metadata.doc_id", "metadata.clause_no"):
+    client.create_payload_index(COLLECTION, field_name=field, field_schema=qm.PayloadSchemaType.KEYWORD)
+print("indexed", len(docs), "clauses into", COLLECTION, "from", ", ".join(sys.argv[1:]), "| payload indexes ok")

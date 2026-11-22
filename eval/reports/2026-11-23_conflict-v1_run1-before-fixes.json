@@ -1,0 +1,383 @@
+{
+  "summary": {
+    "prompt_version": "conflict-v1",
+    "policy_rules_checked": 13,
+    "policy_outcomes": {
+      "FLAG": 3,
+      "cannot_check": 1,
+      "pass": 9
+    },
+    "policy_flagged_looser": [
+      "DB-HL-014",
+      "DB-HL-025",
+      "DB-HL-028"
+    ],
+    "declared_vs_verdict_mismatch": [
+      [
+        "DB-HL-001",
+        "equal",
+        "stricter"
+      ],
+      [
+        "DB-HL-002",
+        "equal",
+        "stricter"
+      ],
+      [
+        "DB-HL-020",
+        "equal",
+        "stricter"
+      ]
+    ],
+    "fixtures_caught": "5/5",
+    "total_cost_usd": 0.00507
+  },
+  "rows": [
+    {
+      "kind": "policy",
+      "id": "DB-HL-001",
+      "declared": "equal",
+      "verdict": "stricter",
+      "rbi_para": "90",
+      "reason": "RBI requires a declaration of intent to build within a period 'as may be laid down by the banks themselves,' and the bank fixes that period at 3 years from first disbursement, which is more restrictive than RBI's open-ended standard.",
+      "trace": [
+        [
+          "90",
+          "found"
+        ],
+        [
+          "93",
+          "found"
+        ],
+        [
+          "95",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.00034,
+      "latency_ms": 5468,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-002",
+      "declared": "equal",
+      "verdict": "stricter",
+      "rbi_para": "92(6), 92(7)",
+      "reason": "The bank rule matches RBI's bar on unauthorized colonies and on residential property used for commercial purposes, and it adds a further refusal for property without a sanctioned building plan, which RBI para 92 does not prohibit outright (it only requires a sanctioned plan copy or affidavit, e.g. 'shall be obtained by the bank before sanctioning the home loan').",
+      "trace": [
+        [
+          "92",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000292,
+      "latency_ms": 2534,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-009",
+      "declared": "equal",
+      "verdict": "equal",
+      "rbi_para": "111",
+      "reason": "RBI sets the LTV caps as 'Up to ₹30 lakh ≤ 80' (with '>80 and ≤ 90' also permitted), 'Above ₹30 lakh & up to ₹75 lakh ≤ 80', and 'Above ₹75 lakh ≤ 75', which match the bank's 90%, 80% and 75% limits exactly.",
+      "trace": [
+        [
+          "111",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000246,
+      "latency_ms": 1996,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-010",
+      "declared": "equal",
+      "verdict": "equal",
+      "rbi_para": "113",
+      "reason": "RBI says banks \"shall not include stamp duty, registration and other documentation charges in the cost of the housing property\" except where the cost \"does not exceed ₹10 lakh\", and the bank rule states the same exclusion and the same exemption threshold.",
+      "trace": [
+        [
+          "113",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000106,
+      "latency_ms": 1170,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-014",
+      "declared": "equal",
+      "verdict": "looser",
+      "rbi_para": "349(1)",
+      "reason": "RBI requires that 'any increase in the EMI / tenor or both on account of the above shall be communicated to the borrower immediately through appropriate channels', but the bank rule only covers disclosure at sanction and says nothing about immediate notice of later increases.",
+      "trace": [
+        [
+          "349",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000528,
+      "latency_ms": 4189,
+      "outcome": "FLAG"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-017",
+      "declared": "equal",
+      "verdict": "equal",
+      "rbi_para": "353(1) and 353(3)",
+      "reason": "Paragraph 353(1) requires that for all floating rate loans granted for purposes other than business to individuals, \"a bank shall not levy pre-payment charges,\" and 353(3) applies this \"irrespective of the source of funds... and without any minimum lock-in period,\" which matches the bank's home loan rule.",
+      "trace": [
+        [
+          "352",
+          "found"
+        ],
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000342,
+      "latency_ms": 2727,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-018",
+      "declared": "equal",
+      "verdict": "equal",
+      "rbi_para": "351",
+      "reason": "Note (ii) requires that penalty for default 'shall only be levied in the form of penal charges and not penal interest' and that there be 'no capitalization of the penal charges,' which the bank rule matches by charging on the overdue EMI only with no interest on the charge, and para 351(6)-(7) require upfront disclosure in the loan agreement and KFS and communication in reminders, which the bank r",
+      "trace": [
+        [
+          "351",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000564,
+      "latency_ms": 4165,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-020",
+      "declared": "equal",
+      "verdict": "stricter",
+      "rbi_para": "92(4)",
+      "reason": "Para 92(4) requires a completion certificate only \"as far as possible\" for a built-up purchase, while the bank rule makes a completion or occupancy certificate mandatory for completed property, which is more restrictive; the title-verification requirement is not addressed by the RBI text given.",
+      "trace": [
+        [
+          "92",
+          "found"
+        ],
+        [
+          "120",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000443,
+      "latency_ms": 3723,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-025",
+      "declared": "equal",
+      "verdict": "looser",
+      "rbi_para": "348(1)",
+      "reason": "RBI requires that \"Contents of KFS shall be explained to the borrower and an acknowledgement shall be obtained that they have understood the same,\" but the bank rule omits both the explanation and the acknowledgement, and it also omits the receipts requirement in 348(4) for third-party charges.",
+      "trace": [
+        [
+          "348",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000479,
+      "latency_ms": 2665,
+      "outcome": "FLAG"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-026",
+      "declared": "equal",
+      "verdict": "equal",
+      "rbi_para": "116",
+      "reason": "RBI requires that \"Disbursal of housing loans sanctioned to individuals shall be closely linked to the stages of construction ... and upfront disbursal shall not be made in cases of incomplete / under-construction / green field housing projects,\" which the bank rule matches exactly; its pre-EMI and 36-month terms are not addressed by the RBI text given.",
+      "trace": [
+        [
+          "114",
+          "found"
+        ],
+        [
+          "115",
+          "found"
+        ],
+        [
+          "116",
+          "found"
+        ],
+        [
+          "117",
+          "found"
+        ],
+        [
+          "118",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000368,
+      "latency_ms": 3530,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-028",
+      "declared": "stricter",
+      "verdict": "looser",
+      "rbi_para": "358",
+      "reason": "RBI requires that a bank 'shall communicate to the borrower reasons for delay in releasing of original movable / immovable property documents ... beyond 30 days after full repayment,' but the bank rule says nothing about communicating reasons for delay.",
+      "trace": [
+        [
+          "354",
+          "found"
+        ],
+        [
+          "355",
+          "found"
+        ],
+        [
+          "358",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.00023,
+      "latency_ms": 2404,
+      "outcome": "FLAG"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-029",
+      "declared": "equal",
+      "verdict": "cannot_check",
+      "rbi_para": "",
+      "trace": [
+        [
+          "n/a",
+          "not_indexed"
+        ]
+      ],
+      "reason": "cited RBI text is not in the index",
+      "cost_usd": 0.0,
+      "latency_ms": 0,
+      "outcome": "cannot_check"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-031",
+      "declared": "equal",
+      "verdict": "equal",
+      "rbi_para": "346",
+      "reason": "RBI requires that disputes from the bank's functionaries' decisions are \"heard and disposed of at least at the next higher level,\" and the bank rule says any dispute about a decision is heard \"at least one level above the officer who made it.\"",
+      "trace": [
+        [
+          "346",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000249,
+      "latency_ms": 2395,
+      "outcome": "pass"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-001",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "111",
+      "reason": "For individual housing loans above ₹30 lakh and up to ₹75 lakh, RBI sets the LTV at \"≤ 80\", so the bank's 85% LTV for a ₹50 lakh loan exceeds the RBI limit.",
+      "trace": [
+        [
+          "111",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000183,
+      "latency_ms": 1600,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-002",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "353(1)",
+      "reason": "RBI says that for all floating rate loans granted for purposes other than business to individuals, \"a bank shall not levy pre-payment charges,\" and 353(3) bars any minimum lock-in period, whereas the bank imposes a 2% foreclosure charge on floating-rate home loans closed within 3 years.",
+      "trace": [
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000246,
+      "latency_ms": 1862,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-003",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "113",
+      "reason": "RBI says the bank \"shall not include stamp duty, registration and other documentation charges in the cost of the housing property\" except where the cost does not exceed ₹10 lakh, but the bank rule adds them to property cost on all loans, diluting the LTV norm.",
+      "trace": [
+        [
+          "113",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000105,
+      "latency_ms": 1085,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-004",
+      "declared": "possible_conflict",
+      "verdict": "looser",
+      "rbi_para": "349(3)(i)",
+      "reason": "The bank rule gives the bank the option to choose the EMI increase, tenure extension, or both, whereas RBI requires that \"The borrower shall also be given the choice to opt for (i) enhancement in EMI or elongation of tenor or for a combination of both options.\"",
+      "trace": [
+        [
+          "349",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000265,
+      "latency_ms": 1849,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-005",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "354",
+      "reason": "The bank allows 45 days to return original title deeds, whereas RBI requires a bank to \"release all the original movable / immovable property documents ... within a period of 30 days after full repayment / settlement of the loan account.\"",
+      "trace": [
+        [
+          "354",
+          "found"
+        ]
+      ],
+      "cost_usd": 8.4e-05,
+      "latency_ms": 1107,
+      "outcome": "caught"
+    }
+  ]
+}

@@ -1,0 +1,771 @@
+{
+  "summary": {
+    "prompt_version": "conflict-v3",
+    "runs_per_rule": 3,
+    "policy_rules_checked": 12,
+    "policy_outcomes": {
+      "pass": 12
+    },
+    "policy_flagged_looser": [],
+    "unstable": [
+      [
+        "DB-HL-009",
+        {
+          "complies": 2,
+          "looser": 1
+        }
+      ]
+    ],
+    "coverage_gaps_non_blocking": {
+      "DB-HL-001": [
+        "93: additional finance for alterations, additions or repairs must stay within the overall ceiling of the existing financed house/flat",
+        "95: before financing repairs or additions, the bank must be satisfied regarding the estimated cost, with an Engineer/Architect certificate where necessary",
+        "95: the bank must obtain such security as it deems appropriate for repair or addition finance",
+        "93: additional finance for alterations/additions/repairs must stay within the overall ceiling of the house already financed by the bank",
+        "95: repair/addition finance must be need-based",
+        "95: estimated cost must be satisfied, with an Engineer/Architect certificate where necessary",
+        "95: appropriate security must be obtained for repair/addition finance",
+        "93: additional finance for alterations, additions or repairs is subject to the overall ceiling of the already-financed house",
+        "95: for repairs or additions, the bank must be satisfied on estimated cost, with an Engineer/Architect certificate where necessary",
+        "95: bank must obtain such security as it deems appropriate for repair or addition finance"
+      ],
+      "DB-HL-002": [
+        "92(1) copy of the sanctioned plan in the applicant's name must be obtained before sanctioning a home loan on owned land",
+        "92(2) affidavit-cum-undertaking not to violate the sanctioned plan and to obtain completion certificate within 3 months, failing which the bank may recall the entire loan with interest and charges",
+        "92(3) empanelled architect must certify at various construction stages and on obtaining the completion certificate",
+        "92(4) affidavit-cum-undertaking required for purchase of built-up house/flat that it was built per sanctioned plan/bye-laws and, as far as possible, has a completion certificate",
+        "92(5) architect must certify before disbursement that the built-up property conforms to the sanctioned plan/bye-laws",
+        "92(6) unauthorised-colony loans permitted only after regularisation and payment of development and other charges",
+        "92(1) copy of sanctioned plan must be in the name of the applicant and obtained before sanctioning a home loan",
+        "92(2) affidavit-cum-undertaking from the applicant that construction will follow the sanctioned plan",
+        "92(2) applicant must obtain completion certificate within 3 months of completion of construction, failing which the bank may recall the entire loan",
+        "92(3) empanelled architect must certify at various construction stages that construction is as per sanctioned plan, and certify when the completion certificate is obtained",
+        "92(4) for built-up house/flat purchases, applicant must give an affidavit-cum-undertaking that the property was built per the sanctioned plan and/or bye-laws",
+        "92(5) empanelled architect must certify before disbursement that the built-up property follows the sanctioned plan and/or bye-laws",
+        "92(1) copy of sanctioned plan in the applicant's name must be obtained before sanctioning a home loan for construction on owned land",
+        "92(2) affidavit-cum-undertaking from applicants not to violate the sanctioned plan and to obtain completion certificate within 3 months, with bank power to recall the entire loan",
+        "92(3) architect appointed/empanelled by the bank must certify at various construction stages and at completion that the completion certificate has been obtained",
+        "92(4) affidavit-cum-undertaking for purchase of built-up house/flat that it was constructed as per sanctioned plan/bye-laws and, as far as possible, has a completion certificate",
+        "92(5) architect must certify before disbursement that the built-up property is strictly as per sanctioned plan and/or bye-laws",
+        "92(6) loans for unauthorised colonies allowed only after regularisation and payment of development and other charges"
+      ],
+      "DB-HL-009": [
+        "111 risk weights of 35% (up to ₹75 lakh, LTV ≤80%), 50% (LTV >80 and ≤90%, up to ₹30 lakh), 50% (above ₹75 lakh, LTV ≤75%), and 75% for CRE-RH",
+        "111 proviso for loans sanctioned till June 06, 2017: above ₹30 lakh up to ₹75 lakh LTV ≤75% (RW 35%) and >75 and ≤80% (RW 50%), above ₹75 lakh LTV ≤75% (RW 75%), and CRE at 100% RW",
+        "111 risk weights tied to LTV bands: 35% for up to ₹30 lakh at ≤80% LTV, 50% for up to ₹30 lakh at >80% and ≤90% LTV, 35% for ₹30–75 lakh at ≤80% LTV, 50% for above ₹75 lakh at ≤75% LTV",
+        "111 CRE-RH (commercial real estate residential housing) risk weight of 75%",
+        "111 transitional LTV and risk weight table for loans sanctioned till June 06, 2017 (e.g., 75% LTV cap and 75% RW above ₹75 lakh; 100% RW for CRE)",
+        "111 risk weights of 35% (LTV ≤80, up to ₹75 lakh), 50% (LTV >80 and ≤90, up to ₹30 lakh), 35% (₹30–75 lakh) and 75% (above ₹75 lakh) are not stated",
+        "111 CRE-RH (residential) risk weight of 75% is not stated",
+        "111 pre-June 06, 2017 LTV and risk-weight schedule (including CRE at 100%) is not addressed"
+      ],
+      "DB-HL-010": [
+        "113 the ₹10 lakh exemption is permissive (\"the bank may add\"), not mandatory; the bank rule states the addition as automatic in that case"
+      ],
+      "DB-HL-014": [
+        "349(4) applicable charges must be as approved by the Board or a delegated Committee",
+        "349(6) quarterly statement must be simple and easily understood by the borrower",
+        "349(6) annualised rate / APR must be shown for the entire tenor of the loan",
+        "349(4) charges for switching and service/administrative costs must be as approved by the Board or a delegated Committee",
+        "349(6) the annualised rate/APR must be shown for the entire tenor of the loan",
+        "349(6) statements must be simple and easily understood by the borrower",
+        "349(3) prepayment charges are subject to extant instructions, which the rule does not state",
+        "349(6) quarterly statement must give the annualised rate/APR for the entire tenor of the loan"
+      ],
+      "DB-HL-017": [
+        "353(8) applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement (and in the KFS where applicable)",
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(9) no retrospective levy of charges waived off earlier by the bank at pre-payment",
+        "353(4) dual/special rate loans: applicability depends on whether the loan is floating at the time of pre-payment",
+        "353(8) applicability of pre-payment charges (here none) must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable",
+        "353(9) no charges may be levied retrospectively on pre-payment for charges the bank earlier waived",
+        "353(8) applicability of pre-payment charges (here, none) must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable",
+        "353(9) no charges or fees may be levied retrospectively at pre-payment if the bank had earlier waived them",
+        "353(7) no charges may be levied where pre-payment is effected at the instance of the bank"
+      ],
+      "DB-HL-018": [
+        "351(1) interest on unpaid EMI may be charged only at the contracted rate until remediation, not the penal rate",
+        "351(1) Note (ii) penal charges must be reasonable and levied in a non-discriminatory manner under a Board-approved policy",
+        "351(1) Note (iii) no fresh penal charges on earlier outstanding penal charges",
+        "351(1) Note (iv) GST on penal charges must follow CBIC instructions",
+        "351(1) Note (vi) penal charges on NPA accounts must be reversed to the extent uncollected",
+        "351(1) Note (vii) fees and penal charges must be disclosed in Schedule 14: Other Income",
+        "351(3) a Board- or delegate-approved policy on penal charges is required",
+        "351(4) quantum must be reasonable and commensurate with the non-compliance, not discriminatory within a product category, and not used as a revenue tool",
+        "351(4) Note (i) penal charge structure must be uniform within a product category regardless of borrower constitution",
+        "351(5) penal charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(6) reason and quantum must be disclosed upfront, and the website reference alone does not suffice",
+        "351(7) reminders must state the applicable charge, and each levy must be communicated with its reason",
+        "351(1)(ii) penal charges must be reasonable and non-discriminatory, per a Board-approved policy",
+        "351(3) bank must have a Board-approved (or delegated committee) policy on penal charges",
+        "351(4) quantum must be commensurate with the non-compliance and uniform within a product category irrespective of borrower constitution",
+        "351(5) penal charges for individual borrowers for non-business purposes must not exceed those for non-individual borrowers",
+        "351(6) quantum and reason must also be displayed on the bank's website under 'Interest rates and Service Charges'",
+        "351(1)(iii) no fresh penal charges may be levied on earlier outstanding penal charges",
+        "351(1) interest on unpaid EMI may be charged only at the contracted rate until remediation, not at the penal rate",
+        "351(1)(vi) penal charges on NPA accounts must be reversed to the extent uncollected",
+        "351(1)(vii) penal charges must be disclosed in 'Schedule 14: Other Income'",
+        "351 note (iv) GST applicability on penal charges per CBIC instructions",
+        "351(7) applicable penal charges must be communicated in reminders, and each instance of levy with its reason communicated",
+        "351(3) Board- or committee-approved policy on penal charges is required",
+        "351(4) quantum must be reasonable, commensurate with non-compliance, and non-discriminatory within a product category",
+        "351(4) Note (ii) penal charges must not be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(6) penal charges must be displayed on the bank's website under 'Interest rates and Service Charges'",
+        "351(7) each instance of levy and its reason must be communicated to the borrower",
+        "351(1) Note (iv) GST on penal charges per CBIC instructions",
+        "351(1) Note (vi) reversal of uncollected penal charges on NPA accounts",
+        "351(1) Note (vii) disclosure of penal charges in 'Schedule 14: Other Income'"
+      ],
+      "DB-HL-020": [
+        "92(1) copy of the sanctioned plan in the applicant's name must be obtained before sanctioning the home loan",
+        "92(2) recall power must cover the entire loan with interest, costs and other usual bank charges",
+        "92(4) affidavit for a built-up property must declare construction per sanctioned plan and/or bye-laws, with a completion certificate as far as possible",
+        "92(6) no loan for properties in unauthorized colonies until regularized and development and other charges paid",
+        "92(7) no loan for residential property the applicant declares it will use for commercial purposes",
+        "92(1) sanctioned plan must be a copy in the name of the applicant obtained before sanctioning the home loan",
+        "92(6) no loan for properties in unauthorized colonies unless regularized and development and other charges paid",
+        "92(1) a copy of the sanctioned plan must be in the name of the person applying for the credit facility",
+        "92(6) no loan for properties in unauthorized colonies until they are regularized and development and other charges are paid"
+      ],
+      "DB-HL-025": [
+        "348(1) KFS must follow the standardised format in Annex XIII",
+        "348(2) bank is bound by the KFS loan terms if the borrower agrees within the validity period",
+        "348(4) receipts and related documents for third-party charges must be given within a reasonable time, not just 'for each payment'",
+        "348(6) KFS must also be included as a summary box exhibited as part of the loan agreement",
+        "348(2) one-working-day validity applies to loans under seven days (rule sets three days for all loans)",
+        "348(3) KFS must include a computation sheet of APR and the amortisation schedule over the full tenor (rule mentions only the schedule and APR, not the computation sheet)",
+        "348(3) APR computed on net disbursed amount using IRR approach and reducing balance method",
+        "348(4) receipts and related documents for third-party charges must be provided within a reasonable time",
+        "348(6) KFS must be included as a summary box exhibited as part of the loan agreement"
+      ],
+      "DB-HL-026": [
+        "118 bank must ensure customer suitability and appropriateness for the product",
+        "118 borrowers must be made fully aware of the risks and liabilities under the product",
+        "118 bank must ensure customer suitability and appropriateness of the product"
+      ],
+      "DB-HL-028": [
+        "358 requires filing the charge satisfaction form with the relevant registry, which the bank rule does not mention explicitly",
+        "358: failing to file charge satisfaction form with the relevant registry must also be explained to the borrower and falls under the compensation rule",
+        "354: removal of charges must be done for charges registered with any registry, not only charges held by the bank"
+      ],
+      "DB-HL-031": [
+        "346 periodical review of compliance with the Fair Practices Code and of the grievance redressal mechanism at various levels of controlling offices",
+        "346 consolidated report of such reviews submitted to the Board at regular intervals, as prescribed by the Board",
+        "346 Board or delegated committee must lay down the grievance redressal mechanism",
+        "346 periodical review of Fair Practices Code compliance and grievance redressal functioning at various levels of controlling offices",
+        "346 consolidated report of such reviews submitted to the Board at regular intervals as prescribed by the Board",
+        "346 consolidated report of such reviews must be submitted to the Board at regular intervals as prescribed by it"
+      ]
+    },
+    "fixtures_caught": "5/5",
+    "total_cost_usd": 0.02336
+  },
+  "rows": [
+    {
+      "kind": "policy",
+      "id": "DB-HL-001",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "CF para 90",
+      "reason": "The bank rule requires a declaration to complete construction within 3 years, which matches RBI's allowance for a period 'as may be laid down by the banks themselves', and the rule's repair and extension coverage is consistent with CF paras 93 and 95.",
+      "omissions": [
+        "93: additional finance for alterations, additions or repairs must stay within the overall ceiling of the existing financed house/flat",
+        "95: before financing repairs or additions, the bank must be satisfied regarding the estimated cost, with an Engineer/Architect certificate where necessary",
+        "95: the bank must obtain such security as it deems appropriate for repair or addition finance",
+        "93: additional finance for alterations/additions/repairs must stay within the overall ceiling of the house already financed by the bank",
+        "95: repair/addition finance must be need-based",
+        "95: estimated cost must be satisfied, with an Engineer/Architect certificate where necessary",
+        "95: appropriate security must be obtained for repair/addition finance",
+        "93: additional finance for alterations, additions or repairs is subject to the overall ceiling of the already-financed house",
+        "95: for repairs or additions, the bank must be satisfied on estimated cost, with an Engineer/Architect certificate where necessary",
+        "95: bank must obtain such security as it deems appropriate for repair or addition finance"
+      ],
+      "trace": [
+        [
+          "90",
+          "found"
+        ],
+        [
+          "93",
+          "found"
+        ],
+        [
+          "95",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001239,
+      "latency_ms": 27073,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-002",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "92(6), 92(7)",
+      "reason": "The bank rule bars loans for unauthorised colonies and commercial-use residential property, matching RBI's \"No loan should be given in respect of those properties which fall in the category of unauthorized colonies\" and \"properties meant for residential use but which the applicant intends to use for commercial purposes\"; its ban on property without a sanctioned plan is stricter than RBI's document",
+      "omissions": [
+        "92(1) copy of the sanctioned plan in the applicant's name must be obtained before sanctioning a home loan on owned land",
+        "92(2) affidavit-cum-undertaking not to violate the sanctioned plan and to obtain completion certificate within 3 months, failing which the bank may recall the entire loan with interest and charges",
+        "92(3) empanelled architect must certify at various construction stages and on obtaining the completion certificate",
+        "92(4) affidavit-cum-undertaking required for purchase of built-up house/flat that it was built per sanctioned plan/bye-laws and, as far as possible, has a completion certificate",
+        "92(5) architect must certify before disbursement that the built-up property conforms to the sanctioned plan/bye-laws",
+        "92(6) unauthorised-colony loans permitted only after regularisation and payment of development and other charges",
+        "92(1) copy of sanctioned plan must be in the name of the applicant and obtained before sanctioning a home loan",
+        "92(2) affidavit-cum-undertaking from the applicant that construction will follow the sanctioned plan",
+        "92(2) applicant must obtain completion certificate within 3 months of completion of construction, failing which the bank may recall the entire loan",
+        "92(3) empanelled architect must certify at various construction stages that construction is as per sanctioned plan, and certify when the completion certificate is obtained",
+        "92(4) for built-up house/flat purchases, applicant must give an affidavit-cum-undertaking that the property was built per the sanctioned plan and/or bye-laws",
+        "92(5) empanelled architect must certify before disbursement that the built-up property follows the sanctioned plan and/or bye-laws",
+        "92(1) copy of sanctioned plan in the applicant's name must be obtained before sanctioning a home loan for construction on owned land",
+        "92(2) affidavit-cum-undertaking from applicants not to violate the sanctioned plan and to obtain completion certificate within 3 months, with bank power to recall the entire loan",
+        "92(3) architect appointed/empanelled by the bank must certify at various construction stages and at completion that the completion certificate has been obtained",
+        "92(4) affidavit-cum-undertaking for purchase of built-up house/flat that it was constructed as per sanctioned plan/bye-laws and, as far as possible, has a completion certificate",
+        "92(5) architect must certify before disbursement that the built-up property is strictly as per sanctioned plan and/or bye-laws",
+        "92(6) loans for unauthorised colonies allowed only after regularisation and payment of development and other charges"
+      ],
+      "trace": [
+        [
+          "92",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001599,
+      "latency_ms": 12310,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-009",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "111",
+      "reason": "The bank caps LTV at 90% up to ₹30 lakh, 80% for ₹30–75 lakh and 75% above ₹75 lakh, which matches RBI's maximum LTV ratios of \"≤ 80\" or \"> 80 and ≤ 90\" for loans up to ₹30 lakh, \"≤ 80\" for ₹30–75 lakh, and \"≤ 75\" above ₹75 lakh.",
+      "omissions": [
+        "111 risk weights of 35% (up to ₹75 lakh, LTV ≤80%), 50% (LTV >80 and ≤90%, up to ₹30 lakh), 50% (above ₹75 lakh, LTV ≤75%), and 75% for CRE-RH",
+        "111 proviso for loans sanctioned till June 06, 2017: above ₹30 lakh up to ₹75 lakh LTV ≤75% (RW 35%) and >75 and ≤80% (RW 50%), above ₹75 lakh LTV ≤75% (RW 75%), and CRE at 100% RW",
+        "111 risk weights tied to LTV bands: 35% for up to ₹30 lakh at ≤80% LTV, 50% for up to ₹30 lakh at >80% and ≤90% LTV, 35% for ₹30–75 lakh at ≤80% LTV, 50% for above ₹75 lakh at ≤75% LTV",
+        "111 CRE-RH (commercial real estate residential housing) risk weight of 75%",
+        "111 transitional LTV and risk weight table for loans sanctioned till June 06, 2017 (e.g., 75% LTV cap and 75% RW above ₹75 lakh; 100% RW for CRE)",
+        "111 risk weights of 35% (LTV ≤80, up to ₹75 lakh), 50% (LTV >80 and ≤90, up to ₹30 lakh), 35% (₹30–75 lakh) and 75% (above ₹75 lakh) are not stated",
+        "111 CRE-RH (residential) risk weight of 75% is not stated",
+        "111 pre-June 06, 2017 LTV and risk-weight schedule (including CRE at 100%) is not addressed"
+      ],
+      "trace": [
+        [
+          "111",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001683,
+      "latency_ms": 13914,
+      "votes": {
+        "complies": 2,
+        "looser": 1
+      },
+      "stable": false,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-010",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "113",
+      "reason": "RBI says the bank 'shall not include stamp duty, registration and other documentation charges in the cost of the housing property' with the exemption that the bank 'may add' them where the cost does not exceed ₹10 lakh, and the bank rule states exactly this.",
+      "omissions": [
+        "113 the ₹10 lakh exemption is permissive (\"the bank may add\"), not mandatory; the bank rule states the addition as automatic in that case"
+      ],
+      "trace": [
+        [
+          "113",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000755,
+      "latency_ms": 19631,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-014",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "349(2)",
+      "reason": "RBI says a bank \"may, at its option, provide a choice\" to switch to a fixed rate, and the bank's statement that it does not offer one is consistent with that optional wording (349 Note also refers to switching \"where such an option is provided by the bank\").",
+      "omissions": [
+        "349(4) applicable charges must be as approved by the Board or a delegated Committee",
+        "349(6) quarterly statement must be simple and easily understood by the borrower",
+        "349(6) annualised rate / APR must be shown for the entire tenor of the loan",
+        "349(4) charges for switching and service/administrative costs must be as approved by the Board or a delegated Committee",
+        "349(6) the annualised rate/APR must be shown for the entire tenor of the loan",
+        "349(6) statements must be simple and easily understood by the borrower",
+        "349(3) prepayment charges are subject to extant instructions, which the rule does not state",
+        "349(6) quarterly statement must give the annualised rate/APR for the entire tenor of the loan"
+      ],
+      "trace": [
+        [
+          "349",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.002281,
+      "latency_ms": 41818,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-017",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "353(1)",
+      "reason": "RBI requires that for all floating rate loans granted for purposes other than business to individuals, a bank 'shall not levy pre-payment charges', and a floating-rate home loan to an individual is such a loan, so the bank's no-charge rule matches or exceeds that requirement.",
+      "omissions": [
+        "353(8) applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement (and in the KFS where applicable)",
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(9) no retrospective levy of charges waived off earlier by the bank at pre-payment",
+        "353(4) dual/special rate loans: applicability depends on whether the loan is floating at the time of pre-payment",
+        "353(8) applicability of pre-payment charges (here none) must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable",
+        "353(9) no charges may be levied retrospectively on pre-payment for charges the bank earlier waived",
+        "353(8) applicability of pre-payment charges (here, none) must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable",
+        "353(9) no charges or fees may be levied retrospectively at pre-payment if the bank had earlier waived them",
+        "353(7) no charges may be levied where pre-payment is effected at the instance of the bank"
+      ],
+      "trace": [
+        [
+          "352",
+          "found"
+        ],
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001416,
+      "latency_ms": 22585,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-018",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "351(1) and Note (ii)",
+      "reason": "The rule levies penal charges only on the overdue EMI amount, not as penal interest, and charges no interest on them, consistent with RBI's requirement that penal charges 'shall only be levied in the form of penal charges and not penal interest' and that there 'shall be no capitalization of the penal charges'.",
+      "omissions": [
+        "351(1) interest on unpaid EMI may be charged only at the contracted rate until remediation, not the penal rate",
+        "351(1) Note (ii) penal charges must be reasonable and levied in a non-discriminatory manner under a Board-approved policy",
+        "351(1) Note (iii) no fresh penal charges on earlier outstanding penal charges",
+        "351(1) Note (iv) GST on penal charges must follow CBIC instructions",
+        "351(1) Note (vi) penal charges on NPA accounts must be reversed to the extent uncollected",
+        "351(1) Note (vii) fees and penal charges must be disclosed in Schedule 14: Other Income",
+        "351(3) a Board- or delegate-approved policy on penal charges is required",
+        "351(4) quantum must be reasonable and commensurate with the non-compliance, not discriminatory within a product category, and not used as a revenue tool",
+        "351(4) Note (i) penal charge structure must be uniform within a product category regardless of borrower constitution",
+        "351(5) penal charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(6) reason and quantum must be disclosed upfront, and the website reference alone does not suffice",
+        "351(7) reminders must state the applicable charge, and each levy must be communicated with its reason",
+        "351(1)(ii) penal charges must be reasonable and non-discriminatory, per a Board-approved policy",
+        "351(3) bank must have a Board-approved (or delegated committee) policy on penal charges",
+        "351(4) quantum must be commensurate with the non-compliance and uniform within a product category irrespective of borrower constitution",
+        "351(5) penal charges for individual borrowers for non-business purposes must not exceed those for non-individual borrowers",
+        "351(6) quantum and reason must also be displayed on the bank's website under 'Interest rates and Service Charges'",
+        "351(1)(iii) no fresh penal charges may be levied on earlier outstanding penal charges",
+        "351(1) interest on unpaid EMI may be charged only at the contracted rate until remediation, not at the penal rate",
+        "351(1)(vi) penal charges on NPA accounts must be reversed to the extent uncollected",
+        "351(1)(vii) penal charges must be disclosed in 'Schedule 14: Other Income'",
+        "351 note (iv) GST applicability on penal charges per CBIC instructions",
+        "351(7) applicable penal charges must be communicated in reminders, and each instance of levy with its reason communicated",
+        "351(3) Board- or committee-approved policy on penal charges is required",
+        "351(4) quantum must be reasonable, commensurate with non-compliance, and non-discriminatory within a product category",
+        "351(4) Note (ii) penal charges must not be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(6) penal charges must be displayed on the bank's website under 'Interest rates and Service Charges'",
+        "351(7) each instance of levy and its reason must be communicated to the borrower",
+        "351(1) Note (iv) GST on penal charges per CBIC instructions",
+        "351(1) Note (vi) reversal of uncollected penal charges on NPA accounts",
+        "351(1) Note (vii) disclosure of penal charges in 'Schedule 14: Other Income'"
+      ],
+      "trace": [
+        [
+          "351",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.002176,
+      "latency_ms": 26209,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-020",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "CF 92(2), CF 120",
+      "reason": "The bank rule matches the RBI requirements that construction must be strictly as per the sanctioned plan with a completion certificate within 3 months, and that disbursements wait until the borrower has obtained requisite clearances, as CF 120 says \"the disbursements shall be made only after the borrower has obtained requisite clearances.\"",
+      "omissions": [
+        "92(1) copy of the sanctioned plan in the applicant's name must be obtained before sanctioning the home loan",
+        "92(2) recall power must cover the entire loan with interest, costs and other usual bank charges",
+        "92(4) affidavit for a built-up property must declare construction per sanctioned plan and/or bye-laws, with a completion certificate as far as possible",
+        "92(6) no loan for properties in unauthorized colonies until regularized and development and other charges paid",
+        "92(7) no loan for residential property the applicant declares it will use for commercial purposes",
+        "92(1) sanctioned plan must be a copy in the name of the applicant obtained before sanctioning the home loan",
+        "92(6) no loan for properties in unauthorized colonies unless regularized and development and other charges paid",
+        "92(1) a copy of the sanctioned plan must be in the name of the person applying for the credit facility",
+        "92(6) no loan for properties in unauthorized colonies until they are regularized and development and other charges are paid"
+      ],
+      "trace": [
+        [
+          "92",
+          "found"
+        ],
+        [
+          "120",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001708,
+      "latency_ms": 12531,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-025",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "348(2)",
+      "reason": "RBI requires a validity period of 'at least three working days for loans having tenor of seven days or more' and 'one working day for loans having tenor of less than seven days', and the bank rule's uniform 'at least 3 working days' meets or exceeds both limits.",
+      "omissions": [
+        "348(1) KFS must follow the standardised format in Annex XIII",
+        "348(2) bank is bound by the KFS loan terms if the borrower agrees within the validity period",
+        "348(4) receipts and related documents for third-party charges must be given within a reasonable time, not just 'for each payment'",
+        "348(6) KFS must also be included as a summary box exhibited as part of the loan agreement",
+        "348(2) one-working-day validity applies to loans under seven days (rule sets three days for all loans)",
+        "348(3) KFS must include a computation sheet of APR and the amortisation schedule over the full tenor (rule mentions only the schedule and APR, not the computation sheet)",
+        "348(3) APR computed on net disbursed amount using IRR approach and reducing balance method",
+        "348(4) receipts and related documents for third-party charges must be provided within a reasonable time",
+        "348(6) KFS must be included as a summary box exhibited as part of the loan agreement"
+      ],
+      "trace": [
+        [
+          "348",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001929,
+      "latency_ms": 11713,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-026",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "116",
+      "reason": "RBI says \"Disbursal of housing loans sanctioned to individuals shall be closely linked to the stages of construction ... and upfront disbursal shall not be made in cases of incomplete / under-construction / green field housing projects,\" and the bank rule links disbursal to certified construction stages and makes no upfront disbursal for incomplete or under-construction projects.",
+      "omissions": [
+        "118 bank must ensure customer suitability and appropriateness for the product",
+        "118 borrowers must be made fully aware of the risks and liabilities under the product",
+        "118 bank must ensure customer suitability and appropriateness of the product"
+      ],
+      "trace": [
+        [
+          "114",
+          "found"
+        ],
+        [
+          "115",
+          "found"
+        ],
+        [
+          "116",
+          "found"
+        ],
+        [
+          "117",
+          "found"
+        ],
+        [
+          "118",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001194,
+      "latency_ms": 10526,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-028",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "354, 355, 358, 359",
+      "reason": "The bank rule sets a stricter 15-working-day return period than RBI's 30 days (354), gives the borrower a choice of office as 355 requires, and mirrors the reasons, daily ₹5,000 compensation (358) and 30-day extension for lost or damaged documents (359).",
+      "omissions": [
+        "358 requires filing the charge satisfaction form with the relevant registry, which the bank rule does not mention explicitly",
+        "358: failing to file charge satisfaction form with the relevant registry must also be explained to the borrower and falls under the compensation rule",
+        "354: removal of charges must be done for charges registered with any registry, not only charges held by the bank"
+      ],
+      "trace": [
+        [
+          "354",
+          "found"
+        ],
+        [
+          "355",
+          "found"
+        ],
+        [
+          "358",
+          "found"
+        ],
+        [
+          "359",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.00128,
+      "latency_ms": 12068,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-HL-031",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "346",
+      "reason": "RBI requires that 'all disputes arising out of the decisions of the bank's functionaries are heard and disposed of at least at the next higher level', and the bank rule states that 'any dispute about a decision is heard at least one level above the officer who made it.'",
+      "omissions": [
+        "346 periodical review of compliance with the Fair Practices Code and of the grievance redressal mechanism at various levels of controlling offices",
+        "346 consolidated report of such reviews submitted to the Board at regular intervals, as prescribed by the Board",
+        "346 Board or delegated committee must lay down the grievance redressal mechanism",
+        "346 periodical review of Fair Practices Code compliance and grievance redressal functioning at various levels of controlling offices",
+        "346 consolidated report of such reviews submitted to the Board at regular intervals as prescribed by the Board",
+        "346 consolidated report of such reviews must be submitted to the Board at regular intervals as prescribed by it"
+      ],
+      "trace": [
+        [
+          "346",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001051,
+      "latency_ms": 8217,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-001",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "CF para 111",
+      "reason": "For individual housing loans 'Above ₹30 lakh & up to ₹75 lakh' the RBI text sets 'LTV Ratio (%) ≤ 80', while the bank rule permits 85% of property cost for a ₹50 lakh loan.",
+      "omissions": [
+        "111 risk weight of 35% for individual housing loans above ₹30 lakh up to ₹75 lakh",
+        "111 the 75% LTV cap applies to loans sanctioned before June 06, 2017 under the proviso",
+        "111 for loans above ₹30 lakh up to ₹75 lakh, the risk weight is 35% at LTV ≤80%, and 50% for LTV above 80% under the pre-June 2017 schedule",
+        "111 LTV must not exceed 80% for loans in this bracket, so no 85% LTV is allowed",
+        "111(a) for loans above ₹30 lakh up to ₹75 lakh, the applicable risk weight is 35% (current regime)",
+        "111 for loans sanctioned before June 06, 2017 in the ₹30-75 lakh band, LTV ≤ 75% carries 35% RW and >75% to ≤80% carries 50% RW"
+      ],
+      "trace": [
+        [
+          "111",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001081,
+      "latency_ms": 9102,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-002",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "353(1)",
+      "reason": "Under 353(1), for floating rate loans granted for purposes other than business to individuals, \"a bank shall not levy pre-payment charges\", but the bank rule imposes a 2% foreclosure charge on a floating-rate home loan closed within 3 years.",
+      "omissions": [
+        "353(3) pre-payment charge ban applies irrespective of source of funds used for pre-payment, in part or full, and without any minimum lock-in period",
+        "353(8) applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable; undisclosed pre-payment charges cannot be charged",
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(9) no charges/fees may be levied retrospectively on pre-payment if the bank earlier waived them",
+        "353(1) applies only to loans sanctioned or renewed on or after January 01, 2026",
+        "353(3) no pre-payment charge regardless of the source of funds used for pre-payment, in part or full",
+        "353(3) no minimum lock-in period permitted for pre-payment",
+        "353(7) no charges where pre-payment is at the instance of the bank",
+        "353(8) applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement (and KFS where applicable)",
+        "353(9) no retrospective levy of charges waived off earlier by the bank",
+        "353(3) the no-charge rule applies irrespective of the source of funds used for pre-payment, in part or in full, and without any minimum lock-in period",
+        "353(8) any applicability or non-applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where required under para 348",
+        "353(9) no charges may be levied retrospectively at pre-payment for amounts the bank had earlier waived",
+        "353(7) no charges may be levied where pre-payment is effected at the instance of the bank",
+        "353(1) the no-charge rule applies only to loans sanctioned or renewed on or after January 01, 2026"
+      ],
+      "trace": [
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001228,
+      "latency_ms": 8961,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-003",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "113",
+      "reason": "RBI says \"bank shall not include stamp duty, registration and other documentation charges in the cost of the housing property it finances so that the effectiveness of LTV norms is not diluted,\" and the only exemption is where the cost \"does not exceed ₹10 lakh\", whereas the bank adds these charges for all loans.",
+      "omissions": [
+        "113 stamp duty and registration charges may be added to cost for LTV only where the house/dwelling unit cost does not exceed ₹10 lakh",
+        "113 exclusion exists for uniformity in valuation practice and to avoid diluting LTV norms",
+        "113 the stamp duty add-on exemption applies only where the cost of the house/dwelling unit does not exceed ₹10 lakh",
+        "113 the exclusion exists so that the effectiveness of LTV norms is not diluted and practice is uniform",
+        "113 bank shall not include other documentation charges in property cost (rule mentions only stamp duty and registration)",
+        "113 the add-on exemption applies only where house cost does not exceed ₹10 lakh (rule omits this cap)"
+      ],
+      "trace": [
+        [
+          "113",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000809,
+      "latency_ms": 7673,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-004",
+      "declared": "possible_conflict",
+      "verdict": "looser",
+      "rbi_para": "349(3)(i)",
+      "reason": "RBI requires that \"The borrower shall also be given the choice to opt for (i) enhancement in EMI or elongation of tenor or for a combination of both options\", but the bank rule gives the option to the bank, not the borrower.",
+      "omissions": [
+        "349(1) bank must clearly communicate at sanction the possible impact of benchmark rate changes on EMI and/or tenor",
+        "349(1) any increase in EMI/tenor must be communicated to the borrower immediately through appropriate channels",
+        "349(2) at reset, borrower may be offered a choice to switch to a fixed rate per the Board-approved policy",
+        "349(3)(ii) borrower must be given the choice to prepay in part or in full at any point during the loan tenor",
+        "349(3) Note: on a class-wide reset due to benchmark increase, borrower must be offered EMI enhancement or tenor elongation (keeping EMI unchanged), fixed-rate switch where available, and prepayment during residual tenor",
+        "349(5) elongation of tenor for floating rate loans must not result in negative amortisation",
+        "349(1) at sanction, communicate to the borrower the possible impact of benchmark rate changes on EMI and/or tenor",
+        "349(1) communicate any increase in EMI/tenor to the borrower immediately through appropriate channels",
+        "349(2) at reset, provide the borrower a choice to switch to a fixed rate per the Board-approved policy, where the bank offers this",
+        "349(3)(ii) borrower may prepay, in part or in full, at any point during the loan tenor, subject to extant prepayment-charge instructions",
+        "349(4) disclose switching and incidental charges transparently in the sanction letter and on revision, and display them on the bank's website",
+        "349(5) elongation of tenor on a floating rate loan must not result in negative amortisation",
+        "349(6) quarterly statement to the borrower showing principal and interest recovered, EMI amount, EMIs left and annualised rate/APR, in simple language",
+        "349(1) communicate to borrower at sanction the impact of benchmark rate change on EMI and/or tenor",
+        "349(1) communicate any increase in EMI/tenor to borrower immediately through appropriate channels",
+        "349(2) provide borrower a choice to switch to a fixed rate at reset, per Board-approved policy",
+        "349(3)(ii) borrower must be able to prepay in part or full at any point during the tenor, subject to extant prepayment-charge instructions",
+        "349(4) disclose switching and incidental charges transparently in sanction letter and on revision, and display them on the bank's website",
+        "349(5) elongation of tenor on floating rate loans must not result in negative amortisation",
+        "349(6) quarterly statement to borrower showing principal and interest recovered, EMI, EMIs left, and annualised rate/APR, kept simple and easily understood"
+      ],
+      "trace": [
+        [
+          "349",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001527,
+      "latency_ms": 10700,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-005",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "354",
+      "reason": "RBI requires release of original property documents and removal of registry charges 'within a period of 30 days after full repayment / settlement', while the bank rule allows 45 days for return of original title deeds.",
+      "omissions": [
+        "354 removal of charges registered with any registry within 30 days of full repayment/settlement",
+        "354 release of all original movable / immovable property documents (not only title deeds) within 30 days",
+        "354 original movable/immovable property documents must be released within 30 days of full repayment/settlement",
+        "354 charges registered with any registry must be removed within 30 days of full repayment/settlement",
+        "354 the release obligation covers all original movable and immovable property documents, not only title deeds",
+        "354 deadline runs from full repayment/settlement of the loan account"
+      ],
+      "trace": [
+        [
+          "354",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000406,
+      "latency_ms": 4018,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    }
+  ]
+}

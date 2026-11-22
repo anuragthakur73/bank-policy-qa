@@ -58,3 +58,16 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - app/retrieve.py contract v0.1: layers=("policy","rbi"), top 3 rules + top 5 RBI clauses; each rule traced to its RBI para by number (found / not_found / not_indexed). Default call unchanged. ADR-005.
 - Results: pytest 9 passed; RBI smoke 3/3 (same top 5 as before); policy smoke 5/5 incl. Rs 50 lakh LTV -> DB-HL-009 + para 111 found.
 - Gap: rules citing RBC Directions (KFS, reset, penal, prepayment, document return, grievance) trace as not_indexed until RBC is parsed and indexed.
+
+## Week 2 · Session 4: cited two-layer answers + bank-vs-RBI conflict check (23 Nov 2026)
+- Corpus: added RBI (Commercial Banks – Responsible Business Conduct) Directions, 2025, updated as on 1 Oct 2026 (458 clauses). clauses_v1 now 975 clauses from 2 directions; ingest/index.py rebuilds the payload indexes after recreate.
+- Trace: RBC paragraphs now resolve (prepayment 352/353, KFS 348, reset 349, penal 351, documents 354–359, grievance 346). PMAY rule uses scheme_ref (government scheme, not RBI) and is out of conflict scope.
+- Answers: prompt answer-v2 — Demo Bank rule first (rule ID), then the RBI para it implements, or "bank discretion"; traced paras always in context; audit log records cited_rules and cited_rbi. Streamlit shows Demo Bank vs RBI sources separately.
+- Eval golden_v0 (answer-v2, stricter scoring: hit@5 = top 5 RBI search hits only, matched by doc_id): hit@5 7/8 · in_context 8/8 · cited 8/8 · refusal 10/10 · $0.0088 · 6.3 s avg. Miss g005: para 111 pushed out of RBI top 5 after RBC was added; answer still correct via DB-HL-009 trace. Logged in failures.md (Week 3: hybrid search).
+- Conflict check (app/conflict.py, ADR-006), iterated on evidence:
+  - v1 run 1: flagged 3 real gaps in the draft (DB-HL-014, 025, 028 missing RBI borrower notices) → rules fixed; run 2 12/12 pass, but equal-vs-stricter verdicts flipped between runs.
+  - v2: binary complies/looser, 3 runs, majority vote. Flagged further unstated details, a different one each run (and twice misread the rule).
+  - v3: blocking verdict = contradiction only (silence complies) + non-blocking coverage list merged over runs. Result: fixtures 5/5, unstable 0, 11/12 pass; DB-HL-014 looser 3/3 — genuine: its wording allowed prepayment only at a reset vs RBC 349(3)(ii) "at any point". Wording fixed; re-run pending. Coverage list: 116 unstated RBI items across 11 rules, not acted on (policy frozen for Week 2).
+- Policy: 31/31 reviewed (DB-HL-019 deposit Rs 2,500 confirmed). Labels DB-HL-001/002/020 corrected to stricter. Frozen for Week 2 after the DB-HL-014 wording fix.
+- Tests: 15 offline (policy file, para parser, verdict parser, RBC parse). Reports kept per run in eval/reports (v1 before/after, v2, v3, answer-v2 old/new scoring).
+- Interview takeaway: the checker caught real compliance gaps in a policy I drafted, and its own instability showed why "contradiction" and "coverage" must be separate checks.

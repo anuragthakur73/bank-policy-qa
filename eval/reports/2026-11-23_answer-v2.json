@@ -1,0 +1,232 @@
+{
+  "summary": {
+    "hit_at_5": "7/8",
+    "in_context": "8/8",
+    "cited_ok": "8/8",
+    "refusal_ok": "10/10",
+    "total_cost_usd": 0.00876,
+    "avg_latency_s": 6.3,
+    "golden_set": "golden_v0",
+    "prompt_version": "answer-v2"
+  },
+  "rows": [
+    {
+      "id": "g001",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "44",
+        "219G",
+        "45",
+        "35",
+        "33"
+      ],
+      "cited": [
+        "44",
+        "45"
+      ],
+      "cited_rules": [],
+      "answer": "The maximum LTV for this loan is **80%**. RBI sets a tiered ceiling for consumption loans secured by gold, and a Rs 4 lakh loan falls in the middle band. The maximum LTV ratio for consumption loans against eligible collateral is capped at 85 per cent for totals up to ₹2.5 lakh, 80 per cent above ₹2.",
+      "expected_answer": "80 per cent",
+      "cost_usd": 0.000872,
+      "latency_ms": 10401
+    },
+    {
+      "id": "g002",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "39",
+        "60K",
+        "35",
+        "60L",
+        "4(v)"
+      ],
+      "cited": [
+        "35",
+        "39",
+        "4(v)"
+      ],
+      "cited_rules": [],
+      "answer": "The RBI cap is **12 months**. The results do not show a Demo Bank rule for gold loans, so this answer comes from RBI alone. The directions define a bullet repayment loan as one where both principal and interest are due for payment at the maturity of the loan. For consumption loans of this type, the ",
+      "expected_answer": "12 months, renewable per para 35",
+      "cost_usd": 0.000876,
+      "latency_ms": 7255
+    },
+    {
+      "id": "g003",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "40",
+        "33",
+        "38",
+        "37",
+        "49"
+      ],
+      "cited": [
+        "40"
+      ],
+      "cited_rules": [],
+      "answer": "The total cap is 1 kilogram of gold ornaments per borrower, counted across every loan. The RBI directions set this limit under the chapter on gold and silver collateral. The aggregate weight of ornaments pledged for all loans to a borrower shall not exceed 1 kilogram for gold ornaments, and 10 kilog",
+      "expected_answer": "1 kg gold ornaments (gold coins 50 g)",
+      "cost_usd": 0.00075,
+      "latency_ms": 6134
+    },
+    {
+      "id": "g004",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "41",
+        "42",
+        "43",
+        "60E"
+      ],
+      "cited": [
+        "41",
+        "42",
+        "43"
+      ],
+      "cited_rules": [],
+      "answer": "No Demo Bank rule covers gold collateral, so this answer comes from the RBI Directions alone. Under the RBI rule, the lower of two prices sets the value. The first is the average closing price of that purity over the preceding 30 days. The second is the closing price of that purity on the preceding ",
+      "expected_answer": "Lower of 30-day average closing price or previous day's closing price for that purity",
+      "cost_usd": 0.001026,
+      "latency_ms": 6863
+    },
+    {
+      "id": "g005",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "44",
+        "219G",
+        "45",
+        "112"
+      ],
+      "cited": [
+        "111"
+      ],
+      "cited_rules": [
+        "DB-HL-009"
+      ],
+      "answer": "The maximum LTV is 80% for a Rs 50 lakh individual home loan, under Demo Bank rule DB-HL-009. The rule sets 80% for loans above Rs 30 lakh up to Rs 75 lakh, and the loan may not exceed 90% of the property cost for loans up to Rs 30 lakh, 80% for loans above Rs 30 lakh up to Rs 75 lakh, and 75% for l",
+      "expected_answer": "80 per cent",
+      "cost_usd": 0.000829,
+      "latency_ms": 6114
+    },
+    {
+      "id": "g006",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "215",
+        "219B",
+        "216",
+        "219J",
+        "219C"
+      ],
+      "cited": [
+        "215"
+      ],
+      "cited_rules": [],
+      "answer": "No. The RBI directions prohibit it. The bank shall desist from sanctioning advances against FDRs or other term deposits of other banks. The indexed results contain no Demo Bank rule on this point, so this answer rests only on the RBI clause.",
+      "expected_answer": "No",
+      "cost_usd": 0.000956,
+      "latency_ms": 4460
+    },
+    {
+      "id": "g007",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "11",
+        "27",
+        "4(xi)",
+        "21",
+        "9"
+      ],
+      "cited": [
+        "11"
+      ],
+      "cited_rules": [],
+      "answer": "The RBI floor is one day. The cooling off period shall be determined by the bank in terms of its credit policy, subject to the period so determined not being less than one day. Within that limit, a lender sets its own window through its credit policy, but it cannot go below one day.\n\nNo Demo Bank ru",
+      "expected_answer": "Not less than one day; set by the bank's credit policy",
+      "cost_usd": 0.000891,
+      "latency_ms": 4984
+    },
+    {
+      "id": "g008",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "refusal_ok": true,
+      "retrieved": [
+        "35",
+        "4(xxxvi)",
+        "60L",
+        "36",
+        "31"
+      ],
+      "cited": [
+        "35",
+        "4(xxxvi)"
+      ],
+      "cited_rules": [],
+      "answer": "Yes, the RBI directions permit a top-up on an existing gold loan, but only under conditions. No Demo Bank rule addresses top-ups, so this answer rests on the RBI clauses alone.\n\nA top-up is defined as an additional loan sanctioned over and above an outstanding loan, during the tenor of the original ",
+      "expected_answer": "Yes, on formal request, after credit assessment, within permissible LTV, loan must be standard",
+      "cost_usd": 0.001096,
+      "latency_ms": 6731
+    },
+    {
+      "id": "g009",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "refusal_ok": true,
+      "retrieved": [
+        "124",
+        "219K",
+        "219J",
+        "34",
+        "8"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Refusal",
+      "cost_usd": 0.000561,
+      "latency_ms": 5389
+    },
+    {
+      "id": "g010",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "refusal_ok": true,
+      "retrieved": [
+        "13"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Refusal (KYC Directions not indexed yet)",
+      "cost_usd": 0.000904,
+      "latency_ms": 4248
+    }
+  ]
+}

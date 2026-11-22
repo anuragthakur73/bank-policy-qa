@@ -19,7 +19,7 @@ FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor"
 POLICY_FIELDS = ("rule_id", "bank_discretion", "vs_rbi", "rbi_ref", "params", "review", "synthetic")
 COLLECTIONS = {"rbi": "clauses_v1", "policy": "policy_v1"}
 # Short names used in policy rbi_ref.direction -> doc_id in clauses_v1. Only indexed directions trace.
-INDEXED_RBI = {"CF": "RBI-CB-CREDIT-FAC-2025"}
+INDEXED_RBI = {"CF": "RBI-CB-CREDIT-FAC-2025", "RBC": "RBI-CB-RBC-2025"}
 
 _network = retry(retry=retry_if_exception_type(ResponseHandlingException), stop=stop_after_attempt(4),
                  wait=wait_exponential(multiplier=1, max=8), reraise=True)

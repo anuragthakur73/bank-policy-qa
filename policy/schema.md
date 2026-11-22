@@ -30,7 +30,8 @@ One YAML file per product, e.g. `policy/demo_bank/home_loan_v1.yaml`.
 | `title` | yes | Short name |
 | `rule` | yes | Plain-English rule text. This is what gets embedded and cited. |
 | `params` | no | Machine-readable values (numbers, bands, lists) for checks and agents (1B / Project 2) |
-| `rbi_ref` | conditional | `{direction, para, note}`. Required when `bank_discretion: false` |
+| `rbi_ref` | conditional | `{direction, para, note}`. Required when `bank_discretion: false`, unless `scheme_ref` is given |
+| `scheme_ref` | conditional | `{scheme, source, note}` for rules set by a government scheme (e.g. PMAY-U 2.0), not by RBI. Not conflict-checked |
 | `bank_discretion` | yes | `true` when no RBI rule fixes this parameter |
 | `vs_rbi` | conditional | `equal` \| `stricter` \| `not_applicable`. The conflict check flags anything else, e.g. a rule `looser` than RBI |
 | `design_basis` | yes | Study source IDs that informed the value, plus `synthetic` where the value is invented |
@@ -45,4 +46,7 @@ One YAML file per product, e.g. `policy/demo_bank/home_loan_v1.yaml`.
 3. Rule text must be self-contained: one rule answers one question without needing
    another rule's text.
 4. Changing a rule = a new `policy_version` with a new `effective_from`. The old file stays
-   (for "what changed" and as-on-date answers).
+   (for "what changed" and as-on-date answers). Exception: while `status: draft` (never in force),
+   rules are edited in place and the change is recorded in `review_note`.
+5. Run `python -m app.conflict` after any change to an RBI-bound rule; a rule flagged `looser` must be
+   fixed before `status` can become `approved`.
