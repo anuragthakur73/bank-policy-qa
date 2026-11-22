@@ -14,3 +14,4 @@ Hours: 0/10
 - Anchors: no per-paragraph anchors. RBI has section anchors (e.g. #C4D = Chapter IV, section D, which holds para 44).
 - Text-fragment link test: <works / doesn't work> (fill in)
 - Week 2 to-do: para 4 (definitions) is 15,360 chars — split by sub-clause; amendment footnote markers like "17 [" / "1 [" in text — strip, and use them for version history.
+Score 3/3
