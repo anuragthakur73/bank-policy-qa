@@ -37,6 +37,22 @@ for t, anchor in lines:
     elif cur:
         cur["text"] += " " + t
 
+# Split long definition paragraphs (e.g. para 4, 15k chars) into one record per defined term,
+# so a definition such as 4(viii) 'Consumption Loan' can be retrieved on its own.
+defn = re.compile(r"\(([ivxlc]+[a-z]{0,2})\)\s+(?=(?:\d+\s*\[\s*)?[‘'\"])")   # "(viii) ‘Consumption Loan’ means"
+def split_definitions(c):
+    if not (c["section"] or "").endswith("Definitions") or len(c["text"]) < 3000:
+        return [c]
+    ms = list(defn.finditer(c["text"]))
+    if len(ms) < 5:
+        return [c]
+    out = [{**c, "text": c["text"][:ms[0].start()].strip()}]       # "4. (1) For the purpose ..."
+    for m, nxt in zip(ms, ms[1:] + [None]):
+        out.append({**c, "clause_no": f'{c["clause_no"]}({m.group(1)})', "parent_clause": c["clause_no"],
+                    "text": c["text"][m.start():nxt.start() if nxt else None].strip()})
+    return out
+clauses = [x for c in clauses for x in split_definitions(c)]
+
 meta = {k: src[k] for k in ("doc_id", "title", "issuer", "applies_to", "version_label",
                             "version_as_on", "effective_from", "effective_to", "source_url")}
 with open(f"data/parsed/{key}.jsonl", "w", encoding="utf-8") as f:

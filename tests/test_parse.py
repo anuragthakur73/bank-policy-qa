@@ -12,3 +12,11 @@ def test_parsed_clauses():
     p44 = next(r for r in rows if r["clause_no"] == "44")
     assert "LTV" in p44["text"] and "85 per cent" in p44["text"]
     assert all(r["version_as_on"] == "2026-10-01" for r in rows)
+
+@pytest.mark.skipif(not P.exists(), reason="run the parser first")
+def test_definitions_split():
+    rows = {json.loads(l)["clause_no"]: json.loads(l) for l in P.open(encoding="utf-8")}
+    assert "Consumption Loan" in rows["4(viii)"]["text"]
+    assert rows["4(viii)"]["parent_clause"] == "4"
+    assert len(rows["4"]["text"]) < 500          # header only; terms are separate records
+    assert rows["44"]["chapter"].startswith("Chapter IV")

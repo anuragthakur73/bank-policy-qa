@@ -12,7 +12,7 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 CONTRACT_VERSION = "v0"
 FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor",
           "version_label", "version_as_on", "effective_from", "effective_to",
-          "source_url", "content_hash")
+          "source_url", "content_hash", "parent_clause")
 
 @lru_cache
 def _store():
@@ -31,7 +31,8 @@ def _search(question: str, k: int):
 def retrieve(question: str, k: int = 5) -> list[dict]:
     hits = _search(question, k)
     return [{**{f: d.metadata.get(f) for f in FIELDS},
-             "score": round(float(s), 4), "text": d.page_content} for d, s in hits]
+             "score": round(float(s), 4),
+             "text": d.metadata.get("clause_text", d.page_content)} for d, s in hits]
 
 if __name__ == "__main__":
     # expected clause in brackets; check by eye that it appears in the top 5

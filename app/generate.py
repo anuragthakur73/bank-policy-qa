@@ -8,10 +8,15 @@ import anthropic
 from app.retrieve import retrieve, CONTRACT_VERSION
 
 cl = anthropic.Anthropic()
-PROMPT_VERSION = "answer-v0"
+PROMPT_VERSION = "answer-v1"
 REFUSAL = "Not covered by the indexed documents."
 SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the search results provided. "
-          "Cite the clause for every statement. Quote figures (percentages, amounts, days) exactly. "
+          "Each result's title gives its chapter and section; a clause applies to the subject of the chapter "
+          "it sits in (e.g. a clause in 'Lending against Gold and Silver Collateral' applies to gold loans). "
+          "Definitions (para 4 sub-clauses) are part of the same directions: use them to classify the case. "
+          "Start with the direct answer in one sentence (the figure or yes/no), then the clause, then at most "
+          "one caveat that the results actually require. Cite the clause for every statement. "
+          "Quote figures (percentages, amounts, days) exactly. "
           f"If the search results do not answer the question, reply exactly: '{REFUSAL}' "
           "Do not use outside knowledge, and do not guess.")
 PRICE_IN, PRICE_OUT = 0.10, 0.50   # USD per 1M tokens, Claude Haiku 5.5 (financial-viability doc, 18 Nov 2026)
@@ -29,7 +34,7 @@ def answer(q: str, k: int = 5, caller: str = "cli"):
     t0, rid = time.time(), str(uuid.uuid4())
     hits = retrieve(q, k)
     results = [{"type": "search_result", "source": clause_link(h),
-                "title": f'{h["title"]}, para {h["clause_no"]} ({h["version_label"]})',
+                "title": f'{h["title"]} | {h.get("chapter") or ""} > {h.get("section") or ""} | para {h["clause_no"]} ({h["version_label"]})',
                 "content": [{"type": "text", "text": h["text"]}],
                 "citations": {"enabled": True}} for h in hits]
     model = os.environ.get("DEFAULT_MODEL", "claude-haiku-5-5")
