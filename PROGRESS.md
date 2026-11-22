@@ -51,3 +51,10 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 ## Discovery round 1 + decision (22 Nov 2026)
 - 7 interviews: H1 failed on frequency (3/7 costly incidents), H2 failed (0/7 mainly public docs), H3 failed as worded. 7/7 learn RBI changes via internal circulars; 7/7 can't use outside AI tools; 7/7 English.
 - Decision: Option C (ADR-004) — fictional Demo Bank policy layer now; head-office user tested with 2–3 interviews.
+
+## Week 2 · Session 3: Demo Bank policy layer indexed (23 Nov 2026)
+- Policy: policy/demo_bank/home_loan_v1.yaml, 31 rules (13 RBI-bound, 18 bank discretion), format policy/schema.md; designed from public SBI + ICICI studies; reviewed 30/31 (DB-HL-019 deposit amount pending).
+- ingest/index_policy.py -> Qdrant policy_v1 (31 points) + keyword payload indexes on clauses_v1 (doc_id, clause_no).
+- app/retrieve.py contract v0.1: layers=("policy","rbi"), top 3 rules + top 5 RBI clauses; each rule traced to its RBI para by number (found / not_found / not_indexed). Default call unchanged. ADR-005.
+- Results: pytest 9 passed; RBI smoke 3/3 (same top 5 as before); policy smoke 5/5 incl. Rs 50 lakh LTV -> DB-HL-009 + para 111 found.
+- Gap: rules citing RBC Directions (KFS, reset, penal, prepayment, document return, grievance) trace as not_indexed until RBC is parsed and indexed.
