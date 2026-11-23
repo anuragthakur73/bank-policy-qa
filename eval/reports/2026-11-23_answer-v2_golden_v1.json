@@ -1,0 +1,1105 @@
+{
+  "summary": {
+    "hit_at_5": "7/14",
+    "in_context": "14/14",
+    "cited_ok": "14/14",
+    "rule_hit": "20/20",
+    "rule_cited": "16/16",
+    "answer_ok": "12/12",
+    "refusal_ok": "29/29",
+    "interview_questions": {
+      "hit_at_5": "-",
+      "in_context": "-",
+      "cited_ok": "-",
+      "rule_hit": "5/5",
+      "rule_cited": "1/1",
+      "answer_ok": "-",
+      "refusal_ok": "3/3"
+    },
+    "n_questions": 33,
+    "manual_review": [
+      {
+        "id": "i02",
+        "refused": true,
+        "answer": "Not covered by the indexed documents."
+      },
+      {
+        "id": "i04",
+        "refused": true,
+        "answer": "Not covered by the indexed documents."
+      },
+      {
+        "id": "i05",
+        "refused": true,
+        "answer": "Not covered by the indexed documents."
+      },
+      {
+        "id": "i06",
+        "refused": false,
+        "answer": "The indexed results don't directly answer whether you can finance a second house on a plot that already carries a bank-funded residence. I can only give the closest rules.\n\n**RBI:** Finance for a seco"
+      }
+    ],
+    "total_cost_usd": 0.03155,
+    "avg_latency_s": 12.1,
+    "golden_set": "golden_v1",
+    "prompt_version": "answer-v2"
+  },
+  "rows": [
+    {
+      "id": "g001",
+      "source": "draft-claude",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "44",
+        "219G",
+        "45",
+        "35",
+        "33"
+      ],
+      "retrieved_rules": [
+        "DB-HL-009",
+        "DB-HL-008",
+        "DB-HL-011"
+      ],
+      "cited": [
+        "44"
+      ],
+      "cited_rules": [],
+      "answer": "The maximum LTV for this gold loan is 80%. No Demo Bank rule covers gold loans, so this comes from the RBI Directions alone. The RBI sets a ceiling that depends on the total consumption loan amount per borrower, and a Rs 4 lakh loan falls in the band above Rs 2.5 lakh up to Rs 5 lakh. For that band, the maximum LTV is 80 per cent.\n\nThe ceiling is measured against the whole borrower's consumption e",
+      "expected_answer": "80 per cent",
+      "cost_usd": 0.000926,
+      "latency_ms": 10145
+    },
+    {
+      "id": "g002",
+      "source": "draft-claude",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "39",
+        "60K",
+        "35",
+        "60L",
+        "4(v)"
+      ],
+      "retrieved_rules": [
+        "DB-HL-012",
+        "DB-HL-021",
+        "DB-HL-011"
+      ],
+      "cited": [
+        "35",
+        "39",
+        "4(v)"
+      ],
+      "cited_rules": [],
+      "answer": "The RBI directions cap the tenure at **12 months**. The cap applies to consumption loans structured as bullet repayment loans, and the directions allow those loans to be renewed under conditions. Tenor of consumption loans in the nature of bullet repayment loans shall be capped at 12 months, which may be renewed in terms of paragraph 35.\n\nA bullet repayment loan is defined as a loan in which princ",
+      "expected_answer": "12 months, renewable per para 35",
+      "cost_usd": 0.001032,
+      "latency_ms": 8125
+    },
+    {
+      "id": "g003",
+      "source": "draft-claude",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "40",
+        "33",
+        "38",
+        "37",
+        "49"
+      ],
+      "retrieved_rules": [
+        "DB-HL-008",
+        "DB-HL-011",
+        "DB-HL-009"
+      ],
+      "cited": [
+        "40"
+      ],
+      "cited_rules": [],
+      "answer": "Across all of a borrower's loans, the pledged gold ornaments are capped at 1 kilogram. The cap is set by RBI paragraph 40(1), which sits in the chapter on lending against gold and silver collateral. The aggregate weight of ornaments pledged for all loans to a borrower shall not exceed 1 kilogram for gold ornaments, and 10 kilograms for silver ornaments.\n\nGold coins are a separate category under pa",
+      "expected_answer": "1 kg gold ornaments (gold coins 50 g)",
+      "cost_usd": 0.000747,
+      "latency_ms": 6044
+    },
+    {
+      "id": "g004",
+      "source": "draft-claude",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "41",
+        "42",
+        "43",
+        "60E"
+      ],
+      "retrieved_rules": [
+        "DB-HL-013",
+        "DB-HL-010",
+        "DB-HL-014"
+      ],
+      "cited": [
+        "41",
+        "42",
+        "43"
+      ],
+      "cited_rules": [],
+      "answer": "For pledged gold, RBI sets the valuation price by purity. The lender takes the lower of two figures for that exact caratage: the average closing price over the preceding 30 days, or the previous day's closing price. Both come from IBJA or a SEBI-regulated commodity exchange (Gold or silver accepted as collateral shall be valued based on the reference price corresponding to its actual purity (carat",
+      "expected_answer": "Lower of 30-day average closing price or previous day's closing price for that purity",
+      "cost_usd": 0.001089,
+      "latency_ms": 7331
+    },
+    {
+      "id": "g005",
+      "source": "draft-claude",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "44",
+        "219G",
+        "45",
+        "112"
+      ],
+      "retrieved_rules": [
+        "DB-HL-009",
+        "DB-HL-008",
+        "DB-HL-011"
+      ],
+      "cited": [
+        "111"
+      ],
+      "cited_rules": [
+        "DB-HL-009"
+      ],
+      "answer": "The maximum LTV for a Rs 50 lakh individual home loan is **80%** of property cost under Demo Bank rule DB-HL-009. This rule applies to loans above Rs 30 lakh up to Rs 75 lakh, so this loan falls in that band. Demo Bank sets the ceiling at 80% of the property cost for loans above Rs 30 lakh up to Rs 75 lakh.\n\nDB-HL-009 implements paragraph 111 of the RBI Directions. The RBI schedule sets LTV ≤ 80 f",
+      "expected_answer": "80 per cent",
+      "cost_usd": 0.000955,
+      "latency_ms": 8322
+    },
+    {
+      "id": "g006",
+      "source": "draft-claude",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "215",
+        "219B",
+        "216",
+        "219J",
+        "219C"
+      ],
+      "retrieved_rules": [
+        "DB-HL-030",
+        "DB-HL-031",
+        "DB-HL-019"
+      ],
+      "cited": [
+        "215"
+      ],
+      "cited_rules": [],
+      "answer": "No. The RBI directions prohibit this. The bank shall desist from sanctioning advances against FDRs or other term deposits of other banks. The indexed results contain no Demo Bank rule on FDR-backed loans, so this answer comes only from the RBI clause.",
+      "expected_answer": "No",
+      "cost_usd": 0.000988,
+      "latency_ms": 6701
+    },
+    {
+      "id": "g007",
+      "source": "draft-claude",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "11",
+        "27",
+        "4(xi)",
+        "21",
+        "9"
+      ],
+      "retrieved_rules": [
+        "DB-HL-012",
+        "DB-HL-028",
+        "DB-HL-027"
+      ],
+      "cited": [
+        "11"
+      ],
+      "cited_rules": [],
+      "answer": "The answer comes from the RBI Directions alone. The search results contain no Demo Bank rule on cooling-off periods. Under the RBI digital lending provisions, the bank sets the length of the cooling-off period in its credit policy, and the floor is one day. The cooling off period shall be determined by the bank in terms of its credit policy, subject to the period so determined not being less than ",
+      "expected_answer": "Not less than one day; set by the bank's credit policy",
+      "cost_usd": 0.000943,
+      "latency_ms": 5761
+    },
+    {
+      "id": "g008",
+      "source": "draft-claude",
+      "hit_at_5": true,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "35",
+        "4(xxxvi)",
+        "60L",
+        "36",
+        "31"
+      ],
+      "retrieved_rules": [
+        "DB-HL-009",
+        "DB-HL-008",
+        "DB-HL-011"
+      ],
+      "cited": [
+        "35",
+        "4(xxxvi)"
+      ],
+      "cited_rules": [],
+      "answer": "Yes. RBI permits a top-up on an existing gold loan, but only under conditions. No Demo Bank rule covers this, so the answer rests on RBI rules alone.\n\nA top-up is defined as an additional loan sanctioned over and above an outstanding loan, during the tenor of the original loan, based on the strength of the collateral already pledged for the existing loan.\n\nThe conditions for a top-up are:\n\n- **Bor",
+      "expected_answer": "Yes, on formal request, after credit assessment, within permissible LTV, loan must be standard",
+      "cost_usd": 0.001094,
+      "latency_ms": 8459
+    },
+    {
+      "id": "g009",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "124",
+        "219K",
+        "219J",
+        "34",
+        "8"
+      ],
+      "retrieved_rules": [
+        "DB-HL-007",
+        "DB-HL-013",
+        "DB-HL-008"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Refusal",
+      "cost_usd": 0.000522,
+      "latency_ms": 8107
+    },
+    {
+      "id": "g010",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "13"
+      ],
+      "retrieved_rules": [
+        "DB-HL-024",
+        "DB-HL-025",
+        "DB-HL-028"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Refusal (KYC Directions not indexed yet)",
+      "cost_usd": 0.000975,
+      "latency_ms": 5192
+    },
+    {
+      "id": "p01",
+      "source": "draft-claude (interview topic)",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "44",
+        "112",
+        "219G",
+        "113"
+      ],
+      "retrieved_rules": [
+        "DB-HL-009",
+        "DB-HL-008",
+        "DB-HL-011"
+      ],
+      "cited": [
+        "111",
+        "113"
+      ],
+      "cited_rules": [
+        "DB-HL-009"
+      ],
+      "answer": "The maximum LTV is **80%** under DB-HL-009, because a Rs 40 lakh loan falls in the band for loans above Rs 30 lakh up to Rs 75 lakh. The loan may not exceed 90% of the property cost for loans up to Rs 30 lakh, 80% for loans above Rs 30 lakh up to Rs 75 lakh, and 75% for loans above Rs 75 lakh. The RBI direction implements this band with an LTV of ≤ 80 and a 35% risk weight for individual housing l",
+      "expected_answer": "80% (loans above Rs 30 lakh up to Rs 75 lakh)",
+      "cost_usd": 0.001134,
+      "latency_ms": 8003
+    },
+    {
+      "id": "p02",
+      "source": "draft-claude (interview topic)",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "93",
+        "95",
+        "119"
+      ],
+      "retrieved_rules": [
+        "DB-HL-010",
+        "DB-HL-016",
+        "DB-HL-009"
+      ],
+      "cited": [
+        "113"
+      ],
+      "cited_rules": [
+        "DB-HL-010"
+      ],
+      "answer": "**Yes.** Under Demo Bank rule DB-HL-010, stamp duty and registration charges can be added to the property cost for LTV on a Rs 9 lakh flat, because the rule's exception covers properties priced at or below Rs 10 lakh. Stamp duty, registration and other documentation charges are not included in the property cost when calculating LTV, except where the house costs up to Rs 10 lakh.\n\nThe rule implemen",
+      "expected_answer": "Yes, only because the cost does not exceed Rs 10 lakh",
+      "cost_usd": 0.000986,
+      "latency_ms": 9084
+    },
+    {
+      "id": "p03",
+      "source": "draft-claude (interview topic)",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "112",
+        "111",
+        "124",
+        "114"
+      ],
+      "retrieved_rules": [
+        "DB-HL-007",
+        "DB-HL-013",
+        "DB-HL-005"
+      ],
+      "cited": [],
+      "cited_rules": [
+        "DB-HL-007",
+        "DB-HL-013"
+      ],
+      "answer": "A salaried applicant with a score of 780 pays the repo rate plus 2.60% under DB-HL-013. This is a bank-discretion rule with no RBI requirement behind it.\n\nThe 780 score clears the bank's entry threshold, since the minimum credit bureau score is 700. The 2.60% spread applies to the 750-799 band. The rate is tied to the policy repo rate, and the spread is fixed at sanction for the life of the loan a",
+      "expected_answer": "Repo rate + 2.60% (750-799 band)",
+      "cost_usd": 0.001043,
+      "latency_ms": 8162
+    },
+    {
+      "id": "p04",
+      "source": "draft-claude (interview topic)",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "39",
+        "219L",
+        "60K",
+        "219K",
+        "373"
+      ],
+      "retrieved_rules": [
+        "DB-HL-004",
+        "DB-HL-012",
+        "DB-HL-005"
+      ],
+      "cited": [],
+      "cited_rules": [
+        "DB-HL-004",
+        "DB-HL-012"
+      ],
+      "answer": "The maximum tenure is **20 years**. This is my calculation from two Demo Bank rules. The maximum repayment period is 30 years, including any construction moratorium, and may not run beyond the maturity age in DB-HL-004. Under DB-HL-004, the loan must be fully repaid by age 65 for salaried applicants without pension. A 45-year-old therefore has 20 years to the age-65 limit, which is shorter than th",
+      "expected_answer": "20 years (repaid by 65)",
+      "cost_usd": 0.000854,
+      "latency_ms": 7322
+    },
+    {
+      "id": "p05",
+      "source": "draft-claude (interview topic)",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "67",
+        "66",
+        "113",
+        "112"
+      ],
+      "retrieved_rules": [
+        "DB-HL-008",
+        "DB-HL-009",
+        "DB-HL-007"
+      ],
+      "cited": [
+        "111"
+      ],
+      "cited_rules": [
+        "DB-HL-008",
+        "DB-HL-009"
+      ],
+      "answer": "Under rule DB-HL-008, Demo Bank's home loan floor is Rs 5 lakh and its ceiling is Rs 10 crore. Both amounts are subject to the LTV limit (DB-HL-009) and repayment capacity (DB-HL-011).\n\nThis is a bank-discretion rule with no RBI requirement behind it, so the amounts are Demo Bank's own choice. The LTV cap in DB-HL-009 implements RBI para 111. The loan may not exceed 90% of the property cost for lo",
+      "expected_answer": "Rs 5 lakh to Rs 10 crore, subject to LTV and FOIR",
+      "cost_usd": 0.000984,
+      "latency_ms": 8511
+    },
+    {
+      "id": "p06",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "219L",
+        "66",
+        "63",
+        "219K"
+      ],
+      "retrieved_rules": [
+        "DB-HL-011",
+        "DB-HL-005",
+        "DB-HL-003"
+      ],
+      "cited": [
+        "66"
+      ],
+      "cited_rules": [
+        "DB-HL-011"
+      ],
+      "answer": "The maximum FOIR for this applicant is **55%**, under Demo Bank rule DB-HL-011. Total monthly obligations, meaning the proposed EMI plus all existing EMIs and 5% of credit card outstanding, may not exceed a share of net monthly income (NMI): 50% for NMI up to Rs 50,000, 55% for NMI above Rs 50,000 up to Rs 1,00,000. At Rs 80,000 NMI, the 55% band applies.\n\nThis is a bank-discretion rule. The resul",
+      "expected_answer": "55%",
+      "cost_usd": 0.001119,
+      "latency_ms": 7121
+    },
+    {
+      "id": "p07",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "170K",
+        "170O"
+      ],
+      "retrieved_rules": [
+        "DB-HL-006",
+        "DB-HL-004",
+        "DB-HL-003"
+      ],
+      "cited": [],
+      "cited_rules": [
+        "DB-HL-004",
+        "DB-HL-006"
+      ],
+      "answer": "Yes, a grandfather can join as a co-applicant under Demo Bank rule DB-HL-006. Grandparents fall within the relatives the bank accepts as co-applicants. This is a bank-discretion rule with no RBI requirement, so no RBI clause applies.\n\nHe must also meet the age condition in DB-HL-004. Joint applicants need to have reached 18.\n\nThe policy version is marked as a draft, so confirm the current wording ",
+      "expected_answer": "Yes, grandparents are allowed co-applicants",
+      "cost_usd": 0.000919,
+      "latency_ms": 8240
+    },
+    {
+      "id": "p08",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "63",
+        "65",
+        "4(xvii)",
+        "405",
+        "170K"
+      ],
+      "retrieved_rules": [
+        "DB-HL-006",
+        "DB-HL-005",
+        "DB-HL-004"
+      ],
+      "cited": [
+        "4(xvii)"
+      ],
+      "cited_rules": [
+        "DB-HL-006"
+      ],
+      "answer": "**No.** Demo Bank rule DB-HL-006 excludes guarantor earnings from eligibility, so the bank does not add a guarantor's income to the applicant's. The income of any earning co-applicant may be added to the applicant's income for eligibility, whether or not the co-applicant is a co-owner, but guarantors are treated differently.\n\nThis is a bank-discretion rule. The results contain no RBI requirement o",
+      "expected_answer": "No, a guarantor's income is never added",
+      "cost_usd": 0.00081,
+      "latency_ms": 7145
+    },
+    {
+      "id": "p09",
+      "source": "draft-claude",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "358"
+      ],
+      "retrieved_rules": [
+        "DB-HL-017",
+        "DB-HL-018",
+        "DB-HL-014"
+      ],
+      "cited": [
+        "352",
+        "353"
+      ],
+      "cited_rules": [
+        "DB-HL-017"
+      ],
+      "answer": "No, there is no foreclosure charge. Under Demo Bank rule DB-HL-017, no prepayment or foreclosure charge applies to any floating-rate home loan to an individual, whatever the source of funds and with no lock-in period. The one-year timing therefore doesn't matter.\n\nThis rule implements RBI paras 352 and 353. Which RBI paragraph governs depends on the sanction date. For loans sanctioned before 31 De",
+      "expected_answer": "No charge on floating-rate loans to individuals",
+      "cost_usd": 0.00121,
+      "latency_ms": 8236
+    },
+    {
+      "id": "p10",
+      "source": "draft-claude",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "322",
+        "321",
+        "358"
+      ],
+      "retrieved_rules": [
+        "DB-HL-018",
+        "DB-HL-014",
+        "DB-HL-011"
+      ],
+      "cited": [
+        "351"
+      ],
+      "cited_rules": [
+        "DB-HL-018"
+      ],
+      "answer": "A 3% per annum penal charge applies, charged only on the overdue EMI amount for the number of days it stays unpaid (DB-HL-018). The charge is not added to the interest rate, and no interest accrues on it. The rule also requires that the amount and reason are disclosed in the loan agreement and Key Facts Statement and stated in every reminder.\n\nDB-HL-018 implements RBI para 351. Under that paragrap",
+      "expected_answer": "3% per annum on the overdue EMI amount only, not added to the rate",
+      "cost_usd": 0.001164,
+      "latency_ms": 31333
+    },
+    {
+      "id": "p11",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "91",
+        "92",
+        "133H"
+      ],
+      "retrieved_rules": [
+        "DB-HL-021",
+        "DB-HL-012",
+        "DB-HL-001"
+      ],
+      "cited": [],
+      "cited_rules": [
+        "DB-HL-012",
+        "DB-HL-021"
+      ],
+      "answer": "**Yes, a 50-year-old resale flat can be financed under Demo Bank rule DB-HL-021, provided it has a structural stability certificate and passes the residual-life test.** The building is under the bank's 70-year cutoff, so it is not excluded. Because it is over 25 years old, the bank needs a structural stability certificate from a licensed engineer. The bank's valuer must also confirm that the build",
+      "expected_answer": "Yes if residual life >= tenure + 5 years; structural stability certificate needed (over 25 years); not over 70 years",
+      "cost_usd": 0.001043,
+      "latency_ms": 31131
+    },
+    {
+      "id": "p12",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "219Q",
+        "173",
+        "82",
+        "170L"
+      ],
+      "retrieved_rules": [
+        "DB-HL-030",
+        "DB-HL-011",
+        "DB-HL-003"
+      ],
+      "cited": [],
+      "cited_rules": [
+        "DB-HL-011",
+        "DB-HL-030"
+      ],
+      "answer": "Under Demo Bank rule DB-HL-030, the Regional Credit Head can sign off on a 3-percentage-point FOIR excess, because that rule covers FOIR up to 5 points above the DB-HL-011 limit. The Regional Credit Head may approve these deviations, recording the reason and the mitigating strength: maturity age up to 2 years beyond DB-HL-004; FOIR up to 5 percentage points above DB-HL-011; credit score from 680 t",
+      "expected_answer": "Regional Credit Head, up to 5 percentage points",
+      "cost_usd": 0.000978,
+      "latency_ms": 30924
+    },
+    {
+      "id": "p13",
+      "source": "draft-claude",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "356",
+        "377",
+        "357"
+      ],
+      "retrieved_rules": [
+        "DB-HL-028",
+        "DB-HL-020",
+        "DB-HL-023"
+      ],
+      "cited": [
+        "354"
+      ],
+      "cited_rules": [
+        "DB-HL-028"
+      ],
+      "answer": "Demo Bank's rule DB-HL-028 requires the original property documents to be returned within 15 working days of full repayment, which is shorter than the RBI limit. Original property documents are returned and all charges removed within 15 working days of full repayment, at the branch or another office of the borrower's choice.\n\nThe RBI directions allow a longer period. Under paragraph 354, banks mus",
+      "expected_answer": "15 working days (Demo Bank); RBI limit 30 days; Rs 5,000 per day for delay",
+      "cost_usd": 0.001077,
+      "latency_ms": 32006
+    },
+    {
+      "id": "p14",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [],
+      "retrieved_rules": [
+        "DB-HL-019",
+        "DB-HL-015",
+        "DB-HL-018"
+      ],
+      "cited": [],
+      "cited_rules": [
+        "DB-HL-019"
+      ],
+      "answer": "Yes. Under Demo Bank rule DB-HL-019, the applicant pays a Rs 2,500 refundable dishonour deposit at login, along with the processing fee. This is a bank-discretion rule with no RBI requirement. Each dishonour charge is deducted from this deposit and the borrower is told of every deduction. The dishonour charge itself is Rs 500 plus GST per instance, for a dishonoured cheque, NACH or standing instru",
+      "expected_answer": "Yes, refundable dishonour deposit of Rs 2,500",
+      "cost_usd": 0.001407,
+      "latency_ms": 31361
+    },
+    {
+      "id": "p15",
+      "source": "draft-claude",
+      "hit_at_5": false,
+      "in_context": true,
+      "cited_ok": true,
+      "manual": false,
+      "note": null,
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": true,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "4",
+        "194"
+      ],
+      "retrieved_rules": [
+        "DB-HL-025",
+        "DB-HL-021",
+        "DB-HL-012"
+      ],
+      "cited": [
+        "348"
+      ],
+      "cited_rules": [
+        "DB-HL-025"
+      ],
+      "answer": "Under Demo Bank rule DB-HL-025, a Key Facts Statement stays open for at least 3 working days. The rule sets this minimum for every KFS, It is valid for at least 3 working days.\n\nThis implements RBI para 348(2). The RBI clause sets the period by loan tenor. For loans of seven days or more, the validity must be at least three working days, and for shorter loans it is one working day The KFS shall be",
+      "expected_answer": "At least 3 working days",
+      "cost_usd": 0.001376,
+      "latency_ms": 31609
+    },
+    {
+      "id": "p17",
+      "source": "draft-claude",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": null,
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "219G",
+        "44",
+        "219F",
+        "45"
+      ],
+      "retrieved_rules": [
+        "DB-HL-009",
+        "DB-HL-008",
+        "DB-HL-012"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": null,
+      "cost_usd": 0.000479,
+      "latency_ms": 4569
+    },
+    {
+      "id": "i01",
+      "source": "interview-I01",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": "Stamp duty is state law; not in corpus",
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [],
+      "retrieved_rules": [
+        "DB-HL-010",
+        "DB-HL-016",
+        "DB-HL-015"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": null,
+      "cost_usd": 0.000479,
+      "latency_ms": 2684
+    },
+    {
+      "id": "i02",
+      "source": "interview-I02",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": true,
+      "note": "Candidate rule for policy v1.1",
+      "rule_hit": true,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": null,
+      "retrieved_rbi": [
+        "4(xxiia)",
+        "100",
+        "45",
+        "44"
+      ],
+      "retrieved_rules": [
+        "DB-HL-009",
+        "DB-HL-010",
+        "DB-HL-021"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Policy gap: DB-HL-009 caps LTV on property cost; combined vs separate for composite loans not stated",
+      "cost_usd": 0.000573,
+      "latency_ms": 2981
+    },
+    {
+      "id": "i03",
+      "source": "interview-I03",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": "No education-loan policy yet (Week 3)",
+      "rule_hit": null,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "219L",
+        "11"
+      ],
+      "retrieved_rules": [
+        "DB-HL-012",
+        "DB-HL-030",
+        "DB-HL-026"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": null,
+      "cost_usd": 0.000716,
+      "latency_ms": 3215
+    },
+    {
+      "id": "i04",
+      "source": "interview-I04",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": true,
+      "note": "Candidate clarification for policy v1.1",
+      "rule_hit": true,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": null,
+      "retrieved_rbi": [
+        "437"
+      ],
+      "retrieved_rules": [
+        "DB-HL-004",
+        "DB-HL-012",
+        "DB-HL-021"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "70 if treated as pension-earning; policy does not say whether NPS counts",
+      "cost_usd": 0.000562,
+      "latency_ms": 3666
+    },
+    {
+      "id": "i05",
+      "source": "interview-I05",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": true,
+      "note": "Candidate rule for policy v1.1",
+      "rule_hit": true,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": null,
+      "retrieved_rbi": [
+        "113",
+        "91",
+        "114"
+      ],
+      "retrieved_rules": [
+        "DB-HL-020",
+        "DB-HL-001",
+        "DB-HL-002"
+      ],
+      "cited": [],
+      "cited_rules": [],
+      "answer": "Not covered by the indexed documents.",
+      "expected_answer": "Policy gap: purchase of part of a building not addressed",
+      "cost_usd": 0.00078,
+      "latency_ms": 4648
+    },
+    {
+      "id": "i06",
+      "source": "interview-I06",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": true,
+      "note": "Candidate rule for policy v1.1",
+      "rule_hit": true,
+      "rule_cited": null,
+      "answer_ok": null,
+      "refusal_ok": null,
+      "retrieved_rbi": [
+        "91",
+        "94",
+        "104"
+      ],
+      "retrieved_rules": [
+        "DB-HL-001",
+        "DB-HL-020",
+        "DB-HL-026"
+      ],
+      "cited": [
+        "91",
+        "92"
+      ],
+      "cited_rules": [
+        "DB-HL-001",
+        "DB-HL-020"
+      ],
+      "answer": "The indexed results don't directly answer whether you can finance a second house on a plot that already carries a bank-funded residence. I can only give the closest rules.\n\n**RBI:** Finance for a second house is allowed in principle. The bank may extend finance to a person who already owns a house in town / village where they reside, for buying / constructing a second house in the same or other to",
+      "expected_answer": "Policy gap: second house / existing charge on same land not addressed",
+      "cost_usd": 0.001586,
+      "latency_ms": 10274
+    },
+    {
+      "id": "i07",
+      "source": "interview-I07",
+      "hit_at_5": null,
+      "in_context": null,
+      "cited_ok": null,
+      "manual": false,
+      "note": "Answerable from Demo Bank policy",
+      "rule_hit": true,
+      "rule_cited": true,
+      "answer_ok": null,
+      "refusal_ok": true,
+      "retrieved_rbi": [
+        "173",
+        "170O",
+        "219N",
+        "219O",
+        "219L"
+      ],
+      "retrieved_rules": [
+        "DB-HL-006",
+        "DB-HL-024",
+        "DB-HL-023"
+      ],
+      "cited": [],
+      "cited_rules": [
+        "DB-HL-006"
+      ],
+      "answer": "**Short answer: the indexed documents don't clearly permit this.** The only co-applicant rule, DB-HL-006, names individual relatives and does not mention companies or partnership firms. Every co-owner of the property must be a co-applicant. The rule also lists the relatives who may join: a spouse, parent, grandparent, son, daughter, grandchild or sibling. A partnership firm is not on that list, so",
+      "expected_answer": "No: only resident Indian individuals may apply; co-applicants are listed relatives",
+      "cost_usd": 0.001,
+      "latency_ms": 31544
+    }
+  ]
+}

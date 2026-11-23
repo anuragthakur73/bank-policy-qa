@@ -1,42 +1,64 @@
-# run: python -m eval.run_eval
-# Scores retrieval (hit@5), citation (cited the expected clause) and refusal on the golden set.
-import json, datetime, pathlib
-from app.generate import answer, REFUSAL, PROMPT_VERSION
+# run: python -m eval.run_eval [golden file]   (default eval/golden_v1.jsonl)
+# Scores, per question:
+#   hit_at_5    expected RBI clause in the top 5 RBI SEARCH hits (not traced paras), matched by doc_id
+#   in_context  expected RBI clause anywhere the model saw (incl. paras traced from a Demo Bank rule)
+#   cited_ok    expected RBI clause cited
+#   rule_hit    expected Demo Bank rule in the policy top 3      rule_cited  expected rule cited
+#   answer_ok   every must_contain string appears in the answer (crude correctness check on key figures)
+#   refusal_ok  refused exactly when expected
+#   manual      manual_review questions (policy gaps): answer recorded, NOT auto-scored except rule_hit
+import json, datetime, pathlib, sys
+from app.generate import answer, PROMPT_VERSION
 
-rows = [json.loads(l) for l in open("eval/golden_v0.jsonl", encoding="utf-8")]
+GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v1.jsonl"
+rows = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 out = []
 for r in rows:
     text, cites, rec = answer(r["question"], caller="eval")
-    doc = r.get("expected_doc", "RBI-CB-CREDIT-FAC-2025")      # golden_v0 questions are all Credit Facilities
-    # hit@5 = the top 5 RBI clauses from SEARCH only (not policy rules, not paragraphs pulled in by a rule's trace)
+    doc = r.get("expected_doc", "RBI-CB-CREDIT-FAC-2025")
+    exp, rules, ref = r.get("expected_clauses", []), r.get("expected_rules", []), r["expect_refusal"]
     searched = [x for x in rec["retrieved"] if x.get("layer", "rbi") == "rbi" and not x.get("traced_from")][:5]
     got = [x["clause_no"] for x in searched if x["doc_id"] == doc]
-    in_context = {x["clause_no"] for x in rec["retrieved"] if x["doc_id"] == doc}   # everything shown to the model
+    in_context = {x["clause_no"] for x in rec["retrieved"] if x["doc_id"] == doc}
     cited = {c.split(":", 1)[1] for c in rec.get("cited_rbi", []) if c.startswith(doc + ":")}
-    exp, ref = r["expected_clauses"], r["expect_refusal"]
-    row = {"id": r["id"],
-           "hit_at_5": None if ref else any(c in got for c in exp),
-           "in_context": None if ref else any(c in in_context for c in exp),
-           "cited_ok": None if ref else any(c in cited for c in exp),
-           "refusal_ok": rec["refused"] == ref,
-           "retrieved": got, "cited": sorted(cited), "cited_rules": rec.get("cited_rules", []),
-           "answer": text[:300], "expected_answer": r.get("expected_answer"),
+    pol = [x["clause_no"] for x in rec["retrieved"] if x.get("layer") == "policy"]
+    must = r.get("must_contain", [])
+    manual = bool(r.get("manual_review"))
+    row = {"id": r["id"], "source": r.get("source"),
+           "hit_at_5": any(c in got for c in exp) if exp and not ref else None,
+           "in_context": any(c in in_context for c in exp) if exp and not ref else None,
+           "cited_ok": any(c in cited for c in exp) if exp and not ref else None,
+           "manual": manual, "note": r.get("note"),
+           "rule_hit": any(x in pol for x in rules) if rules and not ref else None,
+           "rule_cited": any(x in rec.get("cited_rules", []) for x in rules) if rules and not ref and not manual else None,
+           "answer_ok": all(m.lower() in text.lower() for m in must) if must and not ref and not manual else None,
+           "refusal_ok": None if manual else rec["refused"] == ref,
+           "retrieved_rbi": got, "retrieved_rules": pol, "cited": sorted(cited),
+           "cited_rules": rec.get("cited_rules", []),
+           "answer": text[:400], "expected_answer": r.get("expected_answer"),
            "cost_usd": rec["cost_usd"], "latency_ms": rec["latency_ms"]}
     out.append(row)
-    flag = "OK " if row["refusal_ok"] and row["cited_ok"] is not False else "BAD"
-    print(flag, r["id"], "| retrieved", got, "| cited", rec["cited_clauses"])
+    bad = [k for k in ("cited_ok", "rule_cited", "answer_ok", "refusal_ok") if row[k] is False]
+    print("MAN" if manual else ("OK " if not bad else "BAD"), r["id"], "| rules", pol, "cited", row["cited_rules"], "| rbi", got,
+          "cited", row["cited"], ("| FAILED " + ",".join(bad)) if bad else "")
 
-def score(k):
-    vals = [o[k] for o in out if o[k] is not None]
-    return f"{sum(vals)}/{len(vals)}"
+METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "answer_ok", "refusal_ok")
+def score(k, sub=None):
+    vals = [o[k] for o in (sub or out) if o[k] is not None]
+    return f"{sum(vals)}/{len(vals)}" if vals else "-"
 
-summary = {k: score(k) for k in ("hit_at_5", "in_context", "cited_ok", "refusal_ok")}
+summary = {k: score(k) for k in METRICS}
+real = [o for o in out if str(o["source"]).startswith("interview")]
+summary["interview_questions"] = {k: score(k, real) for k in METRICS} if real else "-"
+summary["n_questions"] = len(out)
+summary["manual_review"] = [{"id": o["id"], "refused": o["answer"].startswith("Not covered"), "answer": o["answer"][:200]}
+                            for o in out if o["manual"]]
 summary["total_cost_usd"] = round(sum(o["cost_usd"] for o in out), 5)
 summary["avg_latency_s"] = round(sum(o["latency_ms"] for o in out) / len(out) / 1000, 1)
-summary["golden_set"] = "golden_v0"
+summary["golden_set"] = pathlib.Path(GOLDEN).stem
 summary["prompt_version"] = PROMPT_VERSION
 pathlib.Path("eval/reports").mkdir(parents=True, exist_ok=True)
-path = f"eval/reports/{datetime.date.today()}_{PROMPT_VERSION}.json"   # one file per prompt version, never overwritten by another
+path = f'eval/reports/{datetime.date.today()}_{PROMPT_VERSION}_{summary["golden_set"]}.json'
 with open(path, "w", encoding="utf-8") as f:
     json.dump({"summary": summary, "rows": out}, f, indent=2, ensure_ascii=False)
-print("\n", summary, "\nreport:", path)
+print("\n", json.dumps(summary, indent=1), "\nreport:", path)
