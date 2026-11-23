@@ -15,3 +15,8 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - Answer correct (80%) and cites para 111, which arrived through DB-HL-009's trace, not search.
 - Regression vs answer-v1 for RBI-only callers: adding the RBC directions (458 clauses) took a top-5 slot, and gold-loan LTV paras outrank housing para 111.
 - Week 3 fix candidates: hybrid keyword + vector search; "housing finance" terms in the contextual header; per-document quota.
+
+## 23 Nov 2026 · answer-v2 · golden_v1 (33 Qs)
+- RBI search alone weak on housing/conduct paras: hit@5 7/14 (misses g005, p01, p02, p09, p10, p13, p15); traces cover it (in_context 14/14, cited 14/14). Week 3: hybrid keyword + vector search.
+- i07 (partnership firm as applicant): right conclusion but hedged; DB-HL-003 (individuals only) not retrieved, cited DB-HL-006. Fix in policy v1.1 (backlog #5) + retrieval.
+- Latency 12.1 s avg (median 8.1 s); four ~31-32 s outliers (p13, p15, i07, p14). Cause not measured (suspect retry/stall). Week 3: per-stage timing in the audit log.

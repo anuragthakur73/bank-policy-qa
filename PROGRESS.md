@@ -71,3 +71,12 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Policy: 31/31 reviewed (DB-HL-019 deposit Rs 2,500 confirmed). Labels DB-HL-001/002/020 corrected to stricter. Frozen for Week 2 after the DB-HL-014 wording fix.
 - Tests: 15 offline (policy file, para parser, verdict parser, RBC parse). Reports kept per run in eval/reports (v1 before/after, v2, v3, answer-v2 old/new scoring).
 - Interview takeaway: the checker caught real compliance gaps in a policy I drafted, and its own instability showed why "contradiction" and "coverage" must be separate checks.
+
+## Week 2 · Session 5: golden_v1 with real interview questions (23 Nov 2026)
+- golden_v1: 33 questions = 10 RBI (v0) + 16 Demo Bank policy (drafted) + 7 verbatim interview questions (I01–I07). Questions also logged in notes/interviews/questions.csv (private).
+- Eval adds rule_hit, rule_cited, answer_ok (key figures), manual review for policy-gap questions, and a separate interview score line.
+- Results (answer-v2): hit@5 7/14 · in_context 14/14 · cited 14/14 · rule_hit 20/20 · rule_cited 16/16 · answer_ok 12/12 · refusal 29/29 · $0.032 · 12.1 s avg.
+- Interview questions: I01 stamp duty + I03 education loan refused correctly; I07 (firm as applicant) right but hedged, wrong rule cited; I02, I04, I05 honest refusals on policy gaps; I06 careful partial answer. Manual verdicts (Anurag): all 4 acceptable. Nothing invented.
+- Policy v1.1 backlog started: policy/demo_bank/backlog_v1_1.md (composite-loan LTV, NPS pension, floor purchase, second house on charged land, firms as applicants, coverage list).
+- Demo video v2 script: docs/demo/demo_v2_script.md. LinkedIn post drafted.
+- Week 3 carry-over: hybrid search; per-stage latency; policy v1.1; LAP / vehicle / education policies; head-office interviews (I08–I10) for Option A.
