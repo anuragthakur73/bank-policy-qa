@@ -1,4 +1,4 @@
-# run: python -m eval.run_eval [golden file]   (default eval/golden_v1.jsonl)
+# run: python -m eval.run_eval [golden file]   (default eval/golden_v2.jsonl)
 # Scores, per question:
 #   hit_at_5    expected RBI clause in the top 5 RBI SEARCH hits, matched by doc_id. Scored on rec["rbi_search"]
 #               (before de-duplication). Before 24 Nov it was scored after de-duplication, so a paragraph that
@@ -9,13 +9,15 @@
 #   answer_ok   every must_contain item appears in the answer (crude check on key figures); an item may list
 #               accepted spellings separated by "|", e.g. "3 working days|three working days"
 #   refusal_ok  refused exactly when expected
+#   product_ok  every cited Demo Bank rule belongs to the expected product (DB-HL vs DB-LAP); questions with rules only
 #   manual      manual_review questions (policy gaps): answer recorded, NOT auto-scored except rule_hit
 #   timings     per-stage ms from the audit record (Week 3); retrieval mode from env RETRIEVAL_MODE (default hybrid)
 import json, datetime, os, pathlib, sys
 from app.generate import answer, PROMPT_VERSION
-MODE = os.environ.get("RETRIEVAL_MODE", "hybrid")
+MODE = os.environ.get("RETRIEVAL_MODE", "vector")
 
-GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v1.jsonl"
+GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2.jsonl"
+prefix = lambda rid: rid.rsplit("-", 1)[0]          # DB-HL-004 -> DB-HL
 rows = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 out = []
 for r in rows:
@@ -35,6 +37,8 @@ for r in rows:
            "manual": manual, "note": r.get("note"),
            "rule_hit": any(x in pol for x in rules) if rules and not ref else None,
            "rule_cited": any(x in rec.get("cited_rules", []) for x in rules) if rules and not ref and not manual else None,
+           "product_ok": all(prefix(c) in {prefix(x) for x in rules} for c in rec.get("cited_rules", []))
+                         if rules and not ref else None,
            "answer_ok": all(any(a.lower() in text.lower() for a in m.split("|")) for m in must)
                         if must and not ref and not manual else None,
            "refusal_ok": None if manual else rec["refused"] == ref,
@@ -48,7 +52,7 @@ for r in rows:
     print("MAN" if manual else ("OK " if not bad else "BAD"), r["id"], "| rules", pol, "cited", row["cited_rules"], "| rbi", got,
           "cited", row["cited"], ("| FAILED " + ",".join(bad)) if bad else "")
 
-METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "answer_ok", "refusal_ok")
+METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "product_ok", "answer_ok", "refusal_ok")
 def score(k, sub=None):
     vals = [o[k] for o in (sub or out) if o[k] is not None]
     return f"{sum(vals)}/{len(vals)}" if vals else "-"
@@ -56,6 +60,9 @@ def score(k, sub=None):
 summary = {k: score(k) for k in METRICS}
 real = [o for o in out if str(o["source"]).startswith("interview")]
 summary["interview_questions"] = {k: score(k, real) for k in METRICS} if real else "-"
+GROUPS = {"rbi_only": lambda o: "rbi-only" in str(o["source"]), "lap": lambda o: o["id"].startswith("l"),
+          "cross_product": lambda o: o["id"].startswith("x"), "home_loan_policy": lambda o: o["id"].startswith("p")}
+summary["by_group"] = {g: {k: score(k, [o for o in out if f(o)]) for k in METRICS} for g, f in GROUPS.items()}
 summary["n_questions"] = len(out)
 summary["manual_review"] = [{"id": o["id"], "refused": o["answer"].startswith("Not covered"), "answer": o["answer"][:200]}
                             for o in out if o["manual"]]

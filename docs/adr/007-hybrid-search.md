@@ -1,6 +1,6 @@
 # ADR-007: Hybrid (vector + keyword) search for RBI clauses
 
-Date: 24 Nov 2026 · Status: accepted provisionally; value on the current test set NOT shown (see Correction)
+Date: 24 Nov 2026 · Status: SUPERSEDED 25 Nov 2026 - default back to vector (see Decision 25 Nov)
 
 ## Context
 On golden_v1 (23 Nov) the eval reported that vector search put the expected RBI paragraph in its top 5 for only
@@ -59,3 +59,10 @@ Qdrant retriever → `EnsembleRetriever` (langchain-classic). Selected with `RET
   two indexes disagree.
 - The KFS and title-deed synonyms were added after seeing the p15 and p13 misses, so those two questions
   no longer test keyword search blind. New synonyms come only from real staff questions.
+
+## Decision 25 Nov 2026 (Anurag): default back to vector search
+golden_v2 (51 Qs, incl. 8 RBI-only exact-term questions): hit@5 23/23 vector and hybrid (RBI-only 8/8 both); cited
+21/23 vs 22/23 (one question, within run-to-run variation); same cost and latency. Hybrid adds a second index to keep
+in sync and gives no measured benefit, so `RETRIEVAL_MODE` defaults to `vector`. Kept: app/keyword.py (also used for
+local clause lookup in policy traces), `hybrid` and `hybrid_lc` modes, eval/compare_retrieval.py.
+Revisit when the corpus grows (KYC, priority-sector directions) or real staff questions miss on exact terms.

@@ -71,7 +71,7 @@ def _sources(hits: list[dict]) -> list[dict]:
 def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi")):
     t0, rid = time.perf_counter(), str(uuid.uuid4())
     timings, before = {}, dict(RETRIES)
-    mode = os.environ.get("RETRIEVAL_MODE", "hybrid")
+    mode = os.environ.get("RETRIEVAL_MODE", "vector")
     raw = retrieve(q, k, layers=layers, mode=mode, timings=timings)
     # RBI search results in rank order BEFORE de-duplication with traced paragraphs (the eval scores this)
     rbi_search = [f'{h["doc_id"]}:{h["clause_no"]}' for h in raw if h.get("layer") == "rbi"]

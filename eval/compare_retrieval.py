@@ -4,7 +4,7 @@
 import json, os, sys, time
 from app.retrieve import retrieve, MODES
 
-GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v1.jsonl"
+GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2.jsonl"
 modes = os.environ.get("MODES", ",".join(MODES)).split(",")
 qs = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 qs = [q for q in qs if q.get("expected_clauses") and not q["expect_refusal"]]

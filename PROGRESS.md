@@ -137,3 +137,27 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
   cited a LAP rule -> product filter for policy retrieval in Week 4.
 - Circular regenerated for 12 changes (DB-HL-014 added); diff report now keeps Claude's own text next to corrections.
 - Tests: 37.
+
+## Week 3 · Session 5: test set v2 + Week 3 wrap-up (25 Nov 2026)
+- eval/golden_v2.jsonl: 51 Qs = 33 from v1 (I02, I04-I07 now scored against policy v1.1; p01 expects DB-HL-032)
+  + 8 LAP + 2 cross-product + 8 RBI-only exact-term questions. Eval adds product_ok and scores by group.
+- Results (vector / hybrid): hit@5 23/23 both; RBI cited 21/23 / 22/23; rules found 29/30, cited 29/30; answers 21/21;
+  refusals 50/51; product_ok 23/30 both; $0.050, ~6 s median. Interview questions: rule cited 5/5, refusals 7/7.
+- Problems: l01 answered a LAP LTV question with the home-loan rule (75% instead of 65%) - wrong headline figure,
+  missed by must_contain; 7/30 answers cite a rule of the other product; l07 refused (rule not in policy top 3).
+- Decisions (Anurag): default retrieval back to vector (ADR-007 superseded); Week 4 starts with the product filter.
+
+## Week 3 summary (24-25 Nov 2026)
+- Built: hybrid search (kept as an option), per-stage timing and retry logging, policy v1.1 from real interview
+  questions (34 rules), "what changed" circular with checks + reviewer corrections (ADR-008), LAP policy (20 rules),
+  conflict-check override with recorded sign-off, test set v2 (51 Qs).
+- Found and fixed: an eval scoring bug that invented the "weak RBI search" problem; 12 s stalls traced to Qdrant over a
+  poor connection; a model circular that passed automatic checks but got 2-3 directions wrong.
+- Open: product filter (wrong answers); headline-figure scoring; the three sign-offs (DB-HL-014/032 overrides,
+  circular reviewed_by); head-office interviews I08-I10 (decide RBI version comparison vs vehicle/education policies);
+  demo video + LinkedIn post (on hold).
+
+## Week 4 plan, first item (decided 25 Nov)
+- Product filter on policy retrieval: product from a UI selector or detected from the question; ambiguous -> both
+  products, labelled; each product gets its own policy quota (fixes l07). Eval: check the FIRST figure in the answer,
+  not just "appears somewhere". Target: product_ok 30/30, l01 correct.

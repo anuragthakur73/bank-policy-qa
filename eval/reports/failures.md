@@ -67,3 +67,15 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - Shared policy index: i04 (home-loan NPS age) also cited DB-LAP-003. Need a product filter on policy retrieval
   (UI selector or product detected from the question) -> Week 4.
 - Spot checks: LAP 3/3, home loan still 5/5 after adding 20 LAP rules.
+
+## 25 Nov 2026 · Week 3 Session 5 · golden_v2 (51 Qs), answer-v2, hybrid vs vector
+- WRONG ANSWER (both modes): l01 "max LTV on a loan against a self-occupied flat, Rs 80 lakh" answered 75% from the
+  HOME-LOAN rule DB-HL-009; correct is 65% (DB-LAP-007). Scored answer_ok only because "65" appears later in the
+  text -> must_contain is too weak for headline figures. Root cause: one shared policy index, no product filter.
+- product_ok 23/30 in both modes: 7 answers also cite a rule of the other product (p07, p10, p12, p13, i04, l01, l08).
+  The 2 cross-product questions that name the product passed.
+- l07 (LAP as overdraft) refused: DB-LAP-009 not in the policy top 3 (54 rules now compete for 3 slots).
+- Hybrid vs vector: hit@5 23/23 both (RBI-only 8/8 both); cited 22/23 vs 21/23; same cost ($0.050) and latency
+  (~6 s). No measurable retrieval benefit from hybrid, even on exact-term RBI-only questions (which I wrote after
+  reading the paragraphs - biased towards keyword search, yet vector found them all too).
+- r04 cited para 108 instead of 109 (both relevant); r01 (vector run) cited the LAP rule, not RBI para 36.

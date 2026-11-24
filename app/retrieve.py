@@ -158,8 +158,8 @@ def _rbi_hybrid(question: str, qvec: list[float], k: int, timings=None) -> list[
 def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
              mode: str | None = None, timings: dict | None = None) -> list[dict]:
     """Policy rules first (each with its RBI trace), then RBI clauses. Each layer has its own quota.
-    mode: "hybrid" (default, or env RETRIEVAL_MODE), "vector" (v0.1 behaviour) or "hybrid_lc"."""
-    mode = mode or os.environ.get("RETRIEVAL_MODE", "hybrid")
+    mode: "vector" (default since 25 Nov, ADR-007; env RETRIEVAL_MODE), "hybrid" or "hybrid_lc"."""
+    mode = mode or os.environ.get("RETRIEVAL_MODE", "vector")
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}")
     rows, qvec = [], None
