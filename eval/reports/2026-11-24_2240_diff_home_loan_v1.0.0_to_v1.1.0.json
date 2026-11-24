@@ -1,0 +1,119 @@
+{
+  "old": "policy/demo_bank/home_loan_v1.yaml",
+  "new": "policy/demo_bank/home_loan_v1_1.yaml",
+  "meta": {
+    "model": "claude-haiku-5-5",
+    "prompt_version": "diff-v1",
+    "attempts": 1,
+    "problems": [
+      []
+    ],
+    "tokens_in": 4076,
+    "tokens_out": 1605,
+    "cost_usd": 0.00121
+  },
+  "changes": [
+    {
+      "rule_id": "DB-HL-001",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "Finance for extension, repair or renovation of a house already financed by Demo Bank must stay within the overall loan ceiling for that house and needs a cost estimate certified by an engineer or architect.",
+      "staff_action": "For renovation or extension of a Demo Bank-financed house, check the total stays within the overall loan ceiling for that house and obtain an engineer or architect certified cost estimate."
+    },
+    {
+      "rule_id": "DB-HL-002",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "vs_rbi"
+      ],
+      "what_changed": "Property in an unauthorised colony is now financed only if the colony has been regularised and the development and other charges have been paid.",
+      "staff_action": "For property in an unauthorised colony, verify regularisation and payment of development and other charges before considering the loan."
+    },
+    {
+      "rule_id": "DB-HL-003",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "what_changed": "Only individuals may apply; partnership firms, LLPs, companies, trusts, societies and HUFs cannot be applicants or co-applicants, including on a takeover, and a partner or director may apply only in their individual capacity.",
+      "staff_action": "Reject non-individual applicants or co-applicants, including on takeovers; accept a partner or director only in their individual capacity."
+    },
+    {
+      "rule_id": "DB-HL-004",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "what_changed": "The pension-earning category is now defined: applicants already receiving a pension or annuity, or who will receive a monthly employer pension after retirement (defined-benefit scheme or NPS), with specified proof required.",
+      "staff_action": "Classify applicants as pension-earning per the definition and obtain a pension payment order or employer certificate naming the scheme, plus the PRAN statement for NPS."
+    },
+    {
+      "rule_id": "DB-HL-032",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "New rule for composite loans: the LTV limit applies to the combined plot price plus valuer-estimated construction cost, with the plot part capped at the same LTV percentage of the plot price and disbursed first, and construction disbursed in stages.",
+      "staff_action": "For composite loans, compute LTV on combined plot price plus valuer-estimated construction cost, cap the plot portion at the same LTV percentage of plot price, and disburse the plot part first."
+    },
+    {
+      "rule_id": "DB-HL-017",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "The no-prepayment-charge position must be stated in the sanction letter, loan agreement and Key Facts Statement, and any charge previously waived can never be levied later.",
+      "staff_action": "Confirm the no-prepayment-charge statement appears in the sanction letter, loan agreement and KFS, and never levy a charge Demo Bank has waived."
+    },
+    {
+      "rule_id": "DB-HL-018",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "The penal charge is now also published on Demo Bank's website, the borrower must be told the amount and reason each time it is levied, and no penal charge may be levied on unpaid penal charges.",
+      "staff_action": "Tell the borrower the amount and reason each time a penal charge is levied, and do not levy penal charges on unpaid penal charges."
+    },
+    {
+      "rule_id": "DB-HL-033",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "New rule permitting finance for purchase of one floor of a residential building only if the floor has its own registered title with undivided land share, is covered by the sanctioned plan, and has independent access; LTV applies to that floor's value alone.",
+      "staff_action": "For floor purchases, verify separate registered title with undivided land share, sanctioned plan coverage and independent access, and apply LTV to the floor's value only; do not finance floors without separate title."
+    },
+    {
+      "rule_id": "DB-HL-034",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "New rule allowing a second house loan for a borrower who owns a house, with specified treatment depending on whether the land is mortgaged to Demo Bank or another lender, LTV on combined value, and repayment capacity counting both EMIs.",
+      "staff_action": "For a second house loan, if land is mortgaged to Demo Bank extend the mortgage as additional finance; if mortgaged elsewhere take over that loan first; apply LTV to combined loans and count both EMIs in repayment capacity."
+    },
+    {
+      "rule_id": "DB-HL-025",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "The KFS is now binding on Demo Bank if the borrower accepts within its validity period, and it must follow RBI's standard KFS format and be attached to the loan agreement as a summary box.",
+      "staff_action": "Use RBI's standard KFS format and attach it to the loan agreement as a summary box; note that Demo Bank is bound if the borrower accepts within the validity period."
+    },
+    {
+      "rule_id": "DB-HL-028",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "Document return now also requires filing the satisfaction of charge with every registry where the charge was registered, such as CERSAI, within the 15 working days.",
+      "staff_action": "On full repayment, file the satisfaction of charge with every registry where it was registered, such as CERSAI, within the 15 working days alongside returning documents."
+    }
+  ]
+}

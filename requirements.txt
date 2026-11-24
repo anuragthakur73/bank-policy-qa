@@ -90,3 +90,4 @@ zstandard==0.25.0
 rank-bm25==0.2.2
 langchain-classic==1.0.8
 langchain-community==0.4.2
+langchain-anthropic==1.7.10

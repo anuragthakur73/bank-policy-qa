@@ -1,0 +1,111 @@
+{
+  "old": "policy/demo_bank/home_loan_v1.yaml",
+  "new": "policy/demo_bank/home_loan_v1_1.yaml",
+  "meta": {
+    "fallback": true
+  },
+  "changes": [
+    {
+      "rule_id": "DB-HL-001",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "Changed: rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-002",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "vs_rbi"
+      ],
+      "what_changed": "Changed: rule, vs_rbi - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-003",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "what_changed": "Changed: rule, params - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-004",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "what_changed": "Changed: rule, params - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-032",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "New rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-017",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "Changed: rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-018",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "Changed: rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-033",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "New rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-034",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "New rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-025",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "Changed: rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    },
+    {
+      "rule_id": "DB-HL-028",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "what_changed": "Changed: rule - read the rule text in the annex.",
+      "staff_action": "See the annex."
+    }
+  ]
+}
