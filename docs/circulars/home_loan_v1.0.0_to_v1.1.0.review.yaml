@@ -1,0 +1,18 @@
+# Reviewer corrections to the model-written circular (diff-v2 run 2026-11-24_2256). Each must pass the same checks.
+# To approve the circular: put your name in reviewed_by, then re-render:
+#   python -m app.policy_diff policy/demo_bank/home_loan_v1.yaml policy/demo_bank/home_loan_v1_1.yaml --from-report eval/reports/2026-11-24_2256_diff_home_loan_v1.0.0_to_v1.1.0.json
+reviewed_by: null
+reviewed_on: 2026-11-24
+corrections:
+  DB-HL-001:
+    direction: tightened
+    reason: "Two new conditions on repair/extension finance (overall ceiling, certified estimate); model labelled it relaxed"
+  DB-HL-003:
+    direction: clarified
+    reason: "v1.0 already admitted only individuals; v1.1 names the excluded entities"
+  DB-HL-004:
+    what_changed: >-
+      Every NPS subscriber, government or private sector, now counts as pension-earning and may repay up to age 70
+      instead of 65; so do applicants already receiving a pension or annuity and defined-benefit employees. Proof: pension
+      payment order, or employer certificate naming the scheme, plus the PRAN statement for NPS.
+    reason: "Model text omitted the effect that matters to staff (age 70 instead of 65 for NPS subscribers)"

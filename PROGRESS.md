@@ -109,3 +109,14 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - conflict.py takes a policy file (default v1.1); report names carry time + policy version. Tests: 24 (5 new).
 - Still to do in Session 5: move I02/I04/I05/I06 from manual review to scored in the golden set (expected answers
   changed with v1.1).
+
+## Week 3 · Session 3: "what changed" circular, policy v1.0 -> v1.1 (24 Nov 2026)
+- app/policy_diff.py: plain-code diff (exactly 3 new + 8 changed rules, review-note edits ignored) -> Claude Haiku 5.5
+  via LangChain ChatAnthropic.with_structured_output (Pydantic, json_schema) writes direction + what changed + staff
+  action per rule -> automatic check (exact rule IDs, no figure not in the rule text, direction for new/withdrawn)
+  -> reviewer corrections file -> docs/circulars/home_loan_v1.0.0_to_v1.1.0.md. ADR-008.
+- Results: v1 prompt passed the automatic check but had 2 meaning errors; v2 fixed them but mislabelled one
+  direction and still buried the NPS age-70 effect. 3 of 11 lines corrected by the reviewer (marked †). $0.0015/run.
+- Interview takeaway: automatic checks catch invented figures and missing rules, not the direction of a change;
+  a maker-checker step is part of the design, not a workaround.
+- Tests: 30 (6 for the diff, incl. corrections being checked like model output).

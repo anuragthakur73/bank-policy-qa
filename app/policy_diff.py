@@ -1,4 +1,8 @@
 # run: python -m app.policy_diff policy/demo_bank/home_loan_v1.yaml policy/demo_bank/home_loan_v1_1.yaml [--no-llm]
+#      ... --from-report eval/reports/<diff report>.json   re-render a saved run + reviewer corrections, no API call
+# Reviewer corrections: docs/circulars/<name>.review.yaml (rule_id -> direction / what_changed / staff_action + reason).
+# They are checked like model output (same figures rule) and marked in the circular. A circular is issued only
+# after a person has read it (ADR-008).
 # "What changed" between two Demo Bank policy versions, as a one-page circular for branches (ADR-008).
 #   1. diff()      plain code, rule by rule: added / changed / removed, and which fields changed. This is the truth.
 #   2. explain()   Claude (via LangChain ChatAnthropic + structured output) writes, per changed rule, one line on what
@@ -7,10 +11,11 @@
 #                  in that rule's old or new text. Fails -> one retry -> plain-text fallback. Nothing invented ships.
 import datetime, json, pathlib, re, sys
 import yaml
+from typing import Literal
 from pydantic import BaseModel, Field
 
 SUBSTANTIVE = ("rule", "params", "rbi_ref", "scheme_ref", "bank_discretion", "vs_rbi", "section", "title")
-MODEL, PROMPT_VERSION = "claude-haiku-5-5", "diff-v1"
+MODEL, PROMPT_VERSION = "claude-haiku-5-5", "diff-v2"   # v2: direction field + "who is affected" wording (24 Nov)
 PRICE_IN, PRICE_OUT = 0.10, 0.50   # USD per 1M tokens, Claude Haiku 5.5
 
 def norm(x):
@@ -48,6 +53,10 @@ def diff(old: dict, new: dict) -> list[dict]:
 # ---------- LLM explanation (LangChain) ----------
 class Item(BaseModel):
     rule_id: str
+    direction: Literal["new", "relaxed", "tightened", "clarified", "withdrawn"] = Field(
+        description="Compared with OLD: 'relaxed' = NEW allows something OLD did not (more customers or cases qualify); "
+                    "'tightened' = NEW forbids or adds a condition OLD did not have; 'clarified' = same outcome, more "
+                    "detail or disclosure; 'new' = no OLD rule; 'withdrawn' = no NEW rule.")
     what_changed: str = Field(description="One sentence: what the rule now says that it did not say before (or that it was removed). Plain English, figures exactly as in the rule text.")
     staff_action: str = Field(description="One short sentence: what branch / processing staff must now do differently. 'No change in practice' if the change only restates an existing RBI duty.")
 
@@ -55,7 +64,11 @@ class Digest(BaseModel):
     items: list[Item]
 
 SYSTEM = ("You write a change circular for branch lending staff of Demo Bank, a fictional Indian bank. For EACH rule "
-          "given, compare OLD and NEW text and write what changed and what staff must do differently. Use ONLY the "
+          "given, compare OLD and NEW text and write what changed and what staff must do differently. First decide the "
+          "direction: did OLD forbid something NEW now allows (relaxed), or the reverse (tightened)? Say it plainly, "
+          "e.g. 'X was not financed; it is now financed if ...'. Lead with the change that alters who qualifies or "
+          "what a customer gets (an age limit, an eligible category, an amount), before definitions or proof. "
+          "Keep every condition the NEW text attaches to what it allows. Use ONLY the "
           "rule texts given; do not add conditions, figures or reasons that are not in them. Copy figures exactly. "
           "Return exactly one item per rule_id given, no others.")
 
@@ -72,8 +85,14 @@ def numbers(text: str) -> set[str]:
     return {m.replace(",", "") for m in NUM.findall(text or "")}
 
 def verify(changes: list[dict], items: list[Item]) -> list[str]:
-    """Problems with the LLM output; empty list = OK."""
+    """Problems with the LLM output; empty list = OK. Direction itself can't be machine-checked (only that
+    added rules are 'new', removed ones 'withdrawn'): a human reads the circular before issue (ADR-008)."""
     problems = []
+    kind = {c["rule_id"]: c["change"] for c in changes}
+    for i in items:
+        if (kind.get(i.rule_id) == "added") != (i.direction == "new") or \
+           (kind.get(i.rule_id) == "removed") != (i.direction == "withdrawn"):
+            problems.append(f"{i.rule_id}: direction '{i.direction}' does not match change '{kind.get(i.rule_id)}'")
     want, got = [c["rule_id"] for c in changes], [i.rule_id for i in items]
     if sorted(want) != sorted(got):
         problems.append(f"rule IDs differ: missing {sorted(set(want) - set(got))}, extra {sorted(set(got) - set(want))}")
@@ -109,7 +128,7 @@ def explain(changes: list[dict]) -> tuple[list[Item], dict]:
 
 def fallback(changes: list[dict]) -> list[Item]:
     word = {"added": "New rule", "changed": "Changed: " , "removed": "Rule withdrawn"}
-    return [Item(rule_id=c["rule_id"],
+    return [Item(rule_id=c["rule_id"], direction={"added": "new", "removed": "withdrawn"}.get(c["change"], "clarified"),
                  what_changed=(f'{word[c["change"]]}{", ".join(c["fields"]) if c["change"] == "changed" else ""}'
                                f' - read the rule text in the annex.'),
                  staff_action="See the annex.") for c in changes]
@@ -119,24 +138,47 @@ LABEL = {"added": "New", "changed": "Changed", "removed": "Withdrawn"}
 def cell(s: str) -> str:
     return norm(s).replace("|", "/")
 
+def apply_review(changes: list[dict], items: list[Item], path: pathlib.Path) -> tuple[list[Item], dict]:
+    """Apply a reviewer's corrections; returns new items + review meta. Corrections must pass verify()."""
+    if not path.exists():
+        return items, {"reviewed_by": None, "edited": []}
+    rev = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    fixes = rev.get("corrections") or {}
+    out = []
+    for i in items:
+        f = fixes.get(i.rule_id) or {}
+        out.append(Item(**{**i.model_dump(), **{k: v for k, v in f.items() if k in Item.model_fields}}))
+    unknown = set(fixes) - {i.rule_id for i in items}
+    problems = verify(changes, out) + ([f"corrections for rules not in the diff: {sorted(unknown)}"] if unknown else [])
+    if problems:
+        raise SystemExit("review file rejected: " + "; ".join(problems))
+    return out, {"reviewed_by": rev.get("reviewed_by"), "reviewed_on": str(rev.get("reviewed_on")),
+                 "edited": sorted(fixes), "reasons": {k: v.get("reason") for k, v in fixes.items()}}
+
 def render(old: dict, new: dict, changes: list[dict], items: list[Item], meta: dict) -> str:
     by = {i.rule_id: i for i in items}
+    edited = set((meta.get("review") or {}).get("edited", []))
     eff = new["effective_from"]
     lines = [
         f'# Demo Bank (fictional) · Circular: Home Loan Policy v{old["policy_version"]} → v{new["policy_version"]}',
         "",
         f'**Effective from:** {eff} · **Prepared:** {datetime.date.today()} · **Status of v{new["policy_version"]}:** {new["status"]}',
+        (f'**Reviewed by:** {meta["review"]["reviewed_by"]} on {meta["review"]["reviewed_on"]}'
+         f' ({len(edited)} line(s) corrected, marked †)' if (meta.get("review") or {}).get("reviewed_by")
+         else "**NOT YET REVIEWED - do not issue.**"),
         f'**Summary:** {sum(c["change"] == "added" for c in changes)} new, {sum(c["change"] == "changed" for c in changes)} changed, '
         f'{sum(c["change"] == "removed" for c in changes)} withdrawn; {len(new["rules"]) - sum(c["change"] != "removed" for c in changes)} rules unchanged.',
         "",
-        "| Rule | | What changed | What staff do differently | Basis |",
+        "| Rule | Change | What changed | What staff do differently | Basis |",
         "|---|---|---|---|---|",
     ]
     for c in changes:
         r = c["new"] or c["old"]; i = by[c["rule_id"]]
-        lines.append(f'| **{c["rule_id"]}** {cell(r["title"])} | {LABEL[c["change"]]} | {cell(i.what_changed)} | '
+        mark = " †" if c["rule_id"] in edited else ""
+        lines.append(f'| **{c["rule_id"]}**{mark} {cell(r["title"])} | {i.direction.capitalize()} | {cell(i.what_changed)} | '
                      f'{cell(i.staff_action)} | {basis(r)} |')
-    lines += ["", "Questions: Regional Credit Head. Full rule text in the annex; the policy file is the authority.",
+    lines += ["", "† corrected by the reviewer." if edited else "",
+              "Questions: Regional Credit Head. Full rule text in the annex; the policy file is the authority.",
               "", "*Demo Bank is fictional; this circular is synthetic, generated from the policy files and "
               f'checked against them (model {meta.get("model", "none")}, {meta.get("prompt_version", "-")}'
               f'{", fallback text" if meta.get("fallback") else ""}).*',
@@ -153,9 +195,19 @@ def main(argv):
     paths = [a for a in argv if not a.startswith("--")]
     old, new = load(paths[0]), load(paths[1])
     changes = diff(old, new)
-    items, meta = explain(changes) if use_llm and changes else (fallback(changes), {"fallback": True})
-    md = render(old, new, changes, items, meta)
     name = f'home_loan_v{old["policy_version"]}_to_v{new["policy_version"]}'
+    if "--from-report" in argv:
+        saved = json.loads(pathlib.Path(argv[argv.index("--from-report") + 1]).read_text(encoding="utf-8"))
+        paths = [saved["old"], saved["new"]]
+        items = [Item(rule_id=c["rule_id"], direction=c["direction"], what_changed=c["what_changed"],
+                      staff_action=c["staff_action"]) for c in saved["changes"]]
+        meta = {**saved["meta"], "rendered_from": argv[argv.index("--from-report") + 1]}
+        meta.pop("review", None)
+        assert [c["rule_id"] for c in changes] == [i.rule_id for i in items], "policy files changed since that run"
+    else:
+        items, meta = explain(changes) if use_llm and changes else (fallback(changes), {"fallback": True})
+    items, meta["review"] = apply_review(changes, items, pathlib.Path(f"docs/circulars/{name}.review.yaml"))
+    md = render(old, new, changes, items, meta)
     pathlib.Path("docs/circulars").mkdir(parents=True, exist_ok=True)
     pathlib.Path(f"docs/circulars/{name}.md").write_text(md, encoding="utf-8")
     report = {"old": paths[0], "new": paths[1], "meta": meta,
@@ -167,7 +219,7 @@ def main(argv):
 
 def by_item(items, rid):
     i = next(x for x in items if x.rule_id == rid)
-    return {"what_changed": i.what_changed, "staff_action": i.staff_action}
+    return {"direction": i.direction, "what_changed": i.what_changed, "staff_action": i.staff_action}
 
 if __name__ == "__main__":
     main(sys.argv[1:])

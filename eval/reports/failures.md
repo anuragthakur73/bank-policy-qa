@@ -48,3 +48,12 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - Coverage list noise: for DB-HL-033/034 it lists CF 92 sanctioned-plan duties that the rules cover by referring to
   DB-HL-020. Cross-references are invisible to a one-rule-at-a-time check -> possible check improvement: include the
   referenced rules' text. Not blocking.
+
+## 24 Nov 2026 · Week 3 Session 3 · change circular diff-v1 (Haiku 5.5, $0.0012, passed the automatic check first try)
+- Automatic check passed (11/11 rule IDs, no invented figures), but a human read found 2 meaning errors:
+  DB-HL-002 written as a tightening ("now financed only if regularised") when it is a relaxation (v1.0 banned
+  unauthorised colonies outright); DB-HL-004 said "pension-earning is now defined" and left out the real change
+  (every NPS subscriber can now repay to age 70). Minor: DB-HL-034 dropped "self-occupation".
+- Lesson: number and ID checks can't catch the direction of a change. diff-v2 adds a required `direction` field
+  (new / relaxed / tightened / clarified / withdrawn), a "who qualifies first" instruction, and a direction check
+  for new and withdrawn rules. A human still reads every circular before issue.

@@ -32,3 +32,14 @@ which is exactly what `with_structured_output` gives; it is also the pattern Pro
 ## Limits
 - The number check catches invented figures, not wrong meaning in words. A human reads the circular before issue.
 - Cross-rule effects (e.g. DB-HL-030 deviations covering new rule DB-HL-032) are not detected.
+
+## Update (24 Nov 2026): results and a human review step
+- diff-v1: passed the automatic check but a reader found 2 meaning errors (DB-HL-002 relaxation written as a
+  tightening; DB-HL-004's real effect, NPS -> age 70, left out).
+- diff-v2 (required `direction` field, "who qualifies first"): fixed both of those, but labelled DB-HL-001
+  "relaxed" when it adds conditions, and still left out age 70 on DB-HL-004.
+- Decision: stop tuning the prompt; add a reviewer step. `docs/circulars/<name>.review.yaml` holds corrections
+  (with reasons) and the reviewer's name. They pass the same checks as model output, are marked † in the circular,
+  and the circular says "NOT YET REVIEWED - do not issue" until `reviewed_by` is set. `--from-report` re-renders a
+  saved run with corrections, without a new API call. This matches how a bank issues circulars (maker-checker).
+- Measured: 11 lines, 3 needed correction after v2 (27%); $0.0015 per run.
