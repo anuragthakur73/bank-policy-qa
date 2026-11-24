@@ -1,0 +1,566 @@
+{
+  "summary": {
+    "prompt_version": "conflict-v3",
+    "runs_per_rule": 3,
+    "policy_file": "policy/demo_bank/lap_v1.yaml",
+    "policy_version": "1.0.0",
+    "policy_rules_checked": 7,
+    "policy_outcomes": {
+      "FLAG": 1,
+      "pass": 6
+    },
+    "policy_flagged_looser": [
+      "DB-LAP-011"
+    ],
+    "unstable": [
+      [
+        "DB-LAP-011",
+        {
+          "complies": 1,
+          "looser": 2
+        }
+      ]
+    ],
+    "coverage_gaps_non_blocking": {
+      "DB-LAP-001": [
+        "36(1) no loan for purchase of financial assets backed by gold, e.g., gold ETFs or gold-backed mutual fund units",
+        "36(2) no advance or loan against primary gold or silver, or against financial assets backed by primary gold or silver",
+        "36 proviso: gold or silver working-capital finance, if offered, must be need-based, for borrowers using gold or silver as a raw material or input, with the gold or silver acceptable as security, and the bank must ensure no gold acquired or held for investment or speculation",
+        "36(2) no advance against primary gold or silver or financial assets backed by primary gold or silver",
+        "36(2) no advance or loan against primary gold or silver, or against financial assets backed by primary gold or silver, which the LAP rule does not mention"
+      ],
+      "DB-LAP-011": [
+        "349(2) the borrower choice to switch to a fixed rate at reset, if the bank offers it, must follow the Board-approved policy, which may limit the number of switches",
+        "349(3) prepayment charges must be levied only as subject to extant instructions",
+        "349(4) switching charges and any other service charges or administrative costs must be disclosed in the sanction letter, on revision, and displayed on the bank's website as approved by the Board or delegated committee",
+        "349(6) the quarterly statement must be simple and easily understood by the borrower",
+        "349 preamble the bank must have an appropriate policy framework for implementation and compliance",
+        "349(4) all switching, service and administrative charges must be transparently disclosed in the sanction letter and on revision, approved by the Board or delegated committee, and displayed on the website",
+        "349(3)(ii) prepayment charges are subject to extant RBI instructions",
+        "349(6) quarterly statement must be simple and easily understood by the borrower",
+        "349(2) option to switch to a fixed rate at reset, under a Board-approved policy that may limit the number of switches",
+        "349 Note(ii) for class-wide resets, the option to switch to a fixed rate for the remaining loan where offered",
+        "349 Note(i) for class-wide resets, the option to keep EMI unchanged while elongating the number of EMIs",
+        "349(2) option to switch to a fixed rate at reset, per Board-approved policy, and any limit on number of switches (if the bank offers it, Note (ii) applies)",
+        "349(4) disclosure of switching and other service charges in the sanction letter and on the website, and disclosure on revision",
+        "349(3) levy of prepayment charges is subject to extant RBI instructions",
+        "349(6) APR must be stated for the entire tenor of the loan",
+        "349(6) quarterly statements must be simple and easily understood by the borrower"
+      ],
+      "DB-LAP-012": [
+        "327 fee amount refundable if loan is not sanctioned or disbursed must be disclosed",
+        "327 pre-payment options and charges must be disclosed",
+        "327 penalty for delayed repayments must be disclosed",
+        "327 conversion charges for switching between fixed and floating rates must be disclosed",
+        "327 existence of any interest reset clause must be disclosed",
+        "327 any other matter affecting the borrower's interest must be disclosed",
+        "327 all information must also be displayed on the bank's website for all loan products",
+        "327 'all-in-cost' must be disclosed so the customer can compare rates and charges",
+        "327 charges/fees must be non-discriminatory",
+        "327 loan application forms must be comprehensive for all categories of loans regardless of amount",
+        "327 amount of processing fee refundable if loan is not sanctioned or disbursed not stated",
+        "327 pre-payment options and charges not stated",
+        "327 penalty for delayed repayments not stated",
+        "327 conversion charges for switching between fixed and floating rates not stated",
+        "327 existence of any interest reset clause not stated",
+        "327 disclosure of any other matter affecting the borrower's interest not stated",
+        "327 all-in-cost to the customer to enable comparison not stated",
+        "327 information to be displayed on the bank's website for all loan products not stated",
+        "327 application forms must be comprehensive for all loan categories irrespective of amount not stated",
+        "327 charges/fees must be non-discriminatory not stated",
+        "327 amount of fees refundable if loan is not sanctioned or disbursed must be disclosed",
+        "327 all-in-cost must be informed to the customer to enable comparison",
+        "327 fee and charge information must be displayed on the bank's website for all loan products",
+        "327 loan application forms must be comprehensive for all loan categories regardless of amount"
+      ],
+      "DB-LAP-013": [
+        "353(7) no charges where prepayment is effected at the instance of the bank",
+        "353(8) no pre-payment charges that were not disclosed as specified may be charged by the bank",
+        "353(4) dual/special rate loans: applicability depends on whether the loan is floating at the time of prepayment",
+        "353 applies only to loans sanctioned or renewed on or after January 01, 2026",
+        "353(1)/(2) cover loans with or without co-obligant(s)",
+        "353(4) dual/special rate loans: applicability depends on whether the loan is floating at the time of pre-payment",
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(2) also covers floating business loans to MSEs"
+      ],
+      "DB-LAP-014": [
+        "351(1) interest on unpaid EMI may be charged at the contracted rate, not the penal rate, till remediation",
+        "351(1)(iv) GST on penal charges to follow CBIC instructions",
+        "351(1)(vi) penal charges on NPA accounts to be reversed to the extent uncollected",
+        "351(1)(vii) penal charges to be disclosed in 'Schedule 14: Other Income'",
+        "351(3) penal charge policy to be approved by Board or delegated committee",
+        "351(4) penal charges to be reasonable, commensurate with non-compliance, and non-discriminatory within a product category",
+        "351(4)(i) penal charge structure uniform irrespective of borrower constitution",
+        "351(4)(ii) penal charges not to be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers not higher than for non-individual borrowers for similar non-compliance",
+        "351(3) policy on penal charges must be approved by the Board or delegated committee",
+        "351(1)(vii) fees and penal charges recovered must be disclosed in 'Schedule 14: Other Income'",
+        "351(1) interest on unpaid EMI may be charged at the contracted rate until remediation, not the penal rate",
+        "351(1)(iii)/Note (iii) no fresh penal charges on the earlier outstanding penal charges (rule covers only that no penalty applies to unpaid penal charges, not explicitly that fresh charges on earlier penal charges are barred generally)",
+        "351(4) quantum must be reasonable, commensurate with the non-compliance, non-discriminatory within the product category, and not used as a revenue tool",
+        "351(5) penal charges on individual borrowers for non-business purposes must not exceed those for non-individual borrowers for similar non-compliance",
+        "351(1) Note (vi) in NPA accounts, uncollected penal charges must be reversed for income recognition purposes",
+        "351(1) Note (iv) GST on penal charges must follow CBIC instructions",
+        "351(2) no additional component may be added to the rate of interest, in letter and spirit",
+        "351(1) interest on unpaid EMI may be charged only at the contracted rate until remediation, not the penal rate",
+        "351 Note (iv) GST on penal charges must follow CBIC instructions",
+        "351(1)(vi) penal charges on NPA accounts must be reversed to the extent uncollected and not recognised as income",
+        "351(1)(vii) penal charges recovered must be disclosed in 'Schedule 14: Other Income'",
+        "351(2) no additional component may be added to the rate of interest",
+        "351(3) a Board- or committee-approved policy on penal charges is required",
+        "351(4) penal charges must be reasonable, commensurate, non-discriminatory within a product category, and uniform irrespective of borrower constitution",
+        "351(4) Note (ii) penal charges must not be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(6) website disclosure must be under 'Interest rates and Service Charges'"
+      ],
+      "DB-LAP-018": [
+        "348(2) validity of one working day for loans with tenor under seven days (the rule states only the 3-working-day period)",
+        "348(3) APR must include all charges levied by the bank",
+        "348(4) third-party charges recovered by the bank must form part of the APR and be disclosed separately",
+        "348(4) receipts and related documents must be provided to the borrower for each payment within a reasonable time",
+        "348(2) the one-working-day validity period for loans with tenor under seven days",
+        "348(4) receipts and related documents must be given to the borrower for each such payment within a reasonable time",
+        "348(3) KFS must include a computation sheet of APR and the amortisation schedule over the loan tenor (the rule mentions APR and the schedule but not the computation sheet)",
+        "348(4) third-party charges recovered by the bank on actual basis must form part of the APR",
+        "348(4) receipts and related documents must be provided to the borrower for each third-party payment within a reasonable time"
+      ],
+      "DB-LAP-020": [
+        "358: reasons must be communicated for delay in filing the charge satisfaction form, not only for delay in returning documents",
+        "358: communicate reasons for failing to file the charge satisfaction form with the relevant registry beyond 30 days (bank rule only covers reasons for documents not being returned)"
+      ]
+    },
+    "fixtures_caught": "5/5",
+    "total_cost_usd": 0.01707
+  },
+  "rows": [
+    {
+      "kind": "policy",
+      "id": "DB-LAP-001",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "CF para 36",
+      "reason": "The bank rule forbids using LAP 'for purchase of gold in any form', which is consistent with RBI's bar on loans 'For purchase of gold in any form including primary gold, ornaments, jewellery, or coins', so it is more restrictive, not looser.",
+      "omissions": [
+        "36(1) no loan for purchase of financial assets backed by gold, e.g., gold ETFs or gold-backed mutual fund units",
+        "36(2) no advance or loan against primary gold or silver, or against financial assets backed by primary gold or silver",
+        "36 proviso: gold or silver working-capital finance, if offered, must be need-based, for borrowers using gold or silver as a raw material or input, with the gold or silver acceptable as security, and the bank must ensure no gold acquired or held for investment or speculation",
+        "36(2) no advance against primary gold or silver or financial assets backed by primary gold or silver",
+        "36(2) no advance or loan against primary gold or silver, or against financial assets backed by primary gold or silver, which the LAP rule does not mention"
+      ],
+      "trace": [
+        [
+          "36",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001558,
+      "latency_ms": 14147,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-LAP-011",
+      "declared": "stricter",
+      "verdict": "looser",
+      "rbi_para": "349(3)(i)",
+      "reason": "RBI requires that 'The borrower shall also be given the choice to opt for (i) enhancement in EMI or elongation of tenor or for a combination of both options', but the bank rule limits the elongation choice to 'a longer tenure within DB-LAP-009', a restriction RBI does not impose.",
+      "omissions": [
+        "349(2) the borrower choice to switch to a fixed rate at reset, if the bank offers it, must follow the Board-approved policy, which may limit the number of switches",
+        "349(3) prepayment charges must be levied only as subject to extant instructions",
+        "349(4) switching charges and any other service charges or administrative costs must be disclosed in the sanction letter, on revision, and displayed on the bank's website as approved by the Board or delegated committee",
+        "349(6) the quarterly statement must be simple and easily understood by the borrower",
+        "349 preamble the bank must have an appropriate policy framework for implementation and compliance",
+        "349(4) all switching, service and administrative charges must be transparently disclosed in the sanction letter and on revision, approved by the Board or delegated committee, and displayed on the website",
+        "349(3)(ii) prepayment charges are subject to extant RBI instructions",
+        "349(6) quarterly statement must be simple and easily understood by the borrower",
+        "349(2) option to switch to a fixed rate at reset, under a Board-approved policy that may limit the number of switches",
+        "349 Note(ii) for class-wide resets, the option to switch to a fixed rate for the remaining loan where offered",
+        "349 Note(i) for class-wide resets, the option to keep EMI unchanged while elongating the number of EMIs",
+        "349(2) option to switch to a fixed rate at reset, per Board-approved policy, and any limit on number of switches (if the bank offers it, Note (ii) applies)",
+        "349(4) disclosure of switching and other service charges in the sanction letter and on the website, and disclosure on revision",
+        "349(3) levy of prepayment charges is subject to extant RBI instructions",
+        "349(6) APR must be stated for the entire tenor of the loan",
+        "349(6) quarterly statements must be simple and easily understood by the borrower"
+      ],
+      "trace": [
+        [
+          "349",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.002471,
+      "latency_ms": 19684,
+      "votes": {
+        "complies": 1,
+        "looser": 2
+      },
+      "stable": false,
+      "outcome": "FLAG"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-LAP-012",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "327",
+      "reason": "The bank rule lists all fees and charges in the application form and Key Facts Statement, which meets RBI's requirement that charges for processing be \"invariably disclosed in the loan application forms\"; it does not permit anything RBI forbids.",
+      "omissions": [
+        "327 fee amount refundable if loan is not sanctioned or disbursed must be disclosed",
+        "327 pre-payment options and charges must be disclosed",
+        "327 penalty for delayed repayments must be disclosed",
+        "327 conversion charges for switching between fixed and floating rates must be disclosed",
+        "327 existence of any interest reset clause must be disclosed",
+        "327 any other matter affecting the borrower's interest must be disclosed",
+        "327 all information must also be displayed on the bank's website for all loan products",
+        "327 'all-in-cost' must be disclosed so the customer can compare rates and charges",
+        "327 charges/fees must be non-discriminatory",
+        "327 loan application forms must be comprehensive for all categories of loans regardless of amount",
+        "327 amount of processing fee refundable if loan is not sanctioned or disbursed not stated",
+        "327 pre-payment options and charges not stated",
+        "327 penalty for delayed repayments not stated",
+        "327 conversion charges for switching between fixed and floating rates not stated",
+        "327 existence of any interest reset clause not stated",
+        "327 disclosure of any other matter affecting the borrower's interest not stated",
+        "327 all-in-cost to the customer to enable comparison not stated",
+        "327 information to be displayed on the bank's website for all loan products not stated",
+        "327 application forms must be comprehensive for all loan categories irrespective of amount not stated",
+        "327 charges/fees must be non-discriminatory not stated",
+        "327 amount of fees refundable if loan is not sanctioned or disbursed must be disclosed",
+        "327 all-in-cost must be informed to the customer to enable comparison",
+        "327 fee and charge information must be displayed on the bank's website for all loan products",
+        "327 loan application forms must be comprehensive for all loan categories regardless of amount"
+      ],
+      "trace": [
+        [
+          "327",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001266,
+      "latency_ms": 8946,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-LAP-013",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "353(1), 353(2), 353(3), 353(8), 353(9)",
+      "reason": "The bank rule waives prepayment charges on all floating-rate loans to individuals for personal or business purposes, irrespective of source of funds and with no lock-in, which matches 353(1) to 353(3), and RBI requires that such inapplicability be disclosed in the sanction letter, loan agreement and KFS, as the bank states.",
+      "omissions": [
+        "353(7) no charges where prepayment is effected at the instance of the bank",
+        "353(8) no pre-payment charges that were not disclosed as specified may be charged by the bank",
+        "353(4) dual/special rate loans: applicability depends on whether the loan is floating at the time of prepayment",
+        "353 applies only to loans sanctioned or renewed on or after January 01, 2026",
+        "353(1)/(2) cover loans with or without co-obligant(s)",
+        "353(4) dual/special rate loans: applicability depends on whether the loan is floating at the time of pre-payment",
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(2) also covers floating business loans to MSEs"
+      ],
+      "trace": [
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001588,
+      "latency_ms": 12113,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-LAP-014",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "351(1) Note (ii), 351(1) Note (iii), 351(6), 351(7)",
+      "reason": "The rule levies penal charges on the overdue EMI only, states they are 'not an addition to the interest rate, and no interest is charged on it', and bars penal charges on unpaid penal charges, which matches the RBI requirement that default penalties be 'levied only in the form of penal charges and not penal interest' with 'no capitalization of the penal charges' and no fresh charges 'on the earlie",
+      "omissions": [
+        "351(1) interest on unpaid EMI may be charged at the contracted rate, not the penal rate, till remediation",
+        "351(1)(iv) GST on penal charges to follow CBIC instructions",
+        "351(1)(vi) penal charges on NPA accounts to be reversed to the extent uncollected",
+        "351(1)(vii) penal charges to be disclosed in 'Schedule 14: Other Income'",
+        "351(3) penal charge policy to be approved by Board or delegated committee",
+        "351(4) penal charges to be reasonable, commensurate with non-compliance, and non-discriminatory within a product category",
+        "351(4)(i) penal charge structure uniform irrespective of borrower constitution",
+        "351(4)(ii) penal charges not to be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers not higher than for non-individual borrowers for similar non-compliance",
+        "351(3) policy on penal charges must be approved by the Board or delegated committee",
+        "351(1)(vii) fees and penal charges recovered must be disclosed in 'Schedule 14: Other Income'",
+        "351(1) interest on unpaid EMI may be charged at the contracted rate until remediation, not the penal rate",
+        "351(1)(iii)/Note (iii) no fresh penal charges on the earlier outstanding penal charges (rule covers only that no penalty applies to unpaid penal charges, not explicitly that fresh charges on earlier penal charges are barred generally)",
+        "351(4) quantum must be reasonable, commensurate with the non-compliance, non-discriminatory within the product category, and not used as a revenue tool",
+        "351(5) penal charges on individual borrowers for non-business purposes must not exceed those for non-individual borrowers for similar non-compliance",
+        "351(1) Note (vi) in NPA accounts, uncollected penal charges must be reversed for income recognition purposes",
+        "351(1) Note (iv) GST on penal charges must follow CBIC instructions",
+        "351(2) no additional component may be added to the rate of interest, in letter and spirit",
+        "351(1) interest on unpaid EMI may be charged only at the contracted rate until remediation, not the penal rate",
+        "351 Note (iv) GST on penal charges must follow CBIC instructions",
+        "351(1)(vi) penal charges on NPA accounts must be reversed to the extent uncollected and not recognised as income",
+        "351(1)(vii) penal charges recovered must be disclosed in 'Schedule 14: Other Income'",
+        "351(2) no additional component may be added to the rate of interest",
+        "351(3) a Board- or committee-approved policy on penal charges is required",
+        "351(4) penal charges must be reasonable, commensurate, non-discriminatory within a product category, and uniform irrespective of borrower constitution",
+        "351(4) Note (ii) penal charges must not be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(6) website disclosure must be under 'Interest rates and Service Charges'"
+      ],
+      "trace": [
+        [
+          "351",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.002063,
+      "latency_ms": 13348,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-LAP-018",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "348(1)-(6)",
+      "reason": "The bank rule matches RBI's core protections: it provides the KFS in RBI's standard format in a language the borrower understands, obtains acknowledgement, keeps the offer valid for at least 3 working days, and bars charges missing from the KFS without explicit consent. Where it is silent, RBI still applies.",
+      "omissions": [
+        "348(2) validity of one working day for loans with tenor under seven days (the rule states only the 3-working-day period)",
+        "348(3) APR must include all charges levied by the bank",
+        "348(4) third-party charges recovered by the bank must form part of the APR and be disclosed separately",
+        "348(4) receipts and related documents must be provided to the borrower for each payment within a reasonable time",
+        "348(2) the one-working-day validity period for loans with tenor under seven days",
+        "348(4) receipts and related documents must be given to the borrower for each such payment within a reasonable time",
+        "348(3) KFS must include a computation sheet of APR and the amortisation schedule over the loan tenor (the rule mentions APR and the schedule but not the computation sheet)",
+        "348(4) third-party charges recovered by the bank on actual basis must form part of the APR",
+        "348(4) receipts and related documents must be provided to the borrower for each third-party payment within a reasonable time"
+      ],
+      "trace": [
+        [
+          "348",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.002091,
+      "latency_ms": 12652,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "policy",
+      "id": "DB-LAP-020",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "354, 355, 358, 359",
+      "reason": "The bank rule sets a stricter 15-working-day return deadline than RBI's 30 days, gives the borrower a choice of collection office as RBI requires, and matches the 358 compensation and 359 loss-procedure terms.",
+      "omissions": [
+        "358: reasons must be communicated for delay in filing the charge satisfaction form, not only for delay in returning documents",
+        "358: communicate reasons for failing to file the charge satisfaction form with the relevant registry beyond 30 days (bank rule only covers reasons for documents not being returned)"
+      ],
+      "trace": [
+        [
+          "354",
+          "found"
+        ],
+        [
+          "355",
+          "found"
+        ],
+        [
+          "358",
+          "found"
+        ],
+        [
+          "359",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001229,
+      "latency_ms": 9702,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-001",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "111",
+      "reason": "For individual housing loans above ₹30 lakh and up to ₹75 lakh, RBI requires \"≤ 80\" LTV, but the bank rule permits a ₹50 lakh loan \"up to 85% of property cost,\" which exceeds that cap.",
+      "omissions": [
+        "111 risk weight of 35% for individual housing loans above ₹30 lakh up to ₹75 lakh (LTV ≤80%)",
+        "111 pre-June 06, 2017 proviso: for loans sanctioned until that date in this band, LTV must be ≤75% (35% RW) or >75% and ≤80% (50% RW)",
+        "111 for loans above ₹30 lakh up to ₹75 lakh, the LTV must be ≤80% and the risk weight is 35%",
+        "111 the transitional LTV and risk weight table applies to loans sanctioned till June 06, 2017",
+        "111 the bank must abide by the LTV and risk weight limits when deciding the quantum of housing loan"
+      ],
+      "trace": [
+        [
+          "111",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.00099,
+      "latency_ms": 7629,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-002",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "353(1)",
+      "reason": "Para 353(1) says that for all floating rate loans granted for purposes other than business to individuals, 'a bank shall not levy pre-payment charges', whereas the bank rule imposes a 2% foreclosure charge on a floating-rate home loan closed within 3 years.",
+      "omissions": [
+        "353(3) pre-payment charges barred irrespective of the source of funds used for pre-payment, in part or in full, and without any minimum lock-in period",
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(8) applicability of pre-payment charges (here none) must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable",
+        "353(9) no charges waived earlier may be levied retrospectively at pre-payment",
+        "353 applies to loans sanctioned or renewed on or after January 01, 2026",
+        "353(3) charges barred irrespective of source of funds used for pre-payment, in part or in full, and without any minimum lock-in period",
+        "353(8) applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement (and KFS where applicable)",
+        "353(9) no charges may be levied retrospectively on pre-payment of loans for which charges were earlier waived",
+        "353 applies only to loans sanctioned or renewed on or after January 01, 2026",
+        "353(3) the no-charge rule applies irrespective of the source of funds used for pre-payment and to part or full pre-payment",
+        "353(3) no minimum lock-in period may apply to pre-payment",
+        "353(8) applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable",
+        "353(9) no retrospective charges that the bank had earlier waived"
+      ],
+      "trace": [
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001196,
+      "latency_ms": 8058,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-003",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "113",
+      "reason": "RBI says bank 'shall not include stamp duty, registration and other documentation charges in the cost of the housing property' and permits addition only where cost does not exceed ₹10 lakh, whereas the bank rule adds them on all loans.",
+      "omissions": [
+        "113 stamp duty and registration charges may be added to cost for LTV only where cost of house/dwelling unit does not exceed ₹10 lakh",
+        "113 stamp duty, registration and other documentation charges may be added to cost for LTV only where the dwelling cost does not exceed ₹10 lakh",
+        "113 bank must not include stamp duty and registration charges in housing property cost, so that LTV norms are not diluted",
+        "113 stamp duty and registration charges may be added to cost for LTV only where the dwelling cost does not exceed ₹10 lakh",
+        "113 the general rule is that stamp duty, registration and documentation charges must not be included in property cost, so LTV norms are not diluted"
+      ],
+      "trace": [
+        [
+          "113",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000706,
+      "latency_ms": 5721,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-004",
+      "declared": "possible_conflict",
+      "verdict": "looser",
+      "rbi_para": "349(3)",
+      "reason": "RBI says \"The borrower shall also be given the choice to opt for (i) enhancement in EMI or elongation of tenor or for a combination of both options,\" but the bank rule gives the choice to the bank (\"the bank has the option to increase the EMI, extend the tenure, or both\").",
+      "omissions": [
+        "349(1) at sanction, borrower must be told of the possible impact of benchmark rate changes on EMI and/or tenor",
+        "349(1) any later increase in EMI/tenor must be communicated to the borrower immediately through appropriate channels",
+        "349(2) at reset, borrower may be offered a switch to a fixed rate under the bank's Board-approved policy, where the bank chooses to offer it",
+        "349(3)(ii) borrower must be allowed to prepay in part or in full at any point during the tenor, subject to extant prepayment-charge instructions",
+        "349(3) Note: on a class-wide reset due to benchmark increase, borrower must get EMI enhancement or tenor elongation (or both, with EMI unchanged), the fixed-rate switch where offered, and prepayment at any point in the residual tenor",
+        "349(4) switching charges and incidental service/administrative costs must be disclosed in the sanction letter and on revision, and displayed on the bank's website",
+        "349(5) tenor elongation on floating-rate loans must not result in negative amortisation",
+        "349(1) communicate at sanction the possible impact of benchmark rate changes on EMI and/or tenor, and immediately communicate any resulting EMI/tenor increase",
+        "349(2) at reset, offer the borrower a choice to switch to a fixed rate where the bank provides that option, under the Board-approved policy",
+        "349(3)(ii) borrower may prepay in part or in full at any point during the loan tenor, subject to extant prepayment-charge instructions",
+        "349(3) Note: on a class-wide reset due to benchmark increase, offer options to switch to fixed rate for the remaining loan and prepay in part or full during residual tenor",
+        "349(4) disclose switching and incidental charges in the sanction letter and on any revision, as approved by the Board or delegated committee and displayed on the website",
+        "349(5) elongation of tenor on floating rate loans must not result in negative amortisation",
+        "349(6) quarterly statement showing principal and interest recovered, EMI amount, EMIs left, and annualised rate/APR, in simple terms",
+        "349(1) at sanction, communicate to the borrower the possible impact of benchmark rate changes on EMI and/or tenor, and immediately communicate any later EMI/tenor increase",
+        "349(2) at rate reset, offer the borrower a choice to switch to a fixed rate, subject to the Board-approved policy",
+        "349(3) note: on a class-wide reset due to benchmark increase, borrower must be offered EMI enhancement or tenor elongation (or both, keeping EMI unchanged), fixed-rate switch where available, and prepayment during residual tenor",
+        "349(4) charges for floating-to-fixed switching and other incidental costs must be disclosed in the sanction letter and on revision, approved by the Board or delegated committee, and displayed on the bank's website",
+        "349(6) quarterly statement to borrower showing principal and interest recovered, EMI amount, EMIs left, and annualised rate/APR, presented simply"
+      ],
+      "trace": [
+        [
+          "349",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001512,
+      "latency_ms": 10511,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-005",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "354",
+      "reason": "The bank rule sets a 45-day return period, while RBI requires release of original documents and removal of registry charges \"within a period of 30 days after full repayment / settlement of the loan account.\"",
+      "omissions": [
+        "354 removal of charges registered with any registry within 30 days after full repayment / settlement",
+        "354 release of all original movable / immovable property documents (not only title deeds) within 30 days",
+        "354 bank must remove charges registered with any registry within 30 days of full repayment/settlement",
+        "354 bank must release all original movable/immovable property documents within 30 days of full repayment/settlement",
+        "354 removal of charges registered with any registry within 30 days (bank rule covers only title deeds)",
+        "354 release of all original movable / immovable property documents, not only title deeds"
+      ],
+      "trace": [
+        [
+          "354",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000396,
+      "latency_ms": 3431,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    }
+  ]
+}

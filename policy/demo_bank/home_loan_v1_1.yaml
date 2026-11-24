@@ -239,7 +239,7 @@ rules:
     design_basis: [synthetic]
     review: ok
     review_note: "v1.1: new - I02 (combined vs separate LTV for composite loans). Reviewed 24 Nov 2026: kept, incl. plot-part cap"
-
+    conflict_override: {reason: "Votes split complies/unclear across runs; RBI LTV (CF 111) is applied to the total cost and the plot-part cap only adds a limit", approved_by: null, date: 2026-11-24}
   - rule_id: DB-HL-012
     section: amount_ltv
     title: Maximum tenure
@@ -278,26 +278,29 @@ rules:
     title: Interest reset and borrower options
     rule: >-
       The rate resets on the first day of each calendar quarter, using the repo rate in
-      force on the last day of the previous quarter. At sanction the borrower is told how
-      a benchmark change can affect the EMI or tenure. At each upward reset the borrower
-      may choose a higher EMI, a longer tenure (within DB-HL-012) or a combination. The
-      borrower may also prepay in part or in full at any time during the loan, not only at
-      a reset, with no charge (DB-HL-017). A tenure extension may not cause negative amortisation. Any
-      increase in EMI or tenure is communicated to the borrower immediately by SMS and
-      email. Every quarter the borrower receives a statement showing principal and
-      interest recovered to date, the EMI, the number of EMIs left and the annualised
-      rate (APR). Demo Bank does not offer a switch to a fixed rate. Choosing a higher
-      EMI, a longer tenure or prepayment carries no charge; any service charge or
-      administrative cost for exercising these options is disclosed in the sanction letter
-      and again whenever it is revised, and is published on Demo Bank's website.
+      force on the last day of the previous quarter. At sanction the borrower is told
+      how a benchmark change can affect the EMI or tenure. At each upward reset the
+      borrower may choose a higher EMI, a longer tenure (within DB-HL-012) or a
+      combination. If the longest tenure allowed within the maximum tenure and age limit
+      does not absorb the increase, the borrower may choose a higher EMI or a
+      combination; a higher EMI is always available. The borrower may also prepay in
+      part or in full at any time during the loan, not only at a reset, with no charge
+      (DB-HL-017). A tenure extension may not cause negative amortisation. Any increase
+      in EMI or tenure is communicated to the borrower immediately by SMS and email.
+      Every quarter the borrower receives a statement showing principal and interest
+      recovered to date, the EMI, the number of EMIs left and the annualised rate (APR).
+      Demo Bank does not offer a switch to a fixed rate. Choosing a higher EMI, a longer
+      tenure or prepayment carries no charge; any service charge or administrative cost
+      for exercising these options is disclosed in the sanction letter and again
+      whenever it is revised, and is published on Demo Bank's website.
     params: {reset_frequency: quarterly, increase_notice: immediate, statement_frequency: quarterly, fixed_rate_switch: false}
-    rbi_ref: {direction: RBC, para: "349"}
+    rbi_ref: {direction: RBC, para: "349", note: "Tenure extension capped by DB-HL-012 and DB-HL-004 (349 sets no cap beyond no negative amortisation, 349(5)); a higher EMI is always available. Fixed-rate switch is optional for the bank (349(2)): not offered"}
     bank_discretion: false
     vs_rbi: equal
     design_basis: [ICICI-S5, SBI-S18]
     review: ok
-    review_note: "Changed after conflict-v1 flag: added immediate notice of EMI/tenure increase and quarterly statement (RBC 349); conflict-v2: added disclosure of option charges (RBC 349(4)); conflict-v3: prepayment at any time, not only at reset (RBC 349(3)(ii))"
-
+    review_note: "Changed after conflict-v1 flag: added immediate notice of EMI/tenure increase and quarterly statement (RBC 349); conflict-v2: added disclosure of option charges (RBC 349(4)); conflict-v3: prepayment at any time, not only at reset (RBC 349(3)(ii)). v1.1 (24 Nov 2026, approved by Anurag): fallback to higher EMI added when the tenure cap binds, after the LAP conflict check flagged the same cap"
+    conflict_override: {reason: "Tenure extension capped by max tenure and age limit is a credit decision; RBC 349 sets no cap beyond 349(5) but does not forbid one; a higher EMI is always available. Check is unstable on this wording (3/3 complies on 24 Nov 2026 22:28, 2/3 looser at 23:52); same cap passes on DB-LAP-011", approved_by: null, date: 2026-11-24}
   # ---------------- CHARGES ----------------
   - rule_id: DB-HL-015
     section: charges

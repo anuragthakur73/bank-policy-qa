@@ -199,20 +199,23 @@ def main(argv):
     if "--from-report" in argv:
         saved = json.loads(pathlib.Path(argv[argv.index("--from-report") + 1]).read_text(encoding="utf-8"))
         paths = [saved["old"], saved["new"]]
-        items = [Item(rule_id=c["rule_id"], direction=c["direction"], what_changed=c["what_changed"],
-                      staff_action=c["staff_action"]) for c in saved["changes"]]
+        src = lambda c, k: c.get("model", c)[k]          # older reports stored only the final (corrected) text
+        items = [Item(rule_id=c["rule_id"], direction=src(c, "direction"), what_changed=src(c, "what_changed"),
+                      staff_action=src(c, "staff_action")) for c in saved["changes"]]
         meta = {**saved["meta"], "rendered_from": argv[argv.index("--from-report") + 1]}
         meta.pop("review", None)
         assert [c["rule_id"] for c in changes] == [i.rule_id for i in items], "policy files changed since that run"
     else:
         items, meta = explain(changes) if use_llm and changes else (fallback(changes), {"fallback": True})
+    model_items = items
     items, meta["review"] = apply_review(changes, items, pathlib.Path(f"docs/circulars/{name}.review.yaml"))
     md = render(old, new, changes, items, meta)
     pathlib.Path("docs/circulars").mkdir(parents=True, exist_ok=True)
     pathlib.Path(f"docs/circulars/{name}.md").write_text(md, encoding="utf-8")
     report = {"old": paths[0], "new": paths[1], "meta": meta,
               "changes": [{"rule_id": c["rule_id"], "change": c["change"], "fields": c["fields"],
-                           **by_item(items, c["rule_id"])} for c in changes]}
+                           **by_item(items, c["rule_id"]), "model": by_item(model_items, c["rule_id"])}
+                          for c in changes]}
     pathlib.Path(f"eval/reports/{datetime.datetime.now():%Y-%m-%d_%H%M}_diff_{name}.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
     print(md.split("## Annex")[0]); print("meta:", json.dumps(meta, default=str)); print(f"written: docs/circulars/{name}.md")

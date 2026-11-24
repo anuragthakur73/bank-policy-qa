@@ -120,3 +120,20 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Interview takeaway: automatic checks catch invented figures and missing rules, not the direction of a change;
   a maker-checker step is part of the design, not a workaround.
 - Tests: 30 (6 for the diff, incl. corrections being checked like model output).
+
+## Week 3 · Session 4: loan against property (LAP), product 2 (24 Nov 2026)
+- Study: docs/studies/lap_sbi_icici.md (SBI and ICICI own pages only; 6 pages in data/sources.yaml). RBI sets no LTV
+  ceiling for LAP; binding points are CF 36 (no loans to buy gold) and RBC 327/348/349/351/353/354-359.
+- policy/demo_bank/lap_v1.yaml: 20 rules DB-LAP-001..020, reviewed by Anurag ("all ok"). Key choices: LTV residential
+  65% / 60% (> Rs 1 cr), commercial 55%; score 720, no new-to-credit; personal or own-business use; rent at 75% with
+  registered lease; repo + 3.40-3.90%; no plots/industrial/under-construction; 3-15 year term loan, no overdraft.
+- Conflict check LAP: first run flagged DB-LAP-011 (tenure cap in reset options, RBC 349). Decision (Anurag): keep the
+  cap, state the higher-EMI fallback and "no fixed-rate switch" (optional under 349(2)), label equal; same fallback
+  added to DB-HL-014. Re-run: LAP 7/7 pass, fixtures 5/5.
+- Home-loan v1.1 re-run then flagged DB-HL-014 (2/3 looser) on the same cap it passed 3/3 an hour earlier, and DB-HL-032
+  review (2/3 unclear). The check is unstable on this judgment, so added `conflict_override` (reason, approver, date):
+  a recorded human sign-off turns FLAG/review into "overridden", keeps the model's votes, and is listed in the summary.
+- Index: 54 rules (34 home loan + 20 LAP). Spot checks: LAP 3/3, home loan 5/5. Side effect: a home-loan answer also
+  cited a LAP rule -> product filter for policy retrieval in Week 4.
+- Circular regenerated for 12 changes (DB-HL-014 added); diff report now keeps Claude's own text next to corrections.
+- Tests: 37.

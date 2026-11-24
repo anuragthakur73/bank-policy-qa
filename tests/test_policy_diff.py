@@ -7,7 +7,8 @@ CH = diff(OLD, NEW)
 def test_exactly_the_v1_1_changes():
     got = {(c["rule_id"], c["change"]) for c in CH}
     added = {"DB-HL-032", "DB-HL-033", "DB-HL-034"}
-    changed = {"DB-HL-001", "DB-HL-002", "DB-HL-003", "DB-HL-004", "DB-HL-017", "DB-HL-018", "DB-HL-025", "DB-HL-028"}
+    changed = {"DB-HL-001", "DB-HL-002", "DB-HL-003", "DB-HL-004", "DB-HL-014", "DB-HL-017", "DB-HL-018",
+               "DB-HL-025", "DB-HL-028"}   # 014 added 24 Nov (tenure-cap fallback, Session 4)
     assert got == {(r, "added") for r in added} | {(r, "changed") for r in changed}
 
 def test_review_fields_are_not_changes():

@@ -23,3 +23,12 @@ def test_omissions_parsed_and_cleaned():
     v = parse_verdict('{"verdict": "complies", "rbi_para": "349", "reason": "x", "omissions": ["349(6) simple statement", " ", 7]}')
     assert v["verdict"] == "complies" and v["omissions"] == ["349(6) simple statement", "7"]
     assert parse_verdict('{"verdict": "complies", "omissions": "not a list"}')["omissions"] == []
+
+
+def test_override_needs_approver_and_only_softens_flag_or_review():
+    from app.conflict import apply_override
+    ok = {"conflict_override": {"reason": "tenure cap is a credit decision", "approved_by": "Anurag", "date": "2026-11-24"}}
+    assert apply_override(ok, "FLAG")[0] == "overridden" and apply_override(ok, "review")[0] == "overridden"
+    assert apply_override(ok, "pass") == ("pass", None)
+    assert apply_override({"conflict_override": {"reason": "x", "approved_by": None}}, "FLAG")[0] == "FLAG"
+    assert apply_override({}, "FLAG")[0] == "FLAG"

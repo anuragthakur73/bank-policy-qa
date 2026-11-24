@@ -1,0 +1,155 @@
+{
+  "old": "policy/demo_bank/home_loan_v1.yaml",
+  "new": "policy/demo_bank/home_loan_v1_1.yaml",
+  "meta": {
+    "model": "claude-haiku-5-5",
+    "prompt_version": "diff-v2",
+    "attempts": 1,
+    "problems": [
+      []
+    ],
+    "tokens_in": 5199,
+    "tokens_out": 1888,
+    "cost_usd": 0.001464,
+    "review": {
+      "reviewed_by": null,
+      "reviewed_on": "2026-11-24",
+      "edited": [
+        "DB-HL-001",
+        "DB-HL-003",
+        "DB-HL-004"
+      ],
+      "reasons": {
+        "DB-HL-001": "Two new conditions on repair/extension finance (overall ceiling, certified estimate); model labelled it relaxed",
+        "DB-HL-003": "v1.0 already admitted only individuals; v1.1 names the excluded entities",
+        "DB-HL-004": "Model text omitted the effect that matters to staff (age 70 instead of 65 for NPS subscribers)"
+      }
+    }
+  },
+  "changes": [
+    {
+      "rule_id": "DB-HL-001",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "tightened",
+      "what_changed": "Finance for extension, repair or renovation of a house already financed by Demo Bank is now subject to staying within the overall loan ceiling for that house and requires a cost estimate certified by an engineer or architect.",
+      "staff_action": "For renovation or extension of a house already financed by Demo Bank, check the overall loan ceiling for that house and obtain an engineer's or architect's certified cost estimate before sanction."
+    },
+    {
+      "rule_id": "DB-HL-002",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "vs_rbi"
+      ],
+      "direction": "relaxed",
+      "what_changed": "Property in an unauthorised colony is now financed if the colony has been regularised and the development and other charges have been paid.",
+      "staff_action": "For property in an unauthorised colony, verify that the colony is regularised and that development and other charges are paid before considering the loan; otherwise do not finance it."
+    },
+    {
+      "rule_id": "DB-HL-003",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "clarified",
+      "what_changed": "Only individuals may apply; partnership firms, LLPs, companies, trusts, societies and HUFs cannot be applicants or co-applicants, including on a takeover, and a partner or director may apply only in their individual capacity.",
+      "staff_action": "Reject applications and co-applications from firms, LLPs, companies, trusts, societies and HUFs, including takeover cases, and accept partners or directors only as individuals."
+    },
+    {
+      "rule_id": "DB-HL-004",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "relaxed",
+      "what_changed": "Every NPS subscriber, government or private sector, now counts as pension-earning and may repay up to age 70 instead of 65; so do applicants already receiving a pension or annuity and defined-benefit employees. Proof: pension payment order, or employer certificate naming the scheme, plus the PRAN statement for NPS.",
+      "staff_action": "Classify applicants as pension-earning under the new definition, including NPS subscribers, and obtain a pension payment order or employer certificate naming the scheme, with the PRAN statement for NPS, as proof."
+    },
+    {
+      "rule_id": "DB-HL-032",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "For a composite loan, the LTV limit is applied to the combined cost of plot price plus valuer-estimated construction cost, with the plot part capped at the same LTV percentage of the plot price and disbursed first, and construction disbursed in stages.",
+      "staff_action": "For composite loans, compute the LTV on plot price plus valuer's construction estimate, cap the plot portion at the same LTV percentage of plot price, and schedule construction disbursements against progress."
+    },
+    {
+      "rule_id": "DB-HL-014",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "rbi_ref"
+      ],
+      "direction": "relaxed",
+      "what_changed": "If the longest tenure allowed within the maximum tenure and age limit cannot absorb an upward rate reset, the borrower may choose a higher EMI or a combination, and a higher EMI is always available.",
+      "staff_action": "When a rate increase cannot be absorbed by tenure, offer the borrower a higher EMI or a combination of higher EMI and tenure."
+    },
+    {
+      "rule_id": "DB-HL-017",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The no-prepayment-charge position must be stated in the sanction letter, loan agreement and Key Facts Statement, and any charge waived earlier is never levied later.",
+      "staff_action": "State the no prepayment or foreclosure charge in the sanction letter, loan agreement and Key Facts Statement, and never levy a charge previously waived."
+    },
+    {
+      "rule_id": "DB-HL-018",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The penal charge must also be published on Demo Bank's website, each levy must be notified to the borrower with amount and reason, and no penal charge is levied on unpaid penal charges.",
+      "staff_action": "Tell the borrower the amount and reason each time a penal charge is levied, and do not levy penal charges on unpaid penal charges."
+    },
+    {
+      "rule_id": "DB-HL-033",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "Purchase of one floor of a residential building is financed only if the floor has its own registered title with undivided land share, is covered by the sanctioned plan and built per plan, and has independent access; LTV applies to that floor's value alone.",
+      "staff_action": "For a floor purchase, verify separate registered title with undivided land share, sanctioned plan coverage and independent access, and value the LTV on that floor alone; do not finance a floor without separate title."
+    },
+    {
+      "rule_id": "DB-HL-034",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "A borrower who already owns a house may get a loan for a second self-occupied house on the same land; if the land is mortgaged to Demo Bank it is sanctioned as additional finance within the combined LTV, and if mortgaged to another lender Demo Bank lends only after taking over that loan.",
+      "staff_action": "For a second house on land already owned by the borrower, route additional finance on Demo Bank-mortgaged land through combined LTV, take over any loan on land held by another lender, and count both EMIs in repayment capacity."
+    },
+    {
+      "rule_id": "DB-HL-025",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The KFS follows RBI's standard format, is attached to the loan agreement as a summary box, and if the borrower accepts within the validity period Demo Bank is bound by its terms.",
+      "staff_action": "Use RBI's standard KFS format, attach it to the loan agreement as a summary box, and honour its terms if the borrower accepts within the validity period."
+    },
+    {
+      "rule_id": "DB-HL-028",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "tightened",
+      "what_changed": "The release within 15 working days of full repayment now includes filing the satisfaction of charge with every registry where it was registered, such as CERSAI.",
+      "staff_action": "After full repayment, file the satisfaction of charge with every registry where the charge was registered, such as CERSAI, within the 15 working day window."
+    }
+  ]
+}

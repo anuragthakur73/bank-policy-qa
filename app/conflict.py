@@ -70,6 +70,15 @@ def check(rule_text: str, rbi_ref: dict) -> dict:
 def outcome(verdict: str) -> str:
     return {"complies": "pass", "looser": "FLAG"}.get(verdict, "review" if verdict == "unclear" else verdict)
 
+def apply_override(rule: dict, out: str) -> tuple[str, dict | None]:
+    """A recorded human compliance sign-off (rule field `conflict_override`: reason, approved_by, date) turns a
+    FLAG or review into "overridden". It never hides the model's verdict or votes, and every override is listed in
+    the summary. An override without approved_by does not count."""
+    ov = rule.get("conflict_override") or {}
+    if out in ("FLAG", "review") and ov.get("approved_by") and ov.get("reason"):
+        return "overridden", ov
+    return out, None
+
 def check_n(rule_text: str, rbi_ref: dict, runs: int) -> dict:
     """Majority verdict over N runs; ties or split votes are reported, never hidden."""
     res = [check(rule_text, rbi_ref) for _ in range(runs)]
@@ -99,7 +108,8 @@ if __name__ == "__main__":
         if r["bank_discretion"] or not r.get("rbi_ref"):
             continue
         res = check_n(r["rule"], r["rbi_ref"], runs)
-        rows.append({"kind": "policy", "id": r["rule_id"], "declared": r["vs_rbi"], **res, "outcome": outcome(res["verdict"])})
+        out, ov = apply_override(r, outcome(res["verdict"]))
+        rows.append({"kind": "policy", "id": r["rule_id"], "declared": r["vs_rbi"], **res, "outcome": out, "override": ov})
     for f in fix["fixtures"]:
         res = check_n(f["rule"], f["rbi_ref"], runs)
         caught = res["verdict"] == "looser" or (f["expect"] == "possible_conflict" and res["verdict"] == "unclear")
@@ -115,6 +125,8 @@ if __name__ == "__main__":
                "policy_rules_checked": len(pol_rows),
                "policy_outcomes": {o: sum(x["outcome"] == o for x in pol_rows) for o in sorted({x["outcome"] for x in pol_rows})},
                "policy_flagged_looser": [x["id"] for x in pol_rows if x["outcome"] == "FLAG"],
+               "overridden": {x["id"]: {"model_verdict": x["verdict"], "votes": x["votes"], **x["override"]}
+                              for x in pol_rows if x["outcome"] == "overridden"},
                "unstable": [(x["id"], x["votes"]) for x in rows if not x.get("stable", True)],
                "coverage_gaps_non_blocking": {x["id"]: x["omissions"] for x in pol_rows if x.get("omissions")},
                "fixtures_caught": f'{sum(x["outcome"] == "caught" for x in fx_rows)}/{len(fx_rows)}',

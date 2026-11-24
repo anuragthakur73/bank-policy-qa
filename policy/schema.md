@@ -37,6 +37,7 @@ One YAML file per product, e.g. `policy/demo_bank/home_loan_v1.yaml`.
 | `design_basis` | yes | Study source IDs that informed the value, plus `synthetic` where the value is invented |
 | `review` | yes | `needs_review` (synthetic value an experienced banker should sanity-check) or `ok` |
 | `review_note` | no | One line on what the reviewer decided and why (kept / changed what) |
+| `conflict_override` | no | `{reason, approved_by, date}`: a recorded human sign-off that a conflict-check FLAG or review on this rule is accepted. Turns the outcome into `overridden`; the model's verdict and votes stay in the report, and every override is listed in its summary. Without `approved_by` it has no effect |
 
 ## Rules for writing rules
 

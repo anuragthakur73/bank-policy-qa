@@ -1,0 +1,145 @@
+{
+  "old": "policy/demo_bank/home_loan_v1.yaml",
+  "new": "policy/demo_bank/home_loan_v1_1.yaml",
+  "meta": {
+    "model": "claude-haiku-5-5",
+    "prompt_version": "diff-v2",
+    "attempts": 1,
+    "problems": [
+      []
+    ],
+    "tokens_in": 4401,
+    "tokens_out": 2054,
+    "cost_usd": 0.001467,
+    "rendered_from": "eval/reports/2026-11-24_2256_diff_home_loan_v1.0.0_to_v1.1.0.json",
+    "review": {
+      "reviewed_by": null,
+      "reviewed_on": "2026-11-24",
+      "edited": [
+        "DB-HL-001",
+        "DB-HL-003",
+        "DB-HL-004"
+      ],
+      "reasons": {
+        "DB-HL-001": "Two new conditions on repair/extension finance (overall ceiling, certified estimate); model labelled it relaxed",
+        "DB-HL-003": "v1.0 already admitted only individuals; v1.1 names the excluded entities",
+        "DB-HL-004": "Model text omitted the effect that matters to staff (age 70 instead of 65 for NPS subscribers)"
+      }
+    }
+  },
+  "changes": [
+    {
+      "rule_id": "DB-HL-001",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "tightened",
+      "what_changed": "Finance for extending, repairing or renovating a house already financed by Demo Bank now requires that the amount stay within the overall loan ceiling for that house and that a cost estimate be certified by an engineer or architect.",
+      "staff_action": "For renovation or extension loans on a house already financed by Demo Bank, check the amount stays within the overall loan ceiling for that house and obtain an engineer or architect certified cost estimate."
+    },
+    {
+      "rule_id": "DB-HL-002",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "vs_rbi"
+      ],
+      "direction": "relaxed",
+      "what_changed": "Property in an unauthorised colony is no longer excluded outright; it is financed if the colony has been regularised and the development and other charges have been paid.",
+      "staff_action": "For property in an unauthorised colony, verify that the colony is regularised and that development and other charges have been paid before processing; otherwise do not finance it."
+    },
+    {
+      "rule_id": "DB-HL-003",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "clarified",
+      "what_changed": "Only individuals may apply; partnership firms, LLPs, companies, trusts, societies and HUFs cannot be applicants or co-applicants, including on a takeover from another lender, and a partner or director may apply only in their individual capacity.",
+      "staff_action": "Reject applications and co-applications from firms, LLPs, companies, trusts, societies and HUFs, including takeover cases; accept a partner or director only as an individual applicant."
+    },
+    {
+      "rule_id": "DB-HL-004",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "relaxed",
+      "what_changed": "Every NPS subscriber, government or private sector, now counts as pension-earning and may repay up to age 70 instead of 65; so do applicants already receiving a pension or annuity and defined-benefit employees. Proof: pension payment order, or employer certificate naming the scheme, plus the PRAN statement for NPS.",
+      "staff_action": "Classify applicants as pension-earning using the new definition and collect a pension payment order or employer certificate naming the scheme, plus the PRAN statement for NPS subscribers."
+    },
+    {
+      "rule_id": "DB-HL-032",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "For a composite loan, the LTV limit is applied to the combined cost of plot price plus bank valuer's construction estimate, with the plot part capped at the same LTV percentage of plot price and disbursed first, and construction disbursed in stages; stamp duty and registration are excluded from cost. Example: plot Rs 20 lakh plus construction Rs 35 lakh gives Rs 55 lakh; a Rs 30-75 lakh band loan may be up to 80% of that, Rs 44 lakh, of which at most Rs 16 lakh against the plot.",
+      "staff_action": "For composite loans, compute LTV on plot price plus the valuer's construction estimate, cap the plot portion at the same LTV percentage of plot price, disburse the plot part first and release construction funds in stages per DB-HL-026."
+    },
+    {
+      "rule_id": "DB-HL-017",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The no-prepayment-charge position on floating-rate home loans to individuals must be stated in the sanction letter, loan agreement and Key Facts Statement, and a charge previously waived can never be levied later.",
+      "staff_action": "Confirm the no-prepayment-charge statement appears in the sanction letter, loan agreement and Key Facts Statement, and never levy a charge Demo Bank has waived."
+    },
+    {
+      "rule_id": "DB-HL-018",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The penal charge must also be published on Demo Bank's website, and each time it is levied the borrower must be told the amount and reason; no penal charge may be levied on unpaid penal charges.",
+      "staff_action": "Each time a penal charge is levied, inform the borrower of the amount and reason, and do not levy penal charge on unpaid penal charges."
+    },
+    {
+      "rule_id": "DB-HL-033",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "Purchase of one floor of a residential building is financed only if the floor has its own registered title with a proportionate undivided land share, the sanctioned plan covers and matches the floor, and the floor has independent access; LTV is applied to that floor's value alone, and an unpartitioned share of a family house is not financed.",
+      "staff_action": "For floor purchases, verify separate registered title with undivided land share, plan coverage and independent access, apply LTV to the floor's value alone, and decline unpartitioned family-house shares."
+    },
+    {
+      "rule_id": "DB-HL-034",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "A borrower who already owns a house may get a loan for a second self-occupied house, including on the same land; if the land is mortgaged to Demo Bank the loan is additional finance with the mortgage extended, and combined loans must stay within the LTV limit on land and both buildings; if the land is mortgaged to another lender, Demo Bank lends only after taking over that loan, with no pari passu or second charge; the plan must cover the second building and repayment capacity counts both EMIs.",
+      "staff_action": "For second-house loans, if land is mortgaged to Demo Bank sanction as additional finance and extend the mortgage; if mortgaged elsewhere, take over the existing loan first; check combined LTV, plan coverage of the second building and both EMIs in repayment capacity."
+    },
+    {
+      "rule_id": "DB-HL-025",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The KFS is valid for at least 3 working days, and if the borrower accepts within that period Demo Bank is bound by its terms; it follows RBI's standard KFS format and is attached to the loan agreement as a summary box.",
+      "staff_action": "Ensure the KFS follows RBI's standard format, honour its terms if the borrower accepts within the 3 working day validity, and attach it to the loan agreement as a summary box."
+    },
+    {
+      "rule_id": "DB-HL-028",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "Within the 15 working day return period, Demo Bank must also file the satisfaction of charge with every registry where the charge was registered, such as CERSAI.",
+      "staff_action": "On full repayment, file satisfaction of charge with every registry where it was registered, such as CERSAI, within the 15 working day return period."
+    }
+  ]
+}

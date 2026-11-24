@@ -1,4 +1,4 @@
-# run: python -m ingest.index_policy policy/demo_bank/home_loan_v1.yaml
+# run: python -m ingest.index_policy policy/demo_bank/home_loan_v1_1.yaml policy/demo_bank/lap_v1.yaml
 # Embeds every Demo Bank policy rule into Qdrant collection "policy_v1" (ADR-005).
 # Pass ALL policy files in one run: the collection is recreated each time.
 # Also adds keyword payload indexes on clauses_v1 so a rule's RBI paragraph can be fetched by number.
@@ -24,7 +24,9 @@ for path in sys.argv[1:]:
     assert pol.get("synthetic") is True, f"{path}: only synthetic Demo Bank policies may be indexed"
     product = pol["product"]
     doc_id = f"DEMO-BANK-{product.upper().replace('_', '-')}-POLICY"
-    title = f"Demo Bank (fictional) {product.replace('_', ' ').title()} Policy"
+    names = {"home_loan": "Home Loan", "lap": "Loan Against Property (LAP)",
+             "vehicle_loan": "Vehicle Loan", "education_loan": "Education Loan"}
+    title = f"Demo Bank (fictional) {names.get(product, product.replace('_', ' ').title())} Policy"
     for r in pol["rules"]:
         text = " ".join(r["rule"].split())
         meta = jsonable({

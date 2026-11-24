@@ -57,3 +57,13 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - Lesson: number and ID checks can't catch the direction of a change. diff-v2 adds a required `direction` field
   (new / relaxed / tightened / clarified / withdrawn), a "who qualifies first" instruction, and a direction check
   for new and withdrawn rules. A human still reads every circular before issue.
+
+## 24 Nov 2026 · Week 3 Session 4 · LAP v1.0 conflict check + spot checks
+- DB-LAP-011 flagged looser (2/3): tenure extension capped by max tenure/age, which RBC 349(3) does not set (only
+  349(5) no negative amortisation). DB-HL-014 has the same cap and passed 3/3 -> the check is inconsistent on this
+  wording. Fix (Anurag): keep the cap, state the higher-EMI fallback, state no fixed-rate switch, label equal; same
+  fallback added to DB-HL-014 (v1.1 now changes 12 rules). Fixed-rate switch is optional (349(2) "may, at its
+  option"), not a gap.
+- Shared policy index: i04 (home-loan NPS age) also cited DB-LAP-003. Need a product filter on policy retrieval
+  (UI selector or product detected from the question) -> Week 4.
+- Spot checks: LAP 3/3, home loan still 5/5 after adding 20 LAP rules.
