@@ -1,11 +1,11 @@
-# Demo Bank (fictional) - Home Loan Policy v1.0.0 (DRAFT)
+# Demo Bank (fictional) - Home Loan Policy v1.0.0 (APPROVED; v1.1.0 drafted in home_loan_v1_1.yaml)
 # SYNTHETIC. Designed from public SBI and ICICI Bank home-loan studies (23 Nov 2026)
 # and RBI Master Directions. Not based on any bank's internal circulars.
 bank: Demo Bank (fictional)
 product: home_loan
 policy_version: "1.0.0"
 effective_from: 2026-12-01
-status: draft
+status: approved
 synthetic: true
 rbi_corpus_version:
   CF: "RBI (Commercial Banks - Credit Facilities) Directions, 2025 - updated as on 2026-10-01"

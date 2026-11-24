@@ -40,3 +40,11 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   Vector run: none. One miss per run on a different question -> treat as model variation; watch in Session 5.
 - p15 false failure: "three working days" vs must_contain "3 working days". Scorer now accepts "a|b" alternatives.
 - 2026-11-24_answer-v2_hybrid_golden_v1.json (no time in name) = first run with the OLD hit@5 scoring; kept for the record.
+
+## 24 Nov 2026 · Week 3 Session 2 · policy v1.1 conflict check (conflict-v3, 3 runs)
+- 15/15 RBI-bound rules pass, fixtures 5/5, $0.029. Unstable votes: DB-HL-034 (1 of 3 "looser": the model read
+  "takeover required instead of a second charge" as departing from para 94; declining an RBI permission is stricter,
+  so the 2 "complies" votes are right); DB-HL-032 (1 of 3 "unclear"). Watch on the next run.
+- Coverage list noise: for DB-HL-033/034 it lists CF 92 sanctioned-plan duties that the rules cover by referring to
+  DB-HL-020. Cross-references are invisible to a one-rule-at-a-time check -> possible check improvement: include the
+  referenced rules' text. Not blocking.

@@ -14,3 +14,15 @@ Policy v1.0.0 is frozen for Week 2; these are drafted in Week 3 as v1.1 (new `po
 
 Process for each: draft rule → `review: needs_review` → Anurag's review → `python -m app.conflict` → add the
 interview question's expected answer to golden_v1 (manual_review: false).
+
+## Status (24 Nov 2026): all 6 done in policy v1.1.0 (home_loan_v1_1.yaml), reviewed by Anurag
+| # | Done as | Anurag's decision |
+|---|---|---|
+| 1 | DB-HL-032 new: LTV on plot + valuer's construction estimate, band by total loan; plot part capped at same % | kept plot-part cap |
+| 2 | DB-HL-004 changed: pension-earning defined; proof listed | every NPS subscriber counts (age 70) |
+| 3 | DB-HL-033 new: one floor only with own registered title + land share, sanctioned plan, independent access | ok |
+| 4 | DB-HL-034 new: second house for self-occupation; Demo Bank mortgage -> additional finance, combined LTV | other lender -> takeover required (no shared / second charge) |
+| 5 | DB-HL-003 changed: only individuals; firms, LLPs, companies, trusts, societies, HUFs excluded, incl. takeovers | only individuals |
+| 6 | Coverage pass: DB-HL-001 (CF 93/95), 002 (regularised colonies, now equal), 017, 018, 025, 028 | regularised colonies allowed |
+Skipped from the coverage list: risk weights, pre-2017 tables, Board-level duties (not frontline). Several "gaps" were
+already in the rule text (conflict check misread them).

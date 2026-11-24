@@ -95,3 +95,17 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Interview verdicts (24 Nov): i02, i05 refused; i04, i06 give nearest rules after "not covered" - all accepted.
 - Tests: 19 (4 new). pytest.ini added, so plain `pytest -q` works.
 - Lesson: check the measuring tool before acting on a number - a second script scoring the same thing exposed the bug.
+
+## Week 3 · Session 2: Demo Bank home-loan policy v1.1 (24 Nov 2026)
+- policy/demo_bank/home_loan_v1_1.yaml: v1.1.0, 34 rules (3 new: DB-HL-032 composite-loan LTV, 033 one floor,
+  034 second house on mortgaged land; 8 changed: 001, 002, 003, 004, 017, 018, 025, 028). Effective 2027-01-01, draft.
+  v1.0.0 kept unchanged (status -> approved) for the Session 3 "what changed" summary.
+- Source: real loan-officer questions I02, I04-I07 + the conflict-check coverage list. All 11 reviewed by Anurag; his
+  decisions: plot-part cap kept, every NPS subscriber pension-earning, takeover required when another lender holds the
+  mortgage, only individuals may apply, regularised colonies allowed.
+- Conflict check on v1.1: 15/15 pass, 0 looser, fixtures 5/5 (two single dissenting votes, see failures.md).
+- Re-indexed policy_v1 with v1.1. Spot check (eval/spot_check.py): 5/5 interview questions now answered from the
+  rule written for them (I02 -> 032, I04 -> 004, I05 -> 033, I06 -> 034, I07 -> 003).
+- conflict.py takes a policy file (default v1.1); report names carry time + policy version. Tests: 24 (5 new).
+- Still to do in Session 5: move I02/I04/I05/I06 from manual review to scored in the golden set (expected answers
+  changed with v1.1).

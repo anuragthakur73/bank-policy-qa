@@ -1,0 +1,648 @@
+# Demo Bank (fictional) - Home Loan Policy v1.1.0 (DRAFT)
+# SYNTHETIC. Designed from public SBI and ICICI Bank home-loan studies (23 Nov 2026)
+# and RBI Master Directions. Not based on any bank's internal circulars.
+# v1.1 (24 Nov 2026): rules from real loan-officer questions I02, I04-I07 + conflict-check coverage pass.
+# Changed or new rules carry review: needs_review and a 'v1.1:' review_note. v1.0.0 stays in home_loan_v1.yaml.
+bank: Demo Bank (fictional)
+product: home_loan
+policy_version: "1.1.0"
+effective_from: 2027-01-01
+status: draft
+synthetic: true
+rbi_corpus_version:
+  CF: "RBI (Commercial Banks - Credit Facilities) Directions, 2025 - updated as on 2026-10-01"
+  RBC: "RBI (Commercial Banks - Responsible Business Conduct) Directions, 2025 - updated as on 2026-10-01"
+design_basis:
+  - id: SBI-STUDY
+    title: "SBI Home Loan Study, as on 23 Nov 2026"
+    url: https://claude.ai/artifact/AzsXVTVrcwHF2j6xp8oH8K
+  - id: ICICI-STUDY
+    title: "ICICI Bank Home Loan Study, as on 23 Nov 2026"
+    url: https://claude.ai/artifact/UJK9ZrACsDFPRvJ8hy5gRD
+
+rules:
+
+  # ---------------- ELIGIBILITY ----------------
+  - rule_id: DB-HL-001
+    section: eligibility
+    title: Eligible purposes
+    rule: >-
+      A Demo Bank home loan may be used to purchase a new or resale house or flat, to
+      construct a house on a plot the borrower owns, to purchase a plot together with
+      construction (composite loan), to extend, repair or renovate an existing house, or
+      to take over a home loan from another lender. For plot purchase, the borrower must
+      give a declaration to complete construction within 3 years of first disbursement.
+      Finance to extend, repair or renovate a house already financed by Demo Bank must
+      stay within the overall loan ceiling for that house and needs a cost estimate
+      certified by an engineer or architect.
+    params:
+      purposes: [purchase_new, purchase_resale, construction, plot_plus_construction, extension, repair_renovation, takeover]
+      plot_construction_deadline_years: 3
+    rbi_ref: {direction: CF, para: "90, 93, 95", note: "Plot finance needs declaration to build within bank-specified period; repairs and additions permitted"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [SBI-S2, SBI-S9, ICICI-S3]
+    review: ok
+    review_note: "v1.1: coverage - CF 93 (within overall ceiling) and 95 (certified cost estimate) added. Reviewed 24 Nov 2026: accepted"
+
+  - rule_id: DB-HL-002
+    section: eligibility
+    title: Ineligible properties and uses
+    rule: >-
+      Demo Bank does not finance: property in an unauthorised colony, unless the colony
+      has been regularised and the development and other charges have been paid;
+      property without a sanctioned building plan; or a residential property the
+      applicant intends to use for commercial purposes.
+    rbi_ref: {direction: CF, para: "92"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S17]
+    review: ok
+    review_note: "v1.1: coverage - CF 92(6): regularised colonies allowed, as RBI permits (was a blanket ban); label stricter -> equal. Reviewed 24 Nov 2026: kept - regularised colonies allowed, as RBI permits"
+
+  - rule_id: DB-HL-003
+    section: eligibility
+    title: Eligible applicants
+    rule: >-
+      Only individuals may apply: resident Indian individuals who are salaried, self-
+      employed professionals or self-employed non-professionals. Partnership firms,
+      LLPs, companies, trusts, societies and HUFs cannot be applicants or co-applicants,
+      including on a takeover from another lender; a partner or director may apply only
+      in their individual capacity. NRI and PIO applicants are not covered by this
+      policy version.
+    params: {applicant_types: [salaried, self_employed_professional, self_employed_non_professional], nri_covered: false,
+             excluded_applicants: [partnership_firm, llp, company, trust, society, huf]}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S14, ICICI-S3]
+    review: ok
+    review_note: "v1.1: I07 - firms, companies, trusts etc. cannot be applicants or co-applicants, incl. takeovers. Reviewed 24 Nov 2026: kept - only individuals (HUFs excluded)"
+
+  - rule_id: DB-HL-004
+    section: eligibility
+    title: Age at entry and at maturity
+    rule: >-
+      The applicant must be at least 21 years old on the date of sanction. The loan must
+      be fully repaid by age 65 for salaried applicants without pension and by age 70
+      for self-employed applicants and pension-earning applicants. Co-applicants must be
+      at least 18 years old. A pension-earning applicant is one who already receives a
+      pension or annuity, or who will receive a monthly pension from the employer's
+      scheme after retirement: a defined-benefit pension (government, public sector
+      undertaking or bank), or the National Pension System (NPS), for any NPS
+      subscriber, government or private sector. Proof: pension payment order, or an
+      employer certificate naming the pension scheme, with the PRAN statement for NPS.
+    params:
+      min_entry_age: 21
+      max_age_at_maturity: {salaried_non_pension: 65, salaried_pension: 70, self_employed: 70}
+      pension_earning: [receiving_pension_or_annuity, defined_benefit_employee, nps_subscriber]
+      min_co_applicant_age: 18
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S2, ICICI-S3, ICICI-S6, ICICI-S8, synthetic]
+    review: ok
+    review_note: "v1.1: I04 - defines pension-earning; NPS counts for government/PSU employees and current annuitants, not private-sector NPS-only (synthetic choice). Reviewed 24 Nov 2026: changed - every NPS subscriber counts as pension-earning"
+
+  - rule_id: DB-HL-005
+    section: eligibility
+    title: Minimum income and work history
+    rule: >-
+      Salaried applicants need a net monthly income of at least Rs 25,000 and at least 2
+      years of total work experience, including 6 months with the current employer.
+      Self-employed applicants need at least 3 years in the current business and income
+      tax returns for the last 2 years showing an annual income of at least Rs 3,60,000.
+    params:
+      salaried: {min_net_monthly_income: 25000, min_total_experience_years: 2, min_current_employer_months: 6}
+      self_employed: {min_business_vintage_years: 3, itr_years: 2, min_annual_income: 360000}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [ICICI-S3, synthetic]
+    review: ok
+    review_note: "Kept: 6 months with current employer and self-employed floor confirmed"
+
+  - rule_id: DB-HL-006
+    section: eligibility
+    title: Co-applicants and co-owners
+    rule: >-
+      Every co-owner of the property must be a co-applicant. A spouse, parent,
+      grandparent, son, daughter, grandchild or sibling may join as co-applicant. The
+      income of any earning co-applicant may be added to the applicant's income for
+      eligibility, whether or not the co-applicant is a co-owner. A guarantor's income is
+      never added.
+    params:
+      allowed_relationships: [spouse, parent, grandparent, son, daughter, grandchild, sibling]
+      co_owner_must_be_co_applicant: true
+      income_clubbing: {co_applicant: true, requires_co_ownership: false, guarantor: false}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S5, ICICI-S3, synthetic]
+    review: ok
+    review_note: "Changed: grandparents and grandchildren added; any co-applicant's income clubbed, co-owner or not; guarantor income never"
+
+  - rule_id: DB-HL-007
+    section: eligibility
+    title: Credit score
+    rule: >-
+      The minimum credit bureau score is 700. Applicants with no credit history
+      (new to credit) are treated as meeting the 700 minimum and are priced at the
+      700-749 band. Scores from 680 to
+      699 need a deviation approval (DB-HL-030). Scores below 680 are declined.
+    params: {min_score: 700, ntc_band: "700-749", deviation_floor: 680}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [ICICI-S5, SBI-S15, synthetic]
+    review: ok
+    review_note: "Changed: new-to-credit treated as meeting the 700 minimum"
+
+  # ---------------- AMOUNT AND LTV ----------------
+  - rule_id: DB-HL-008
+    section: amount_ltv
+    title: Loan amount limits
+    rule: >-
+      The minimum loan is Rs 5 lakh and the maximum is Rs 10 crore, subject to the LTV
+      limit (DB-HL-009) and repayment capacity (DB-HL-011).
+    params: {min_amount: 500000, max_amount: 100000000}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [ICICI-S3, synthetic]
+    review: ok
+
+  - rule_id: DB-HL-009
+    section: amount_ltv
+    title: Loan-to-value (LTV) limits
+    rule: >-
+      The loan may not exceed 90% of the property cost for loans up to Rs 30 lakh, 80%
+      for loans above Rs 30 lakh up to Rs 75 lakh, and 75% for loans above Rs 75 lakh.
+    params:
+      ltv_bands:
+        - {max_loan: 3000000, max_ltv: 0.90}
+        - {max_loan: 7500000, max_ltv: 0.80}
+        - {max_loan: null, max_ltv: 0.75}
+    rbi_ref: {direction: CF, para: "111"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S2, SBI-S17]
+    review: ok
+
+  - rule_id: DB-HL-010
+    section: amount_ltv
+    title: Stamp duty and registration in property cost
+    rule: >-
+      Stamp duty, registration and other documentation charges are not included in the
+      property cost when calculating LTV, except where the house costs up to Rs 10 lakh.
+    params: {stamp_duty_inclusion_max_property_cost: 1000000}
+    rbi_ref: {direction: CF, para: "113"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S17]
+    review: ok
+
+  - rule_id: DB-HL-011
+    section: amount_ltv
+    title: Repayment capacity (FOIR)
+    rule: >-
+      Total monthly obligations, meaning the proposed EMI plus all existing EMIs and 5% of
+      credit card outstanding, may not exceed a share of net monthly income (NMI): 50%
+      for NMI up to Rs 50,000, 55% for NMI above Rs 50,000 up to Rs 1,00,000, 60% for NMI
+      above Rs 1,00,000 up to Rs 2,00,000, and 65% for NMI above Rs 2,00,000. NMI is
+      take-home pay after tax, provident fund and other statutory deductions.
+    params:
+      foir_bands:
+        - {max_nmi: 50000, max_foir: 0.50}
+        - {max_nmi: 100000, max_foir: 0.55}
+        - {max_nmi: 200000, max_foir: 0.60}
+        - {max_nmi: null, max_foir: 0.65}
+      card_outstanding_pct_as_emi: 0.05
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S5, ICICI-S5, synthetic]
+    review: ok
+    review_note: "Kept: FOIR bands confirmed realistic"
+
+  - rule_id: DB-HL-032
+    section: amount_ltv
+    title: LTV for composite loans (plot plus construction)
+    rule: >-
+      For a composite loan (plot purchase plus construction), the LTV limit in DB-HL-009
+      is applied to the combined cost: the plot price plus the construction cost
+      estimated by the bank's valuer, using the band for the total loan amount. The plot
+      part of the loan may not exceed the same LTV percentage of the plot price and is
+      disbursed first; the construction part is disbursed in stages linked to
+      construction progress (DB-HL-026). Stamp duty and registration on the plot are not
+      part of the cost (DB-HL-010). Example: plot Rs 20 lakh plus construction estimate
+      Rs 35 lakh gives a combined cost of Rs 55 lakh; a loan in the Rs 30-75 lakh band
+      may be up to 80% of that, Rs 44 lakh, of which at most Rs 16 lakh against the
+      plot.
+    params: {ltv_basis: plot_price_plus_valuer_construction_estimate, band_by: total_loan_amount, plot_part_max_ltv: same_band}
+    rbi_ref: {direction: CF, para: "111, 90", note: "LTV on total cost; the per-part cap on the plot is a bank addition"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [synthetic]
+    review: ok
+    review_note: "v1.1: new - I02 (combined vs separate LTV for composite loans). Reviewed 24 Nov 2026: kept, incl. plot-part cap"
+
+  - rule_id: DB-HL-012
+    section: amount_ltv
+    title: Maximum tenure
+    rule: >-
+      The maximum repayment period is 30 years, including any construction moratorium,
+      and may not run beyond the maturity age in DB-HL-004.
+    params: {max_tenure_years: 30}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S2, ICICI-S3]
+    review: ok
+
+  # ---------------- PRICING ----------------
+  - rule_id: DB-HL-013
+    section: pricing
+    title: Interest rate benchmark and spread
+    rule: >-
+      All home loans are floating rate, linked to the RBI policy repo rate. The rate is
+      the repo rate plus a spread fixed at sanction by credit score: 800 and above, 2.40%;
+      750-799, 2.60%; 700-749 and new to credit, 2.90%. Self-employed borrowers pay 0.10%
+      more. A woman sole or joint owner gets 0.05% off. The spread is fixed at sanction for
+      the life of the loan and is not reviewed afterwards; only the repo rate moves.
+    params:
+      benchmark: rbi_repo_rate
+      spread_by_score: {"800+": 2.40, "750-799": 2.60, "700-749": 2.90, "ntc": 2.90}
+      self_employed_add: 0.10
+      woman_owner_discount: 0.05
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S3, SBI-S5, ICICI-S1, synthetic]
+    review: ok
+    review_note: "Changed: spread fixed for life, no post-sanction review"
+
+  - rule_id: DB-HL-014
+    section: pricing
+    title: Interest reset and borrower options
+    rule: >-
+      The rate resets on the first day of each calendar quarter, using the repo rate in
+      force on the last day of the previous quarter. At sanction the borrower is told how
+      a benchmark change can affect the EMI or tenure. At each upward reset the borrower
+      may choose a higher EMI, a longer tenure (within DB-HL-012) or a combination. The
+      borrower may also prepay in part or in full at any time during the loan, not only at
+      a reset, with no charge (DB-HL-017). A tenure extension may not cause negative amortisation. Any
+      increase in EMI or tenure is communicated to the borrower immediately by SMS and
+      email. Every quarter the borrower receives a statement showing principal and
+      interest recovered to date, the EMI, the number of EMIs left and the annualised
+      rate (APR). Demo Bank does not offer a switch to a fixed rate. Choosing a higher
+      EMI, a longer tenure or prepayment carries no charge; any service charge or
+      administrative cost for exercising these options is disclosed in the sanction letter
+      and again whenever it is revised, and is published on Demo Bank's website.
+    params: {reset_frequency: quarterly, increase_notice: immediate, statement_frequency: quarterly, fixed_rate_switch: false}
+    rbi_ref: {direction: RBC, para: "349"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [ICICI-S5, SBI-S18]
+    review: ok
+    review_note: "Changed after conflict-v1 flag: added immediate notice of EMI/tenure increase and quarterly statement (RBC 349); conflict-v2: added disclosure of option charges (RBC 349(4)); conflict-v3: prepayment at any time, not only at reset (RBC 349(3)(ii))"
+
+  # ---------------- CHARGES ----------------
+  - rule_id: DB-HL-015
+    section: charges
+    title: Processing fee
+    rule: >-
+      The processing fee is 0.40% of the loan amount, at least Rs 3,000 and at most
+      Rs 20,000, plus GST. It is charged only after sanction and is shown in the Key Facts
+      Statement.
+    params: {pct: 0.004, min: 3000, max: 20000, gst_extra: true}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S1, SBI-S2, ICICI-S1, ICICI-S4, synthetic]
+    review: ok
+
+  - rule_id: DB-HL-016
+    section: charges
+    title: Legal, valuation and CERSAI charges
+    rule: >-
+      Legal scrutiny and valuation are charged at actual cost, capped at Rs 7,500 in
+      total, plus GST. CERSAI registration is Rs 50 for loans up to Rs 5 lakh and Rs 100
+      above, plus GST.
+    params: {legal_valuation_cap: 7500, cersai: {upto_5_lakh: 50, above_5_lakh: 100}}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S2, ICICI-S4, synthetic]
+    review: ok
+
+  - rule_id: DB-HL-017
+    section: charges
+    title: Prepayment and foreclosure
+    rule: >-
+      No prepayment or foreclosure charge applies to any floating-rate home loan to an
+      individual, whatever the source of funds and with no lock-in period. This is
+      stated in the sanction letter, the loan agreement and the Key Facts Statement. A
+      charge Demo Bank has waived earlier is never levied later, at prepayment or
+      otherwise.
+    params: {prepayment_charge_floating: 0}
+    rbi_ref: {direction: RBC, para: "352, 353"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S2, ICICI-S4, SBI-S18]
+    review: ok
+    review_note: "v1.1: coverage - RBC 353(8) disclosure and 353(9) no retrospective charges added. Reviewed 24 Nov 2026: accepted"
+
+  - rule_id: DB-HL-018
+    section: charges
+    title: Penal charges for late payment
+    rule: >-
+      If an EMI is not paid by its due date, a penal charge of 3% per annum is levied on
+      the overdue EMI amount only, for the days it stays overdue. It is a charge, not an
+      addition to the interest rate, and no interest is charged on it. The amount and
+      reason are disclosed in the loan agreement and Key Facts Statement and stated in
+      every reminder. The penal charge is also published on Demo Bank's website. Each
+      time it is levied, the borrower is told the amount and the reason. No penal charge
+      is levied on unpaid penal charges.
+    params: {penal_rate_pa_on_overdue: 0.03, capitalised: false}
+    rbi_ref: {direction: RBC, para: "351"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S2, ICICI-S2, ICICI-S4, synthetic]
+    review: ok
+    review_note: "v1.1: coverage - RBC 351(1)(iii) no penal on penal, 351(6) website, 351(7) each levy communicated. Reviewed 24 Nov 2026: accepted"
+
+  - rule_id: DB-HL-019
+    section: charges
+    title: Dishonour and switch charges
+    rule: >-
+      A dishonoured cheque, NACH or standing instruction costs Rs 500 plus GST per
+      instance. At login the applicant pays, along with the processing fee, a refundable
+      dishonour deposit of Rs 2,500. Each dishonour charge is deducted from this deposit
+      and the borrower is told of every deduction. Once the deposit is used up, further
+      dishonour charges are recovered from the borrower's repayment account. The unused
+      balance is refunded at loan closure, together with the return of property
+      documents (DB-HL-028). The deposit and its use are stated in the Key Facts
+      Statement. Switching an existing loan to Demo Bank's current spread costs Rs 3,000
+      plus GST.
+    params:
+      dishonour: 500
+      dishonour_deposit: {amount: 2500, refundable: true, collected_at: login, refund_at: loan_closure}
+      switch_fee: 3000
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S2, ICICI-S4, synthetic]
+    rbi_ref: {direction: RBC, para: "348(5)", note: "Deposit and deductions must be in the KFS"}
+    review: ok
+    review_note: "Changed: refundable dishonour deposit of Rs 2,500 at login, refunded at closure (confirmed)"
+
+  # ---------------- PROPERTY ----------------
+  - rule_id: DB-HL-020
+    section: property
+    title: Property documents and approvals
+    rule: >-
+      The property must have a clear, marketable title verified by the bank's advocate,
+      a sanctioned building plan, and, for a completed property, an occupancy or
+      completion certificate. For construction on the borrower's plot, the borrower gives
+      an affidavit-cum-undertaking to build strictly as per the sanctioned plan and to
+      obtain the completion certificate within 3 months of completion, failing which Demo
+      Bank may recall the loan; an architect empanelled by Demo Bank certifies at each
+      construction stage that work follows the sanctioned plan, and later that the
+      completion certificate has been obtained. For a built-up house or flat, the
+      borrower declares by affidavit-cum-undertaking that it was built as per the
+      sanctioned plan and building bye-laws, and an empanelled architect certifies this
+      before disbursement. Loans may be sanctioned before government approvals for the
+      project are in place, but nothing is disbursed until the borrower has obtained them.
+    params: {affidavit_cum_undertaking: true, architect_certification: [construction_stages, before_disbursement_built_up], cc_within_months: 3}
+    rbi_ref: {direction: CF, para: "92, 120"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [SBI-S5, ICICI-S5, SBI-S17]
+    review: ok
+    review_note: "Label corrected equal -> stricter after conflict-v1 (bank sets a firmer condition than RBI requires); conflict-v2: added affidavit-cum-undertaking and architect certification (CF 92(2)-(5)); sanction-before-approval wording per CF 120"
+
+  - rule_id: DB-HL-021
+    section: property
+    title: Age and residual life of building
+    rule: >-
+      For a resale property, the building's residual life, as assessed by the bank's
+      valuer, must be at least the loan tenure plus 5 years. Buildings older than 25
+      years need a structural stability certificate from a licensed engineer. Buildings
+      older than 70 years are not financed.
+    params: {min_residual_life_over_tenure_years: 5, structural_cert_above_age: 25, max_building_age: 70}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [synthetic]
+    review: ok
+    review_note: "Changed: maximum building age 70 years (was 40)"
+
+  - rule_id: DB-HL-033
+    section: property
+    title: Purchase of one floor of a building
+    rule: >-
+      Demo Bank finances the purchase of one floor of a residential building (an
+      independent or builder floor) only if: the floor has its own registered title,
+      meaning a sale deed for that floor with a proportionate undivided share in the
+      land; the building's sanctioned plan covers that floor and it was built as per
+      that plan (DB-HL-020); and the floor has independent access. The mortgage covers
+      the floor and its undivided share in the land, and LTV (DB-HL-009) is applied to
+      the value of that floor alone. A floor without separate title, such as an
+      unpartitioned share of a family house, is not financed.
+    params: {requires: [separate_registered_title, undivided_land_share, sanctioned_plan_covers_floor, independent_access]}
+    rbi_ref: {direction: CF, para: "92", note: "Sanctioned-plan conditions; separate title and access are bank conditions"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [synthetic]
+    review: ok
+    review_note: "v1.1: new - I05 (loan for one floor of a three-storey house). Reviewed 24 Nov 2026: kept"
+
+  - rule_id: DB-HL-034
+    section: property
+    title: Second house on land that already has a house
+    rule: >-
+      A borrower who already owns a house may get a loan to build or buy a second house
+      for self-occupation, including a second house on the same land as the existing
+      one. If that land is already mortgaged to Demo Bank, the new loan is sanctioned as
+      additional finance, the mortgage is extended to the new building, and both loans
+      together must stay within the DB-HL-009 LTV limit on the value of the land and
+      both buildings, using the band for the combined loan amount. If the land is
+      mortgaged to another lender, Demo Bank lends only after taking over that existing
+      loan (DB-HL-001), so that both loans are with Demo Bank; it does not share the
+      security through a pari passu or second charge. In every case the sanctioned plan
+      must cover the second building (DB-HL-020), and repayment capacity (DB-HL-011)
+      counts both EMIs.
+    params: {purpose: self_occupation, existing_charge_demo_bank: additional_finance_combined_ltv, existing_charge_other_lender: takeover_required}
+    rbi_ref: {direction: CF, para: "91, 92, 93, 94", note: "91(2) second house for self-occupation; 93 within overall ceiling; 94 permits a pari passu / second charge, which Demo Bank declines"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [synthetic]
+    review: ok
+    review_note: "v1.1: new - I06 (second house on land carrying a bank-funded house). Reviewed 24 Nov 2026: changed - land mortgaged to another lender: takeover of that loan required first (no shared/second charge)"
+
+  - rule_id: DB-HL-022
+    section: property
+    title: Property insurance
+    rule: >-
+      The financed property, excluding land, must be insured against fire, flood,
+      earthquake and allied perils for at least its reconstruction cost, with Demo Bank as
+      loss payee, from completion until loan closure. The borrower may choose any insurer.
+      Life cover is optional and is never a condition of sanction.
+    params: {property_insurance_mandatory: true, life_cover_mandatory: false}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S2, SBI-S5, ICICI-S3]
+    review: ok
+
+  - rule_id: DB-HL-023
+    section: property
+    title: Security
+    rule: >-
+      The loan is secured by an equitable or registered mortgage of the financed
+      property, created within 60 days of the sale deed or possession, whichever is
+      earlier. If the mortgage is delayed for a valid reason, interim security may be
+      taken, such as a third-party guarantee.
+    params: {mortgage_deadline_days: 60}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S2]
+    review: ok
+
+  # ---------------- PROCESS ----------------
+  - rule_id: DB-HL-024
+    section: process
+    title: Documents required
+    rule: >-
+      All applicants: application with photograph, KYC (identity, address, date of birth,
+      PAN), 6 months' bank statements of all accounts, and statements of existing loans.
+      Salaried: last 3 months' salary slips and Form 16 or ITR for 2 years. Self-employed:
+      ITR, balance sheet and profit and loss account for 2 years (CA-certified),
+      business-existence proof, and professional qualification certificate where
+      applicable. Property: sale agreement or allotment letter, title chain, sanctioned
+      plan, occupancy certificate where applicable, latest encumbrance certificate, and
+      payment receipts.
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S5, ICICI-S5, ICICI-S13]
+    review: ok
+
+  - rule_id: DB-HL-025
+    section: process
+    title: Key Facts Statement
+    rule: >-
+      Before sanction, every applicant receives a Key Facts Statement with a unique
+      proposal number, the APR and the amortisation schedule, in a language they
+      understand. Bank staff explain its contents to the borrower and obtain the
+      borrower's acknowledgement that they have understood it. It is valid for at least
+      3 working days, and if the borrower accepts within that period Demo Bank is bound
+      by its terms. It follows RBI's standard KFS format and is attached to the loan
+      agreement as a summary box. The KFS includes an APR computation that covers all
+      charges, and lists charges payable to Demo Bank separately from charges payable to
+      third parties through the bank (such as insurance, legal, valuation or stamp
+      duty); where a charge cannot be known before sanction, the KFS shows its upper
+      limit. Third-party charges are recovered at actual cost, with receipts and
+      supporting documents given to the borrower. No charge missing from the KFS may be
+      levied without the borrower's explicit consent.
+    params: {kfs_validity_working_days: 3}
+    rbi_ref: {direction: RBC, para: "348"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S18]
+    review: ok
+    review_note: "v1.1: coverage - RBC 348(1) standard format, 348(2) bank bound within validity, 348(6) summary box. Reviewed 24 Nov 2026: accepted"
+
+  - rule_id: DB-HL-026
+    section: process
+    title: Disbursement for under-construction property
+    rule: >-
+      For under-construction property, the loan is disbursed in stages linked to
+      construction progress certified by the bank's valuer, paid directly to the builder
+      or seller. No upfront disbursal is made for incomplete or under-construction
+      projects. During construction the borrower pays interest only (pre-EMI) on the
+      amount disbursed, for at most 36 months. Full EMIs start after possession or at 36
+      months, whichever is earlier.
+    params: {max_pre_emi_months: 36, upfront_disbursal_under_construction: false}
+    rbi_ref: {direction: CF, para: "114-118"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S2, ICICI-S5, SBI-S17, synthetic]
+    review: ok
+
+  - rule_id: DB-HL-027
+    section: process
+    title: Turnaround time
+    rule: >-
+      Demo Bank decides on sanction within 7 working days of receiving a complete
+      application with all documents, and disburses within 3 working days of all
+      disbursement conditions being met.
+    params: {sanction_tat_working_days: 7, disbursement_tat_working_days: 3}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-S5, ICICI-S4, synthetic]
+    review: ok
+
+  - rule_id: DB-HL-028
+    section: process
+    title: Return of property documents after closure
+    rule: >-
+      Original property documents are returned and all charges removed within 15 working
+      days of full repayment, including filing the satisfaction of charge with every
+      registry where it was registered (such as CERSAI), at the branch or another office
+      of the borrower's choice. If the documents are not returned within 30 days, Demo
+      Bank tells the borrower the reason for the delay, and if the delay is attributable
+      to Demo Bank it pays the borrower Rs 5,000 for each day of delay. If documents are
+      lost or damaged, Demo Bank helps the borrower obtain duplicate or certified copies
+      at its own cost within a further 30 days, after which the daily compensation
+      applies.
+    params: {demo_bank_target_working_days: 15, rbi_limit_days: 30, compensation_per_day: 5000, lost_documents_extra_days: 30}
+    rbi_ref: {direction: RBC, para: "354, 355, 358, 359"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [SBI-S18, ICICI-S5]
+    review: ok
+    review_note: "v1.1: coverage - RBC 354/358 charge satisfaction filed with every registry. Reviewed 24 Nov 2026: accepted"
+
+  # ---------------- GOVERNANCE ----------------
+  - rule_id: DB-HL-029
+    section: governance
+    title: PMAY-U 2.0 interest subsidy
+    rule: >-
+      Demo Bank lends under the PMAY-U 2.0 Interest Subsidy Scheme for eligible EWS, LIG
+      and MIG families who do not own a pucca house. The subsidy applies only to loans up
+      to Rs 25 lakh on houses worth up to Rs 35 lakh, sanctioned and disbursed on or after
+      1 September 2024. Applicants register on the PMAY-U 2.0 portal.
+    params: {max_loan: 2500000, max_house_value: 3500000, min_sanction_date: 2024-09-01}
+    scheme_ref: {scheme: "PMAY-U 2.0 Interest Subsidy Scheme (MoHUA)", source: SBI-S19, note: "Government scheme, not an RBI direction; scheme guidelines not indexed"}
+    bank_discretion: false
+    vs_rbi: not_applicable
+    design_basis: [SBI-S13, SBI-S19, ICICI-S12]
+    review: ok
+    review_note: "RBI reference replaced by scheme_ref: PMAY-U 2.0 is a government scheme, not an RBI direction"
+
+  - rule_id: DB-HL-030
+    section: governance
+    title: Deviations
+    rule: >-
+      The Regional Credit Head may approve these deviations, recording the reason and the
+      mitigating strength: maturity age up to 2 years beyond DB-HL-004; FOIR up to 5
+      percentage points above DB-HL-011; credit score from 680 to 699. No more than two
+      deviations are allowed in one loan. No deviation is permitted on LTV (DB-HL-009,
+      DB-HL-010), prepayment (DB-HL-017), penal charges (DB-HL-018), KFS (DB-HL-025) or
+      any other rule that implements an RBI requirement.
+    params:
+      approver: regional_credit_head
+      max_deviations_per_loan: 2
+      allowed: {age_years: 2, foir_pp: 5, score_floor: 680}
+      prohibited_rule_ids: [DB-HL-009, DB-HL-010, DB-HL-017, DB-HL-018, DB-HL-025]
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [synthetic]
+    review: ok
+
+  - rule_id: DB-HL-031
+    section: governance
+    title: Grievance redressal
+    rule: >-
+      A complaint may be raised at the branch, through customer care or online. If it is
+      not resolved, it is escalated to the Nodal Officer and then the Principal Nodal
+      Officer; any dispute about a decision is heard at least one level above the officer
+      who made it. If Demo Bank gives no reply within 30 days of receiving the complaint,
+      or the customer is not satisfied with the reply, the customer may complain to the
+      RBI Ombudsman under the Reserve Bank - Integrated Ombudsman Scheme, 2026, online at
+      cms.rbi.org.in, within 90 days of the later of the end of those 30 days or Demo
+      Bank's last reply. The scheme is free for the customer.
+    params: {bank_reply_days: 30, ombudsman_filing_window_days: 90, scheme: "RB-IOS 2026 (from 2026-07-01)"}
+    rbi_ref: {direction: RBC, para: "346", note: "Ombudsman timelines from Reserve Bank - Integrated Ombudsman Scheme, 2026, FAQ Q17 (updated as on 2026-07-01); RB-IOS 2026 replaced RB-IOS 2021 from 1 July 2026; scheme not indexed"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-S2, SBI-S18, synthetic]
+    review: ok
+    review_note: "Changed: updated to RB-IOS 2026 (30-day bank reply, 90-day filing window)"

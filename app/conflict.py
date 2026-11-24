@@ -1,4 +1,4 @@
-# run: python -m app.conflict [runs]   (every RBI-bound Demo Bank rule + the 5 test fixtures; default 3 runs)
+# run: python -m app.conflict [runs] [policy file]   (every RBI-bound rule + the 5 fixtures; default 3 runs, v1.1)
 # Bank-vs-RBI conflict check (ADR-006): for each rule, fetch the RBI paragraph(s) it cites (by number, via the
 # policy trace) and ask Claude whether the bank rule CONTRADICTS RBI (blocking) and which RBI requirements
 # it does not restate (non-blocking coverage list, merged over runs) - conflict-v3, ADR-006.
@@ -12,7 +12,7 @@ from app.retrieve import trace
 
 PROMPT_VERSION = "conflict-v3"
 VERDICTS = {"complies", "looser", "unclear"}
-POLICY = "policy/demo_bank/home_loan_v1.yaml"
+POLICY = "policy/demo_bank/home_loan_v1_1.yaml"   # current version; pass another file as argv[2]
 FIXTURES = "policy/demo_bank/conflict_fixtures.yaml"
 PRICE_IN, PRICE_OUT = 0.10, 0.50   # USD per 1M tokens, Claude Haiku 5.5
 SYSTEM = ("You check a bank's lending rule against the RBI clause(s) it must comply with. Use ONLY the RBI text "
@@ -91,7 +91,8 @@ def check_n(rule_text: str, rbi_ref: dict, runs: int) -> dict:
 
 if __name__ == "__main__":
     runs = int(sys.argv[1]) if len(sys.argv) > 1 else 3
-    pol = yaml.safe_load(open(POLICY, encoding="utf-8"))
+    policy_file = sys.argv[2] if len(sys.argv) > 2 else POLICY
+    pol = yaml.safe_load(open(policy_file, encoding="utf-8"))
     fix = yaml.safe_load(open(FIXTURES, encoding="utf-8"))
     rows = []
     for r in pol["rules"]:
@@ -110,6 +111,7 @@ if __name__ == "__main__":
     pol_rows = [x for x in rows if x["kind"] == "policy"]
     fx_rows = [x for x in rows if x["kind"] == "fixture"]
     summary = {"prompt_version": PROMPT_VERSION, "runs_per_rule": runs,
+               "policy_file": policy_file, "policy_version": pol["policy_version"],
                "policy_rules_checked": len(pol_rows),
                "policy_outcomes": {o: sum(x["outcome"] == o for x in pol_rows) for o in sorted({x["outcome"] for x in pol_rows})},
                "policy_flagged_looser": [x["id"] for x in pol_rows if x["outcome"] == "FLAG"],
@@ -118,7 +120,7 @@ if __name__ == "__main__":
                "fixtures_caught": f'{sum(x["outcome"] == "caught" for x in fx_rows)}/{len(fx_rows)}',
                "total_cost_usd": round(sum(x["cost_usd"] for x in rows), 5)}
     pathlib.Path("eval/reports").mkdir(parents=True, exist_ok=True)
-    path = f"eval/reports/{datetime.date.today()}_{PROMPT_VERSION}.json"
+    path = f'eval/reports/{datetime.datetime.now():%Y-%m-%d_%H%M}_{PROMPT_VERSION}_policy-v{pol["policy_version"]}.json'
     with open(path, "w", encoding="utf-8") as fh:
         json.dump({"summary": summary, "rows": rows}, fh, indent=2, ensure_ascii=False)
     print("\n", json.dumps(summary, indent=1), "\nreport:", path)
