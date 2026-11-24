@@ -2,13 +2,14 @@
 # Retrieves Demo Bank rules (with their traced RBI paragraphs) and RBI clauses, asks Claude to answer ONLY
 # from them with native citations, refuses when they don't answer, and appends one audit record per query
 # to logs/audit.jsonl.
-import json, os, time, uuid, datetime
+import json, logging, os, time, uuid, datetime
 from urllib.parse import quote
 from dotenv import load_dotenv; load_dotenv()
 import anthropic
-from app.retrieve import retrieve, CONTRACT_VERSION
+from app.retrieve import retrieve, CONTRACT_VERSION, RETRIES, count_sdk_retries
 
 cl = anthropic.Anthropic()
+count_sdk_retries("anthropic._base_client", "anthropic")   # hidden API retries show up in the audit log
 PROMPT_VERSION = "answer-v2"
 REFUSAL = "Not covered by the indexed documents."
 SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the search results provided. "
@@ -68,17 +69,24 @@ def _sources(hits: list[dict]) -> list[dict]:
     return out
 
 def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi")):
-    t0, rid = time.time(), str(uuid.uuid4())
-    hits = _sources(retrieve(q, k, layers=layers))
+    t0, rid = time.perf_counter(), str(uuid.uuid4())
+    timings, before = {}, dict(RETRIES)
+    mode = os.environ.get("RETRIEVAL_MODE", "hybrid")
+    raw = retrieve(q, k, layers=layers, mode=mode, timings=timings)
+    # RBI search results in rank order BEFORE de-duplication with traced paragraphs (the eval scores this)
+    rbi_search = [f'{h["doc_id"]}:{h["clause_no"]}' for h in raw if h.get("layer") == "rbi"]
+    hits = _sources(raw)
     results = [{"type": "search_result", "source": clause_link(h), "title": _title(h),
                 "content": [{"type": "text", "text": h["text"]}],
                 "citations": {"enabled": True}} for h in hits]
     model = os.environ.get("DEFAULT_MODEL", "claude-haiku-5-5")
     # Haiku 5.5 thinks by default (effort "medium") and thinking tokens count against max_tokens,
     # so a tight cap can end the reply before any answer text. Low effort is enough for grounded Q&A.
+    t_model = time.perf_counter()
     msg = cl.messages.create(model=model, max_tokens=2000, system=SYSTEM,
         output_config={"effort": "low"},
         messages=[{"role": "user", "content": results + [{"type": "text", "text": q}]}])
+    timings["model_ms"] = int((time.perf_counter() - t_model) * 1000)
     text = "".join(b.text for b in msg.content if b.type == "text").strip()
     if msg.stop_reason == "max_tokens" and not text:
         text = "[no answer: hit max_tokens before any text]"
@@ -103,7 +111,9 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi")):
            "model": model, "prompt_version": PROMPT_VERSION, "stop_reason": msg.stop_reason,
            "tokens_in": u.input_tokens, "tokens_out": u.output_tokens,
            "cost_usd": round((u.input_tokens * PRICE_IN + u.output_tokens * PRICE_OUT) / 1e6, 6),
-           "latency_ms": int((time.time() - t0) * 1000),
+           "latency_ms": int((time.perf_counter() - t0) * 1000),
+           "retrieval_mode": mode, "timings_ms": timings, "rbi_search": rbi_search,
+           "retries": {k: RETRIES.get(k, 0) - before.get(k, 0) for k in ("openai", "qdrant", "anthropic")},
            "refused": REFUSAL in text,
            "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"] and c["layer"] != "policy"}),
            "cited_rbi": sorted({f'{c["doc_id"]}:{c["clause_no"]}' for c in cites if c["layer"] == "rbi"}),
@@ -124,5 +134,5 @@ if __name__ == "__main__":
         for c in cites:
             label = f'rule {c["rule_id"]}' if c["layer"] == "policy" else f'{c["doc_id"]} para {c["clause_no"]}'
             print(f'  -> {label}: "{c["cited_text"][:70]}..."')
-        print(f'  [{rec["latency_ms"]} ms | {rec["tokens_in"]} in / {rec["tokens_out"]} out | '
+        print(f'  [{rec["latency_ms"]} ms {rec["timings_ms"]} retries {rec["retries"]} | {rec["tokens_in"]} in / {rec["tokens_out"]} out | '
               f'${rec["cost_usd"]:.5f} | refused={rec["refused"]} | rules {rec["cited_rules"]} | rbi {rec["cited_rbi"]}]\n')

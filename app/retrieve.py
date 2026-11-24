@@ -3,16 +3,24 @@
 # Rule: add fields, never rename or remove them.
 # v0.1 (ADR-005): adds the Demo Bank policy layer. Old calls (layers=("rbi",)) return the same rows
 # as v0, plus new fields that are None for RBI clauses.
-import os, re
+# v0.2 (ADR-007): RBI search is hybrid by default (vector + BM25 keyword, fused by reciprocal rank fusion).
+# New field "retrieval" says how each row was found. mode="vector" gives the v0.1 behaviour.
+# Pass timings={} to get per-stage milliseconds back.
+import logging, os, re, time
+from contextlib import contextmanager
 from functools import lru_cache
 from dotenv import load_dotenv; load_dotenv()
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
+from openai import APIConnectionError as OpenAIConnectionError
 from qdrant_client.http import models as qm
 from qdrant_client.http.exceptions import ResponseHandlingException
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from app import keyword
 
-CONTRACT_VERSION = "v0.1"
+CONTRACT_VERSION = "v0.2"
+MODES = ("vector", "hybrid", "hybrid_lc")   # hybrid_lc = same idea built with LangChain (app/retrieve_lc.py)
+N_CANDIDATES = 20                           # each search's shortlist before fusion
 FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor",
           "version_label", "version_as_on", "effective_from", "effective_to",
           "source_url", "content_hash", "parent_clause")
@@ -21,21 +29,62 @@ COLLECTIONS = {"rbi": "clauses_v1", "policy": "policy_v1"}
 # Short names used in policy rbi_ref.direction -> doc_id in clauses_v1. Only indexed directions trace.
 INDEXED_RBI = {"CF": "RBI-CB-CREDIT-FAC-2025", "RBC": "RBI-CB-RBC-2025"}
 
-_network = retry(retry=retry_if_exception_type(ResponseHandlingException), stop=stop_after_attempt(4),
-                 wait=wait_exponential(multiplier=1, max=8), reraise=True)
+RETRIES = {"qdrant": 0, "openai": 0}   # retries since start; generate.py logs the change per query
+
+class _SdkRetryCounter(logging.Handler):
+    """Counts an SDK's own 'Retrying request ...' log lines (openai and anthropic both log them at INFO)."""
+    def __init__(self, name):
+        super().__init__(); self.name_ = name
+    def emit(self, record):
+        if record.getMessage().startswith("Retrying request"):
+            RETRIES[self.name_] = RETRIES.get(self.name_, 0) + 1
+def count_sdk_retries(logger_name: str, key: str):
+    lg = logging.getLogger(logger_name)
+    lg.setLevel(logging.INFO); lg.addHandler(_SdkRetryCounter(key)); lg.propagate = False
+count_sdk_retries("openai._base_client", "openai")
+def _count_retry(_state):
+    RETRIES["qdrant"] += 1
+# 6 attempts, waits 1, 2, 4, 8, 16 s (about 30 s in all): enough to ride out a flaky hotspot's DNS dropouts.
+_network = retry(retry=retry_if_exception_type((ResponseHandlingException, OpenAIConnectionError)),
+                 stop=stop_after_attempt(6), wait=wait_exponential(multiplier=1, max=30),
+                 reraise=True, before_sleep=_count_retry)
+
+@contextmanager
+def _timed(timings, stage: str):
+    t0 = time.perf_counter()
+    try:
+        yield
+    finally:
+        if timings is not None:
+            timings[stage] = timings.get(stage, 0) + int((time.perf_counter() - t0) * 1000)
 
 @lru_cache
+def _embedder():
+    return OpenAIEmbeddings(model="text-embedding-3-small")
+
+@lru_cache           # a failed open raises, so it is not cached and the next call tries again
+@_network            # opening the collection is itself a Qdrant call
 def _store(layer: str = "rbi"):
     return QdrantVectorStore.from_existing_collection(
-        embedding=OpenAIEmbeddings(model="text-embedding-3-small"),
+        embedding=_embedder(),
         collection_name=COLLECTIONS[layer],
         url=os.environ["QDRANT_URL"], api_key=os.environ["QDRANT_API_KEY"])
+
+@_network
+def _embed(question: str) -> list[float]:
+    """OpenAI embedding, retried on connection errors after the SDK's own 2 retries give up."""
+    return _embedder().embed_query(question)
 
 # Transient network/DNS failures reaching Qdrant (e.g. "getaddrinfo failed" on a flaky hotspot)
 # are retried; any other error fails immediately.
 @_network
 def _search(question: str, k: int, layer: str = "rbi"):
     return _store(layer).similarity_search_with_score(question, k=k)
+
+@_network
+def _search_vec(vector: list[float], k: int, layer: str = "rbi"):
+    """Qdrant only: the question is embedded once per query and reused for both layers."""
+    return _store(layer).similarity_search_with_score_by_vector(vector, k=k)
 
 @_network
 def _clause(doc_id: str, clause_no: str):
@@ -61,10 +110,11 @@ def paras(spec) -> list[str]:
             out.append(m[1])
     return list(dict.fromkeys(out))
 
-def _row(meta: dict, score, layer: str, text: str) -> dict:
+def _row(meta: dict, score, layer: str, text: str, retrieval: dict | None = None) -> dict:
+    """score = vector similarity (None if the row was not found by vector search)."""
     return {**{f: meta.get(f) for f in FIELDS}, **{f: meta.get(f) for f in POLICY_FIELDS},
             "layer": layer, "score": None if score is None else round(float(score), 4),
-            "text": meta.get("clause_text", text), "trace": []}
+            "text": meta.get("clause_text", text), "trace": [], "retrieval": retrieval}
 
 def trace(rule_meta: dict) -> list[dict]:
     """The RBI paragraph(s) a policy rule implements. status: found | not_found | not_indexed."""
@@ -78,21 +128,64 @@ def trace(rule_meta: dict) -> list[dict]:
                 for p in (paras(ref.get("para")) or [ref.get("para")])]
     out = []
     for p in paras(ref.get("para")):
-        m = _clause(INDEXED_RBI[key], p)
+        # local lookup first (same data as the index, no network); Qdrant only if the clause isn't local
+        m = keyword.clause(INDEXED_RBI[key], p) or _clause(INDEXED_RBI[key], p)
         out.append({"direction": key, "para": p, "status": "found" if m else "not_found",
                     "clause": _row(m, None, "rbi", "") if m else None})
     return out
 
-def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3) -> list[dict]:
-    """Policy rules first (each with its RBI trace), then RBI clauses. Each layer has its own quota."""
+def _key(meta: dict) -> str:
+    return f'{meta["doc_id"]}|{meta["clause_no"]}'
+
+def _rbi_hybrid(question: str, qvec: list[float], k: int, timings=None) -> list[dict]:
+    """Vector shortlist + BM25 shortlist -> reciprocal rank fusion -> top k."""
+    with _timed(timings, "rbi_vector_ms"):
+        vec = _search_vec(qvec, N_CANDIDATES, "rbi")
+    with _timed(timings, "rbi_keyword_ms"):
+        kw = keyword.search(question, N_CANDIDATES)
+    vrank = {_key(d.metadata): (i, d, s) for i, (d, s) in enumerate(vec, start=1)}
+    krank = {_key(m): (i, m, s) for i, (m, s) in enumerate(kw, start=1)}
+    fused = keyword.rrf([list(vrank), list(krank)])
     rows = []
+    for key in sorted(fused, key=lambda x: -fused[x])[:k]:
+        v, kk = vrank.get(key), krank.get(key)
+        meta = v[1].metadata if v else kk[1]
+        info = {"mode": "hybrid", "vector_rank": v[0] if v else None, "keyword_rank": kk[0] if kk else None,
+                "keyword_score": round(kk[2], 3) if kk else None, "fused": round(fused[key], 5)}
+        rows.append(_row(meta, v[2] if v else None, "rbi", v[1].page_content if v else "", info))
+    return rows
+
+def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
+             mode: str | None = None, timings: dict | None = None) -> list[dict]:
+    """Policy rules first (each with its RBI trace), then RBI clauses. Each layer has its own quota.
+    mode: "hybrid" (default, or env RETRIEVAL_MODE), "vector" (v0.1 behaviour) or "hybrid_lc"."""
+    mode = mode or os.environ.get("RETRIEVAL_MODE", "hybrid")
+    if mode not in MODES:
+        raise ValueError(f"mode must be one of {MODES}")
+    rows, qvec = [], None
+    if "policy" in layers or ("rbi" in layers and mode != "hybrid_lc"):
+        with _timed(timings, "embed_ms"):          # OpenAI call, timed apart from the Qdrant calls
+            qvec = _embed(question)
     if "policy" in layers:
-        for d, s in _search(question, k_policy, "policy"):
-            r = _row(d.metadata, s, "policy", d.page_content)
-            r["trace"] = trace(d.metadata)
-            rows.append(r)
+        with _timed(timings, "policy_search_ms"):
+            found = _search_vec(qvec, k_policy, "policy")
+        with _timed(timings, "trace_ms"):
+            for d, s in found:
+                r = _row(d.metadata, s, "policy", d.page_content, {"mode": "vector"})
+                r["trace"] = trace(d.metadata)
+                rows.append(r)
     if "rbi" in layers:
-        rows += [_row(d.metadata, s, "rbi", d.page_content) for d, s in _search(question, k, "rbi")]
+        if mode == "vector":
+            with _timed(timings, "rbi_vector_ms"):
+                rows += [_row(d.metadata, s, "rbi", d.page_content, {"mode": "vector", "vector_rank": i})
+                         for i, (d, s) in enumerate(_search_vec(qvec, k, "rbi"), start=1)]
+        elif mode == "hybrid":
+            rows += _rbi_hybrid(question, qvec, k, timings)
+        else:
+            from app.retrieve_lc import search as lc_search
+            with _timed(timings, "rbi_hybrid_lc_ms"):
+                rows += [_row(d.metadata, None, "rbi", d.page_content, {"mode": "hybrid_lc", "fused_rank": i})
+                         for i, d in enumerate(lc_search(question, k), start=1)]
     return rows
 
 if __name__ == "__main__":
@@ -102,7 +195,7 @@ if __name__ == "__main__":
              ("When do these directions come into effect?", "2")]
     found = 0
     for q, exp in smoke:
-        hits = retrieve(q)
+        hits = retrieve(q, mode=os.environ.get("RETRIEVAL_MODE"))
         ok = exp in [h["clause_no"] for h in hits]; found += ok
         print(("OK  " if ok else "MISS"), q, "->", [(h["clause_no"], h["score"]) for h in hits])
     print(f"RBI layer: {found}/{len(smoke)} expected clauses in top 5\n")

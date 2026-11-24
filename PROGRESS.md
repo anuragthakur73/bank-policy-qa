@@ -80,3 +80,18 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Policy v1.1 backlog started: policy/demo_bank/backlog_v1_1.md (composite-loan LTV, NPS pension, floor purchase, second house on charged land, firms as applicants, coverage list).
 - Demo video v2 script: docs/demo/demo_v2_script.md. LinkedIn post drafted.
 - Week 3 carry-over: hybrid search; per-stage latency; policy v1.1; LAP / vehicle / education policies; head-office interviews (I08–I10) for Option A.
+
+## Week 3 · Session 1: hybrid search + stage timing (24 Nov 2026)
+- Built: BM25 keyword search (app/keyword.py, rank_bm25) fused with vector search by reciprocal rank fusion (default
+  RETRIEVAL_MODE=hybrid); same thing with LangChain BM25Retriever + EnsembleRetriever (app/retrieve_lc.py) - identical
+  top 5 on 14/14. /retrieve contract v0.2 (new "retrieval" field, mode + timings args). ADR-007.
+- Audit log: per-stage ms (embed, policy search, trace, RBI vector, RBI keyword, model), retries (OpenAI, Qdrant,
+  Anthropic), RBI search order before de-duplication. Question embedded once (was twice). Rule traces read clauses locally.
+- Found and fixed an eval bug: Week 2 "hit@5 7/14" was a scoring error; vector search was already 14/14.
+  So hybrid has no measured benefit on golden_v1 - kept provisionally (cheap), to be tested on harder RBI-only questions.
+- Results (fixed scoring, good connection): hybrid and vector both hit@5 14/14, rules 20/20 found, 16/16 cited,
+  answers 12/12, refusals 29/29, RBI cited 13-14/14, ~$0.031, median ~6 s.
+- 30-40 s answers explained: Qdrant Cloud over a poor connection (~12 s steps). Not code.
+- Interview verdicts (24 Nov): i02, i05 refused; i04, i06 give nearest rules after "not covered" - all accepted.
+- Tests: 19 (4 new). pytest.ini added, so plain `pytest -q` works.
+- Lesson: check the measuring tool before acting on a number - a second script scoring the same thing exposed the bug.
