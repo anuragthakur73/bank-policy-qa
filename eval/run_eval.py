@@ -25,9 +25,15 @@ PRODUCT_CONTEXT = os.environ.get("PRODUCT_CONTEXT", "given")
 AS_ON = os.environ.get("AS_ON", "2027-01-01")
 assert PRODUCT_CONTEXT in ("given", "text"), "PRODUCT_CONTEXT must be given or text"
 _IGNORE = re.compile(r"DB-[A-Z]+-\d{3}|\bparas?(?:graphs?)?\s*[\d(),\s-]+(?:and\s*\d+)?|\b(?:CF|RBC)\s*\d+", re.I)
-def first_figure(text: str):
-    m = re.search(r"\d[\d,]*(?:\.\d+)?", _IGNORE.sub(" ", text))
-    return m[0].replace(",", "") if m else None
+def first_figure(text: str, question: str = ""):
+    """First figure in the answer that is not just repeated from the question (p06 opened by restating
+    'Rs 80,000 net monthly income' before giving 55%)."""
+    asked = {x.replace(",", "") for x in re.findall(r"\d[\d,]*(?:\.\d+)?", question)}
+    for m in re.finditer(r"\d[\d,]*(?:\.\d+)?", _IGNORE.sub(" ", text)):
+        n = m[0].replace(",", "").rstrip(".")
+        if n and n not in asked:
+            return n
+    return None
 
 GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2.jsonl"
 prefix = lambda rid: rid.rsplit("-", 1)[0]          # DB-HL-004 -> DB-HL
@@ -56,9 +62,11 @@ for r in rows:
            "answer_ok": all(any(a.lower() in text.lower() for a in m.split("|")) for m in must)
                         if must and not ref and not manual else None,
            "refusal_ok": None if manual else rec["refused"] == ref,
-           "headline_ok": first_figure(text) == r["headline"].replace(",", "") if r.get("headline") and not ref else None,
-           "first_figure": first_figure(text),
-           "keyword_rules": [x["clause_no"] for x in rec["retrieved"] if x.get("how") == "keyword"], "products": rec["products"], "product_source": rec["product_source"],
+           "headline_ok": first_figure(text, r["question"]) == r["headline"].replace(",", "") if r.get("headline") and not ref else None,
+           "first_figure": first_figure(text, r["question"]),
+           "keyword_rules": [x["clause_no"] for x in rec["retrieved"] if x.get("how") == "keyword"],
+           "validation": rec["validation"]["action"],
+           "issues": [f'{i["severity"]}:{i["check"]}: {i["detail"]}' for i in rec["validation"]["first"]], "products": rec["products"], "product_source": rec["product_source"],
            "retrieved_rbi": got, "retrieved_rules": pol, "cited": sorted(cited),
            "cited_rules": rec.get("cited_rules", []),
            "answer": text[:400], "expected_answer": r.get("expected_answer"),
@@ -97,6 +105,11 @@ summary["retrieval_mode"] = MODE
 summary["product_context"] = PRODUCT_CONTEXT
 summary["as_on"] = AS_ON
 summary["policy_keyword"] = os.environ.get("POLICY_KEYWORD", "1")
+from collections import Counter
+summary["validator"] = os.environ.get("VALIDATOR", "enforce")
+summary["validation_actions"] = dict(Counter(o["validation"] for o in out))
+summary["first_pass_issues"] = dict(Counter(i.split(": ")[0] for o in out for i in o["issues"]))
+summary["flagged"] = {o["id"]: o["issues"] for o in out if o["issues"]}
 summary["keyword_added"] = {o["id"]: o["keyword_rules"] for o in out if o["keyword_rules"]}
 summary["product_source"] = {s: sum(o["product_source"] == s for o in out) for s in ("given", "detected", "unclear")}
 summary["golden_set"] = pathlib.Path(GOLDEN).stem

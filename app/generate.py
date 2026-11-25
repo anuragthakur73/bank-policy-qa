@@ -8,6 +8,7 @@ from dotenv import load_dotenv; load_dotenv()
 import anthropic
 from app.retrieve import CONTRACT_VERSION, RETRIES, count_sdk_retries
 from app.search import search
+from app.validate import validate, blocking
 from app import product as prod
 from app import policy_versions as pv
 
@@ -36,7 +37,9 @@ SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the se
 PRICE_IN, PRICE_OUT = 0.10, 0.50   # USD per 1M tokens, Claude Haiku 5.5 (financial-viability doc, 18 Nov 2026)
 
 def is_refusal(text: str) -> bool:
-    return text.replace("*", "").strip().rstrip(".") == REFUSAL.rstrip(".")
+    """The answer IS the refusal, possibly followed by extra remarks (g010, 26 Nov). A labelled per-product answer
+    with one product 'Not covered' starts with the product name, so it is not a refusal (ADR-009)."""
+    return text.replace("*", "").strip().startswith(REFUSAL.rstrip("."))
 
 def clause_link(h: dict) -> str:
     """RBI: opens the page and highlights the clause (text fragment), skipping the '44.' number.
@@ -81,6 +84,41 @@ def _sources(hits: list[dict]) -> list[dict]:
             add(h)
     return out
 
+VALIDATOR = os.environ.get("VALIDATOR", "enforce")   # enforce: retry once, then refuse | log: record issues only
+
+def _ask(model: str, results: list, q: str, hits: list, retry_note: list | None = None):
+    """One model call -> (message, answer text, citations mapped back to the retrieved rows)."""
+    content = results + [{"type": "text", "text": q}]
+    if retry_note:
+        content.append({"type": "text", "text": "A check of your previous answer to this question found: "
+                        + "; ".join(i["detail"] for i in retry_note) + ". Answer again from the same results. Cite a "
+                        "result for every rule ID and RBI paragraph you name, and use only rules and clauses that "
+                        "apply to the product and date asked about."})
+    # Haiku 5.5 thinks by default (effort "medium") and thinking tokens count against max_tokens,
+    # so a tight cap can end the reply before any answer text. Low effort is enough for grounded Q&A.
+    msg = _client().messages.create(model=model, max_tokens=2000, system=SYSTEM, output_config={"effort": "low"},
+                                    messages=[{"role": "user", "content": content}])
+    text = "".join(b.text for b in msg.content if b.type == "text").strip()
+    if msg.stop_reason == "max_tokens" and not text:
+        text = "[no answer: hit max_tokens before any text]"
+    by_source = {clause_link(h): h for h in hits}
+    cites = []
+    for b in msg.content:
+        if b.type != "text":
+            continue
+        for c in (getattr(b, "citations", None) or []):
+            src = getattr(c, "source", "")
+            # Map back by position, not by link: different clauses can share a link (CF 108 and 109 start with the
+            # same 8 words, so their text-fragment links are identical - r04 was mapped to the wrong para).
+            idx = getattr(c, "search_result_index", None)
+            h = hits[idx] if isinstance(idx, int) and 0 <= idx < len(hits) else by_source.get(src, {})
+            cites.append({"title": getattr(c, "title", ""), "source": src, "hit_index": idx if h else None,
+                          "fallback": section_link(h) if h else "", "layer": h.get("layer"),
+                          "doc_id": h.get("doc_id"), "clause_no": h.get("clause_no"),
+                          "rule_id": h.get("rule_id"), "policy_version": h.get("policy_version"),
+                          "cited_text": getattr(c, "cited_text", "")})
+    return msg, text, cites
+
 def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), product: str | None = None,
            as_on=None):
     """product: home_loan | lap from the screen selector / API / loan file; None = detect from the question.
@@ -98,30 +136,25 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
                 "content": [{"type": "text", "text": h["text"]}],
                 "citations": {"enabled": True}} for h in hits]
     model = os.environ.get("DEFAULT_MODEL", "claude-haiku-5-5")
-    # Haiku 5.5 thinks by default (effort "medium") and thinking tokens count against max_tokens,
-    # so a tight cap can end the reply before any answer text. Low effort is enough for grounded Q&A.
     t_model = time.perf_counter()
-    msg = _client().messages.create(model=model, max_tokens=2000, system=SYSTEM,
-        output_config={"effort": "low"},
-        messages=[{"role": "user", "content": results + [{"type": "text", "text": q}]}])
+    msg, text, cites = _ask(model, results, q, hits)
+    # S3 (ADR-014): check the answer against what was retrieved; one retry with the problems listed, then refuse.
+    issues = validate(text, cites, hits, products, as_on, q)
+    check = {"mode": VALIDATOR, "first": issues, "action": "pass" if not blocking(issues) else "flagged"}
+    usage = [msg.usage]
+    if blocking(issues) and VALIDATOR == "enforce":
+        check["draft_1"] = text
+        msg, text, cites = _ask(model, results, q, hits, retry_note=blocking(issues))
+        usage.append(msg.usage)
+        issues = validate(text, cites, hits, products, as_on, q)
+        check["second"] = issues
+        if blocking(issues):
+            check["action"], check["draft_2"], text, cites = "refused_after_retry", text, REFUSAL, []
+        else:
+            check["action"] = "passed_after_retry"
     timings["model_ms"] = int((time.perf_counter() - t_model) * 1000)
-    text = "".join(b.text for b in msg.content if b.type == "text").strip()
-    if msg.stop_reason == "max_tokens" and not text:
-        text = "[no answer: hit max_tokens before any text]"
-    by_source = {clause_link(h): h for h in hits}
-    cites = []
-    for b in msg.content:
-        if b.type != "text":
-            continue
-        for c in (getattr(b, "citations", None) or []):
-            src = getattr(c, "source", "")
-            h = by_source.get(src, {})
-            cites.append({"title": getattr(c, "title", ""), "source": src,
-                          "fallback": section_link(h) if h else "", "layer": h.get("layer"),
-                          "doc_id": h.get("doc_id"), "clause_no": h.get("clause_no"),
-                          "rule_id": h.get("rule_id"), "policy_version": h.get("policy_version"),
-                          "cited_text": getattr(c, "cited_text", "")})
-    u = msg.usage
+    u = type("U", (), {"input_tokens": sum(x.input_tokens for x in usage),
+                       "output_tokens": sum(x.output_tokens for x in usage)})
     rec = {"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
            "caller": caller, "question": q, "contract": CONTRACT_VERSION, "layers": list(use_layers),
            "products": list(products), "product_source": product_source,
@@ -143,7 +176,7 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
            "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"] and c["layer"] != "policy"}),
            "cited_rbi": sorted({f'{c["doc_id"]}:{c["clause_no"]}' for c in cites if c["layer"] == "rbi"}),
            "cited_rules": sorted({c["rule_id"] for c in cites if c["layer"] == "policy"}),
-           "human_action": None}
+           "human_action": None, "validation": check, "model_calls": len(usage)}
     # Deterministic notices (not written by the model): product not yet in force / cited rule changes soon.
     pre, post = pv.notices(products, as_on, rec["cited_rules"])
     if pre or post:

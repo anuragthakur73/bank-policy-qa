@@ -53,3 +53,9 @@ def test_partial_refusal_is_not_a_refusal():
     from app.generate import is_refusal, REFUSAL
     assert is_refusal(REFUSAL) and is_refusal(f"**{REFUSAL}**")
     assert not is_refusal(f"**Home Loan:** Yes, under DB-HL-021.\n\n**LAP:** {REFUSAL}")
+
+def test_first_figure_skips_numbers_from_question():
+    src = open("eval/run_eval.py", encoding="utf-8").read()
+    ns = {"re": __import__("re")}; exec(src[src.index("_IGNORE ="):src.index("GOLDEN =")], ns)
+    q = "Applicant's net monthly income is Rs 80,000. What is the maximum FOIR?"
+    assert ns["first_figure"]("For Rs 80,000 net monthly income, the maximum FOIR is 55%.", q) == "55"

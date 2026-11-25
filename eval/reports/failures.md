@@ -98,3 +98,20 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - Noise: keyword slot adds weak matches (DB-HL-001, DB-LAP-001) on RBI-only questions.
 - d4 confirmed WRONG (logged answer): "Rs 80 lakh is capped at 75% LTV" for a LAP, from CF para 111. Fix: ADR-012.
 - d4 fixed by ADR-012 (25 Nov 23:01). New pattern: answer names an RBI para in text but does not cite it (p09, g005) -> S3 check.
+
+## 26 Nov 2026 - Week 4 S3 validator, first run (enforce)
+- 47 pass, 3 passed after retry (p01, i06, r06: rule/para named but not cited -> cited on retry), 1 refused (r04).
+- r04 root cause (old, since Week 3): CF 108 and 109 start with the same 8 words, so their text-fragment links are
+  identical; citations were mapped back by link, so the model's citation of 109 was recorded as 108. The validator
+  caught it (quote not in 108). Fix: map citations by search_result_index. 12 link groups are shared across the
+  1,039 RBI clauses (incl. the deleted "*****" paras).
+- STILL OPEN: the shared LINK itself - clicking a 109 citation highlights para 108 on the RBI page. Needs a longer or
+  start,end text fragment and a link check against rbi.org.in (ingest/check_links.py) - not done offline.
+- headline_ok false alarm on p06: answer restated "Rs 80,000" from the question before "55%". Scorer now skips
+  figures that appear in the question.
+- figure warnings: 3 answers, all worked-out figures (p01 44 / 72.7, p04 20): correct answers. Keeps the check warn-only.
+- Run 2 (00:23): r04 now cites 109 (mapping fix works). p02 refused after retry: correct answer named para 113 (the
+  para DB-HL-010 implements) without citing it, twice -> check relaxed to warn for paras implemented by a cited rule.
+  g010: refusal followed by extra remarks was not counted as a refusal -> is_refusal = starts with the refusal.
+- Run 3 (00:38): clean on refusals (51/51). g001 answered "80%" with ZERO citations - wrote <span index="10-1"> markup
+  into the text. New blocking checks no_citations / citation_markup_in_text; first live check in the next eval.

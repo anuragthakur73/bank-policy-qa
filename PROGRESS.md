@@ -218,3 +218,20 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - generate.py: Anthropic client created on first use (tests and the API import it without a key).
 - Tests: 80 offline (11 new API contract tests, fake search, no network). eval/api_smoke.py: 4 live checks.
 - Incident: the first API test run wrote 3 fake records to logs/audit.jsonl; removed, tests now stub the writer.
+
+## Week 4 · Session 3: answer validator (25 Nov 2026) — ADR-014 (proposed)
+- Decision (Claude, stated for review): keep native citations instead of JSON-schema output; coverage/missing_inputs deferred.
+- app/validate.py: blocking checks cited_not_retrieved, quote_not_in_source, version_not_in_force, wrong_product,
+  named_not_cited; warn-only figure_not_in_sources. generate.py: one retry with the issues listed, then refuse;
+  drafts + issues in the audit record. VALIDATOR=log for comparison.
+- Tests: 92 offline (12 new, incl. planted wrong id, wrong quote, wrong version, wrong product, d4, p09 pattern,
+  wrong figure).
+- First run (enforce): 47 pass, 3 passed after retry, 1 refused (r04). r04 = citation mapped by a link shared by CF 108
+  and 109 (old bug since Week 3); now mapped by search_result_index. Shared links themselves still open (12 groups).
+  headline scorer skips figures repeated from the question (p06). Figure warnings 3/3 were worked-out figures.
+- Tests: 94 offline.
+- Run 2: r04 fixed (cites 109). p02 falsely refused (para 113 implemented by the cited rule, named not cited) ->
+  warn-only for paras implemented by a cited rule. g010 -> refusal = answer starts with the refusal. Tests: 96.
+- Run 3: 47 pass, 4 passed after retry, 0 refused; refusals 51/51, RBI cited 22/23 (g001: <span> citation markup
+  in text, zero citations) -> new blocking checks no_citations + citation_markup_in_text (to confirm next run).
+  ADR-014 accepted. Tests: 97.
