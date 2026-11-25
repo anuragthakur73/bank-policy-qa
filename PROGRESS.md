@@ -184,3 +184,12 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Still open: l07 (LAP overdraft) refused in both modes - DB-LAP-009 is not in the LAP top 3 even with the filter:
   the question says "overdraft", the rule only says "term loan ... EMIs". p09 now names paras 352/353 in the text
   without citing them (both runs; was cited under answer-v2) -> S3 validator. r04 unchanged.
+
+## Week 4 · Session 2: policy version by "as on" date (25 Nov 2026) — ADR-010
+- Decisions (Anurag): before a policy starts, say "not in force" and answer from RBI only (option a); l07 rule edit
+  approved, but DB-LAP-009 already says "does not offer LAP as an overdraft" - my l07 diagnosis was wrong, no edit
+  made. l07 is a ranking problem: eval/rank_rule.py shows where DB-LAP-009 ranks.
+- All versions indexed (85 rules); app/policy_versions.py (registry, in force, changes ahead, notices);
+  retrieve contract v0.4 (as_on filter); answer(as_on=today by default); deterministic notices; audit fields.
+- eval/date_check.py: 6 questions on different dates. Eval and spot checks default AS_ON=2027-01-01.
+- Tests: 64 offline (11 new).

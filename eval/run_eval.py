@@ -14,12 +14,15 @@
 #               (Week 4: l01 said "75%" first and "65%" later, so must_contain passed on a wrong answer)
 #   product     PRODUCT_CONTEXT=given (default) passes the row's "product", as the screen selector would;
 #               PRODUCT_CONTEXT=text passes nothing, so the product is detected from the question (ADR-009)
+#   as_on       AS_ON env (default 2027-01-01: golden_v2 was written against home loan v1.1 + LAP v1.0); a row's own
+#               "as_on" wins (ADR-010)
 #   manual      manual_review questions (policy gaps): answer recorded, NOT auto-scored except rule_hit
 #   timings     per-stage ms from the audit record (Week 3); retrieval mode from env RETRIEVAL_MODE (default hybrid)
 import json, datetime, os, pathlib, re, sys
 from app.generate import answer, PROMPT_VERSION
 MODE = os.environ.get("RETRIEVAL_MODE", "vector")
 PRODUCT_CONTEXT = os.environ.get("PRODUCT_CONTEXT", "given")
+AS_ON = os.environ.get("AS_ON", "2027-01-01")
 assert PRODUCT_CONTEXT in ("given", "text"), "PRODUCT_CONTEXT must be given or text"
 _IGNORE = re.compile(r"DB-[A-Z]+-\d{3}|\bparas?(?:graphs?)?\s*[\d(),\s-]+(?:and\s*\d+)?|\b(?:CF|RBC)\s*\d+", re.I)
 def first_figure(text: str):
@@ -32,7 +35,7 @@ rows = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 out = []
 for r in rows:
     ctx = r.get("product") if PRODUCT_CONTEXT == "given" else None
-    text, cites, rec = answer(r["question"], caller="eval", product=ctx)
+    text, cites, rec = answer(r["question"], caller="eval", product=ctx, as_on=r.get("as_on") or AS_ON)
     doc = r.get("expected_doc", "RBI-CB-CREDIT-FAC-2025")
     exp, rules, ref = r.get("expected_clauses", []), r.get("expected_rules", []), r["expect_refusal"]
     got = [c.split(":", 1)[1] for c in rec["rbi_search"][:5] if c.startswith(doc + ":")]
@@ -91,6 +94,7 @@ summary["slowest"] = [{"id": o["id"], "latency_ms": o["latency_ms"], **o["timing
 summary["retries"] = {k: sum(o["retries"].get(k, 0) for o in out) for k in ("openai", "qdrant", "anthropic")}
 summary["retrieval_mode"] = MODE
 summary["product_context"] = PRODUCT_CONTEXT
+summary["as_on"] = AS_ON
 summary["product_source"] = {s: sum(o["product_source"] == s for o in out) for s in ("given", "detected", "unclear")}
 summary["golden_set"] = pathlib.Path(GOLDEN).stem
 summary["prompt_version"] = PROMPT_VERSION

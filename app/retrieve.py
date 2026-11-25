@@ -8,6 +8,8 @@
 # Pass timings={} to get per-stage milliseconds back.
 # v0.3 (ADR-009): products=("lap",) etc. filters the policy layer by product; each product gets its own
 # k_policy quota. New field "product" on policy rows. products=None keeps the v0.2 behaviour (no filter).
+# v0.4 (ADR-010): as_on=date keeps only policy rules in force on that date (every version is indexed).
+# New fields policy_version, policy_status. as_on=None searches all versions (old behaviour, not for answers).
 import logging, os, re, time
 from contextlib import contextmanager
 from functools import lru_cache
@@ -20,13 +22,13 @@ from qdrant_client.http.exceptions import ResponseHandlingException
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from app import keyword
 
-CONTRACT_VERSION = "v0.3"
+CONTRACT_VERSION = "v0.4"
 MODES = ("vector", "hybrid", "hybrid_lc")   # hybrid_lc = same idea built with LangChain (app/retrieve_lc.py)
 N_CANDIDATES = 20                           # each search's shortlist before fusion
 FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor",
           "version_label", "version_as_on", "effective_from", "effective_to",
           "source_url", "content_hash", "parent_clause")
-POLICY_FIELDS = ("product", "rule_id", "bank_discretion", "vs_rbi", "rbi_ref", "params", "review", "synthetic")
+POLICY_FIELDS = ("product", "policy_version", "policy_status", "rule_id", "bank_discretion", "vs_rbi", "rbi_ref", "params", "review", "synthetic")
 COLLECTIONS = {"rbi": "clauses_v1", "policy": "policy_v1"}
 # Short names used in policy rbi_ref.direction -> doc_id in clauses_v1. Only indexed directions trace.
 INDEXED_RBI = {"CF": "RBI-CB-CREDIT-FAC-2025", "RBC": "RBI-CB-RBC-2025"}
@@ -84,13 +86,22 @@ def _search(question: str, k: int, layer: str = "rbi"):
     return _store(layer).similarity_search_with_score(question, k=k)
 
 @_network
-def _search_vec(vector: list[float], k: int, layer: str = "rbi", product: str | None = None):
+def _search_vec(vector: list[float], k: int, layer: str = "rbi", product: str | None = None, as_on=None):
     """Qdrant only: the question is embedded once per query and reused for both layers.
-    product: policy layer only; Qdrant filters BEFORE ranking, so the quota is all that product's rules."""
-    flt = None
+    product / as_on: policy layer only; Qdrant filters BEFORE ranking, so the quota is spent on eligible rules."""
+    return _store(layer).similarity_search_with_score_by_vector(vector, k=k, filter=policy_filter(product, as_on))
+
+def policy_filter(product: str | None = None, as_on=None):
+    """product = X and effective_from <= as_on <= effective_to (dates as yyyymmdd integers)."""
+    from app.policy_versions import date_n
+    must = []
     if product:
-        flt = qm.Filter(must=[qm.FieldCondition(key="metadata.product", match=qm.MatchValue(value=product))])
-    return _store(layer).similarity_search_with_score_by_vector(vector, k=k, filter=flt)
+        must.append(qm.FieldCondition(key="metadata.product", match=qm.MatchValue(value=product)))
+    if as_on:
+        n = date_n(as_on)
+        must += [qm.FieldCondition(key="metadata.effective_from_n", range=qm.Range(lte=n)),
+                 qm.FieldCondition(key="metadata.effective_to_n", range=qm.Range(gte=n))]
+    return qm.Filter(must=must) if must else None
 
 @_network
 def _clause(doc_id: str, clause_no: str):
@@ -162,9 +173,10 @@ def _rbi_hybrid(question: str, qvec: list[float], k: int, timings=None) -> list[
     return rows
 
 def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
-             mode: str | None = None, timings: dict | None = None, products=None) -> list[dict]:
+             mode: str | None = None, timings: dict | None = None, products=None, as_on=None) -> list[dict]:
     """Policy rules first (each with its RBI trace), then RBI clauses. Each layer has its own quota.
     products: tuple of Demo Bank products to search (app.product.PRODUCTS); each gets k_policy rules.
+    as_on: datetime.date; only policy rules in force on that date.
     mode: "vector" (default since 25 Nov, ADR-007; env RETRIEVAL_MODE), "hybrid" or "hybrid_lc"."""
     mode = mode or os.environ.get("RETRIEVAL_MODE", "vector")
     if mode not in MODES:
@@ -175,7 +187,7 @@ def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
             qvec = _embed(question)
     if "policy" in layers:
         with _timed(timings, "policy_search_ms"):
-            found = [x for p in (products or (None,)) for x in _search_vec(qvec, k_policy, "policy", p)]
+            found = [x for p in (products or (None,)) for x in _search_vec(qvec, k_policy, "policy", p, as_on)]
         with _timed(timings, "trace_ms"):
             for d, s in found:
                 r = _row(d.metadata, s, "policy", d.page_content, {"mode": "vector"})

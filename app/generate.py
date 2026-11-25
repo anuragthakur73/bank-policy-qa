@@ -8,6 +8,7 @@ from dotenv import load_dotenv; load_dotenv()
 import anthropic
 from app.retrieve import retrieve, CONTRACT_VERSION, RETRIES, count_sdk_retries
 from app import product as prod
+from app import policy_versions as pv
 
 cl = anthropic.Anthropic()
 count_sdk_retries("anthropic._base_client", "anthropic")   # hidden API retries show up in the audit log
@@ -76,13 +77,19 @@ def _sources(hits: list[dict]) -> list[dict]:
             add(h)
     return out
 
-def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), product: str | None = None):
-    """product: home_loan | lap from the screen selector / API / loan file; None = detect from the question."""
+def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), product: str | None = None,
+           as_on=None):
+    """product: home_loan | lap from the screen selector / API / loan file; None = detect from the question.
+    as_on: date (or 'YYYY-MM-DD') the answer must hold on; None = today. Only policy rules in force then are used;
+    a product whose policy is not yet in force is left out and the answer says so (ADR-010)."""
+    as_on = pv.to_date(as_on) if as_on else datetime.date.today()
     t0, rid = time.perf_counter(), str(uuid.uuid4())
     timings, before = {}, dict(RETRIES)
     mode = os.environ.get("RETRIEVAL_MODE", "vector")
     products, product_source = prod.resolve(q, product)
-    raw = retrieve(q, k, layers=layers, mode=mode, timings=timings, products=products)
+    live = tuple(p for p in products if pv.in_force(p, as_on))       # products with a version in force
+    use_layers = tuple(l for l in layers if l != "policy" or live)    # none in force -> RBI only
+    raw = retrieve(q, k, layers=use_layers, mode=mode, timings=timings, products=live, as_on=as_on)
     # RBI search results in rank order BEFORE de-duplication with traced paragraphs (the eval scores this)
     rbi_search = [f'{h["doc_id"]}:{h["clause_no"]}' for h in raw if h.get("layer") == "rbi"]
     hits = _sources(raw)
@@ -111,10 +118,11 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
             cites.append({"title": getattr(c, "title", ""), "source": src,
                           "fallback": section_link(h) if h else "", "layer": h.get("layer"),
                           "doc_id": h.get("doc_id"), "clause_no": h.get("clause_no"),
-                          "rule_id": h.get("rule_id"), "cited_text": getattr(c, "cited_text", "")})
+                          "rule_id": h.get("rule_id"), "policy_version": h.get("policy_version"),
+                          "cited_text": getattr(c, "cited_text", "")})
     u = msg.usage
     rec = {"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
-           "caller": caller, "question": q, "contract": CONTRACT_VERSION, "layers": list(layers),
+           "caller": caller, "question": q, "contract": CONTRACT_VERSION, "layers": list(use_layers),
            "products": list(products), "product_source": product_source,
            "retrieved": [{"layer": h.get("layer"), "doc_id": h["doc_id"], "clause_no": h["clause_no"],
                           "version_as_on": h["version_as_on"], "score": h["score"],
@@ -128,10 +136,17 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
            # refused = the whole answer is the refusal. A labelled per-product answer where one product is
            # "Not covered" is a partial answer (ADR-009), logged separately; before 25 Nov any occurrence counted.
            "refused": is_refusal(text), "partly_refused": REFUSAL in text and not is_refusal(text),
+           "as_on": as_on.isoformat(), "policy_status": pv.status(products, as_on),
+           "cited_rule_versions": {c["rule_id"]: c["policy_version"] for c in cites if c["layer"] == "policy"},
            "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"] and c["layer"] != "policy"}),
            "cited_rbi": sorted({f'{c["doc_id"]}:{c["clause_no"]}' for c in cites if c["layer"] == "rbi"}),
            "cited_rules": sorted({c["rule_id"] for c in cites if c["layer"] == "policy"}),
            "human_action": None}
+    # Deterministic notices (not written by the model): product not yet in force / cited rule changes soon.
+    pre, post = pv.notices(products, as_on, rec["cited_rules"])
+    if pre or post:
+        text = "\n\n".join(["\n".join(pre)] * bool(pre) + [text] + ["\n".join(post)] * bool(post))
+    rec["notices"] = pre + post
     os.makedirs("logs", exist_ok=True)
     with open("logs/audit.jsonl", "a", encoding="utf-8") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
