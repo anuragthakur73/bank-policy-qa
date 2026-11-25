@@ -17,8 +17,9 @@ CASES = [  # (id, question, product, as_on, check, what it shows)
      "before 1 Dec 2026: no home-loan policy in force -> notice + RBI only"),
     ("d4", "What is the maximum LTV on a loan against a self-occupied flat for a loan of Rs 80 lakh?", "lap",
      "2026-12-15",
-     lambda t, r: not r["cited_rules"] and t.startswith("Demo Bank's Loan Against Property (LAP) policy is not in force"),
-     "LAP starts 1 Jan 2027 -> notice + RBI only"),
+     lambda t, r: (not r["cited_rules"] and t.startswith("Demo Bank's Loan Against Property (LAP) policy is not in force")
+                   and "RBI-CB-CREDIT-FAC-2025:111" not in r["cited_rbi"] and "75%" not in t),
+     "LAP starts 1 Jan 2027 -> notice + RBI only, and NOT the housing-loan LTV (para 111, 75%) - ADR-012"),
     ("d5", I04, "home_loan", "2026-12-15",
      lambda t, r: r["cited_rule_versions"].get("DB-HL-004") == "1.0.0" and "Note: DB-HL-004 is due to change on 1 Jan 2027" in t,
      "v1.0 rule, plus a note that it is due to change on 1 Jan 2027"),

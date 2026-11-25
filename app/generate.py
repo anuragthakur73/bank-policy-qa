@@ -6,11 +6,15 @@ import json, logging, os, time, uuid, datetime
 from urllib.parse import quote
 from dotenv import load_dotenv; load_dotenv()
 import anthropic
-from app.retrieve import retrieve, CONTRACT_VERSION, RETRIES, count_sdk_retries
+from app.retrieve import CONTRACT_VERSION, RETRIES, count_sdk_retries
+from app.search import search
 from app import product as prod
 from app import policy_versions as pv
 
-cl = anthropic.Anthropic()
+from functools import lru_cache
+@lru_cache
+def _client():          # created on first use: importing this module (API, tests) needs no API key
+    return anthropic.Anthropic()
 count_sdk_retries("anthropic._base_client", "anthropic")   # hidden API retries show up in the audit log
 PROMPT_VERSION = "answer-v3"   # v3 (ADR-009): rules labelled by product; per-product answers
 REFUSAL = "Not covered by the indexed documents."
@@ -82,14 +86,11 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
     """product: home_loan | lap from the screen selector / API / loan file; None = detect from the question.
     as_on: date (or 'YYYY-MM-DD') the answer must hold on; None = today. Only policy rules in force then are used;
     a product whose policy is not yet in force is left out and the answer says so (ADR-010)."""
-    as_on = pv.to_date(as_on) if as_on else datetime.date.today()
     t0, rid = time.perf_counter(), str(uuid.uuid4())
     timings, before = {}, dict(RETRIES)
-    mode = os.environ.get("RETRIEVAL_MODE", "vector")
-    products, product_source = prod.resolve(q, product)
-    live = tuple(p for p in products if pv.in_force(p, as_on))       # products with a version in force
-    use_layers = tuple(l for l in layers if l != "policy" or live)    # none in force -> RBI only
-    raw = retrieve(q, k, layers=use_layers, mode=mode, timings=timings, products=live, as_on=as_on)
+    found = search(q, k, layers=layers, product=product, as_on=as_on, timings=timings)
+    raw, as_on, mode = found["rows"], found["as_on"], found["mode"]
+    products, product_source, use_layers = found["products"], found["product_source"], found["layers"]
     # RBI search results in rank order BEFORE de-duplication with traced paragraphs (the eval scores this)
     rbi_search = [f'{h["doc_id"]}:{h["clause_no"]}' for h in raw if h.get("layer") == "rbi"]
     hits = _sources(raw)
@@ -100,7 +101,7 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
     # Haiku 5.5 thinks by default (effort "medium") and thinking tokens count against max_tokens,
     # so a tight cap can end the reply before any answer text. Low effort is enough for grounded Q&A.
     t_model = time.perf_counter()
-    msg = cl.messages.create(model=model, max_tokens=2000, system=SYSTEM,
+    msg = _client().messages.create(model=model, max_tokens=2000, system=SYSTEM,
         output_config={"effort": "low"},
         messages=[{"role": "user", "content": results + [{"type": "text", "text": q}]}])
     timings["model_ms"] = int((time.perf_counter() - t_model) * 1000)

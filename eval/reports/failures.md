@@ -96,3 +96,5 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   Para 111 does not apply to LAP; answer text was not logged, so unknown whether the answer misapplied it.
   Audit now logs the answer.
 - Noise: keyword slot adds weak matches (DB-HL-001, DB-LAP-001) on RBI-only questions.
+- d4 confirmed WRONG (logged answer): "Rs 80 lakh is capped at 75% LTV" for a LAP, from CF para 111. Fix: ADR-012.
+- d4 fixed by ADR-012 (25 Nov 23:01). New pattern: answer names an RBI para in text but does not cite it (p09, g005) -> S3 check.

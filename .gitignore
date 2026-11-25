@@ -5,3 +5,6 @@ data/parsed/
 logs/
 notes/interviews/
 __pycache__/
+
+# kill switch flag file (app/api.py) - operational state, not code
+KILL_SWITCH

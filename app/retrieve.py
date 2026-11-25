@@ -13,6 +13,8 @@
 # v0.5 (ADR-011): with a product and as_on, the policy layer returns the vector top k_policy PLUS the best keyword
 # (BM25) match if it is not already there (retrieval.mode = "keyword"), so up to k_policy + 1 rules per product.
 # Env POLICY_KEYWORD=0 turns it off.
+# v0.6 (ADR-012): with products given, RBI clauses limited to another product (app/rbi_scope.py, e.g. housing
+# finance -> home_loan) are dropped; the RBI search fetches 2k candidates so k remain. New row field "rbi_scope".
 import logging, os, re, time
 from contextlib import contextmanager
 from functools import lru_cache
@@ -25,7 +27,7 @@ from qdrant_client.http.exceptions import ResponseHandlingException
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from app import keyword
 
-CONTRACT_VERSION = "v0.5"
+CONTRACT_VERSION = "v0.6"
 MODES = ("vector", "hybrid", "hybrid_lc")   # hybrid_lc = same idea built with LangChain (app/retrieve_lc.py)
 N_CANDIDATES = 20                           # each search's shortlist before fusion
 FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor",
@@ -176,10 +178,13 @@ def _rbi_hybrid(question: str, qvec: list[float], k: int, timings=None) -> list[
     return rows
 
 def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
-             mode: str | None = None, timings: dict | None = None, products=None, as_on=None) -> list[dict]:
+             mode: str | None = None, timings: dict | None = None, products=None, as_on=None,
+             asked_products=None) -> list[dict]:
     """Policy rules first (each with its RBI trace), then RBI clauses. Each layer has its own quota.
     products: tuple of Demo Bank products to search (app.product.PRODUCTS); each gets k_policy rules.
     as_on: datetime.date; only policy rules in force on that date.
+    asked_products: the products the question is about, for the RBI scope filter (default: products). Differs
+    from products when a product's policy is not in force: its rules are skipped, but its scope still applies.
     mode: "vector" (default since 25 Nov, ADR-007; env RETRIEVAL_MODE), "hybrid" or "hybrid_lc"."""
     mode = mode or os.environ.get("RETRIEVAL_MODE", "vector")
     if mode not in MODES:
@@ -205,6 +210,10 @@ def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
                 r["trace"] = trace(d.metadata)
                 rows.append(r)
     if "rbi" in layers:
+        from app import rbi_scope
+        scope_to = asked_products if asked_products is not None else products
+        k_rbi, k = k, (2 * k if scope_to else k)        # over-fetch, then drop clauses for another product
+        n_before = len(rows)
         if mode == "vector":
             with _timed(timings, "rbi_vector_ms"):
                 rows += [_row(d.metadata, s, "rbi", d.page_content, {"mode": "vector", "vector_rank": i})
@@ -216,6 +225,10 @@ def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
             with _timed(timings, "rbi_hybrid_lc_ms"):
                 rows += [_row(d.metadata, None, "rbi", d.page_content, {"mode": "hybrid_lc", "fused_rank": i})
                          for i, d in enumerate(lc_search(question, k), start=1)]
+        rbi_rows = [r for r in rows[n_before:] if rbi_scope.applies(r["doc_id"], r["clause_no"], scope_to)]
+        for r in rbi_rows:
+            r["rbi_scope"] = rbi_scope.scope(r["doc_id"], r["clause_no"])
+        rows = rows[:n_before] + rbi_rows[:k_rbi]
     return rows
 
 if __name__ == "__main__":

@@ -201,3 +201,20 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Result: rules found/cited 30/30, refusals 51/51 (l07 fixed), no score dropped; $0.058, 6.7 s median. ADR-011 accepted.
   date_check 6/6 still. Keyword slot fires on 16/51 questions, often on weak matches (follow-up: minimum score).
 - Audit log now stores the answer shown to the user (rec["answer"]); before, the d4 answer could not be checked.
+
+## Week 4 · fix before S4: RBI clause scope (25 Nov 2026) — ADR-012 (proposed)
+- d4 answer (now logged) was wrong: LAP question before LAP starts -> "75% LTV" from CF para 111 (housing loans).
+- app/rbi_scope.py: CF paras 89-124 (Housing Finance) limited to home_loan; dropped from RBI results when the
+  question's product is known and is not home_loan. Contract v0.6. date_check d4 now also requires no para 111 / 75%.
+- No golden_v2 question loses an expected clause (checked offline: all 6 housing-finance questions include home_loan).
+- Tests: 69 offline (2 new).
+- Result: d4 fixed (notice + not covered). ADR-012 accepted. golden_v2: rules 30/30, refusals 51/51, RBI cited 20/23
+  (g005/g008 retrieval identical to S2b - citation variance; "para named but not cited" now seen twice -> S3).
+
+## Week 4 · Session 4: /v1 retrieval API for 1B (25 Nov 2026) — ADR-013
+- app/api.py (FastAPI): /v1/health, /v1/retrieve (no model call), /v1/answer; OpenAPI at /docs.
+- app/search.py: one planning function for API + answers (product, date, keyword slot, RBI scope).
+- Kill switch: env KILL_SWITCH=1 or file KILL_SWITCH -> /v1/answer returns search-only, audited.
+- generate.py: Anthropic client created on first use (tests and the API import it without a key).
+- Tests: 80 offline (11 new API contract tests, fake search, no network). eval/api_smoke.py: 4 live checks.
+- Incident: the first API test run wrote 3 fake records to logs/audit.jsonl; removed, tests now stub the writer.
