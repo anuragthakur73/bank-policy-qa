@@ -79,3 +79,13 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   (~6 s). No measurable retrieval benefit from hybrid, even on exact-term RBI-only questions (which I wrote after
   reading the paragraphs - biased towards keyword search, yet vector found them all too).
 - r04 cited para 108 instead of 109 (both relevant); r01 (vector run) cited the LAP rule, not RBI para 36.
+
+## 25 Nov 2026 - Week 4 S1 product filter (answer-v3)
+- Fixed: product_ok 23/30 -> 30/30 with product given; l01 now 65% (headline_ok 9/9).
+- l07 (overdraft on LAP): still refused. Not crowding any more: LAP-only top 3 is DB-LAP-001/017/016. Vocabulary gap -
+  DB-LAP-009 never says "overdraft". Options: state "not available as an overdraft or cash credit" in the rule
+  (policy edit, needs Anurag), or raise k_policy when one product is searched.
+- p09: answer says "implements RBI paragraphs 352 and 353" but cites only DB-HL-017 (2/2 runs under answer-v3;
+  v2 cited both paras). A mentioned-but-uncited paragraph should fail the S3 citation validator.
+- Scoring bug found: refused = "REFUSAL in text" counted labelled per-product answers with one "Not covered" part as
+  refusals (p08, p11, p14 in text mode). Fixed: refused = whole answer; partly_refused logged.

@@ -161,3 +161,26 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Product filter on policy retrieval: product from a UI selector or detected from the question; ambiguous -> both
   products, labelled; each product gets its own policy quota (fixes l07). Eval: check the FIRST figure in the answer,
   not just "appears somewhere". Target: product_ok 30/30, l01 correct.
+
+## Week 4 · Session 1: product filter (25 Nov 2026) — ADR-009
+- app/product.py: product given > detected from keywords > unclear (search both, each its own quota of 3 rules).
+- Policy points carry metadata.product (+ payload index); retrieve() contract v0.3 (products=..., row field product).
+- Prompt answer-v3: rules labelled by product; unclear -> answer per product. Audit logs products + product_source.
+- Eval: golden_v2 rows carry product (30 rows) and headline (9 rows); PRODUCT_CONTEXT=given|text; headline_ok metric.
+- Tests: 52 offline (15 new).
+- Results, golden_v2, vector, answer-v3 (25 Nov 20:48 / 20:5x):
+  | | product given (selector) | product from text only |
+  |---|---|---|
+  | product_ok | **30/30** (was 23/30) | 22/30 |
+  | headline_ok (new) | 9/9 (l01 now 65%) | 9/9 |
+  | rules found / cited | 29/30 / 29/30 | 29/30 / 29/30 |
+  | RBI cited | 21/23 | 21/23 |
+  | refusals | 50/51 | 47/51 as scored; 50/51 with the partial-refusal fix |
+  | cost, median latency | $0.056, 6.6 s | $0.057, 6.8 s |
+  Text only: 20 detected, 31 unclear. All 8 product_ok misses are correctly labelled two-product answers
+  (home-loan part first and right), not a rule applied to the wrong product.
+- Scoring fixes after the runs: "refused" = whole answer is the refusal (p08/p11/p14 had one product "Not covered"
+  and were scored as refusals); new audit field partly_refused; first_figure skips "paragraphs 352 and 353".
+- Still open: l07 (LAP overdraft) refused in both modes - DB-LAP-009 is not in the LAP top 3 even with the filter:
+  the question says "overdraft", the rule only says "term loan ... EMIs". p09 now names paras 352/353 in the text
+  without citing them (both runs; was cited under answer-v2) -> S3 validator. r04 unchanged.

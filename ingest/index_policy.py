@@ -1,7 +1,8 @@
 # run: python -m ingest.index_policy policy/demo_bank/home_loan_v1_1.yaml policy/demo_bank/lap_v1.yaml
 # Embeds every Demo Bank policy rule into Qdrant collection "policy_v1" (ADR-005).
 # Pass ALL policy files in one run: the collection is recreated each time.
-# Also adds keyword payload indexes on clauses_v1 so a rule's RBI paragraph can be fetched by number.
+# Also adds keyword payload indexes on clauses_v1 so a rule's RBI paragraph can be fetched by number,
+# and on policy_v1 metadata.product for the product filter (ADR-009).
 import hashlib, json, os, sys, uuid
 import yaml
 from dotenv import load_dotenv; load_dotenv()
@@ -39,7 +40,7 @@ for path in sys.argv[1:]:
             "content_hash": hashlib.sha256(text.encode("utf-8")).hexdigest(), "parent_clause": None,
             "clause_text": text,
             # policy-only fields
-            "layer": "policy", "rule_id": r["rule_id"], "bank_discretion": r["bank_discretion"],
+            "layer": "policy", "product": product, "rule_id": r["rule_id"], "bank_discretion": r["bank_discretion"],
             "vs_rbi": r["vs_rbi"], "rbi_ref": r.get("rbi_ref"), "params": r.get("params"),
             "review": r["review"], "synthetic": True, "design_basis": r.get("design_basis")})
         header = f"Demo Bank {product.replace('_', ' ')} policy > {r['section']} > {r['title']}"
@@ -58,6 +59,10 @@ for field in ("metadata.doc_id", "metadata.clause_no"):
     client.create_payload_index(RBI_COLLECTION, field_name=field,
                                 field_schema=qm.PayloadSchemaType.KEYWORD)
 
-print("indexed", len(docs), "rules into", COLLECTION, "| payload indexes ok on", RBI_COLLECTION)
+client.create_payload_index(COLLECTION, field_name="metadata.product",
+                            field_schema=qm.PayloadSchemaType.KEYWORD)
+from collections import Counter
+print("indexed", len(docs), "rules into", COLLECTION, dict(Counter(d.metadata["product"] for d in docs)),
+      "| payload indexes ok on", RBI_COLLECTION, "and", COLLECTION)
 if pending:
     print("note: still needs_review:", ", ".join(pending))

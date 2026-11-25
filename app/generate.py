@@ -7,10 +7,11 @@ from urllib.parse import quote
 from dotenv import load_dotenv; load_dotenv()
 import anthropic
 from app.retrieve import retrieve, CONTRACT_VERSION, RETRIES, count_sdk_retries
+from app import product as prod
 
 cl = anthropic.Anthropic()
 count_sdk_retries("anthropic._base_client", "anthropic")   # hidden API retries show up in the audit log
-PROMPT_VERSION = "answer-v2"
+PROMPT_VERSION = "answer-v3"   # v3 (ADR-009): rules labelled by product; per-product answers
 REFUSAL = "Not covered by the indexed documents."
 SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the search results provided. "
           "There are two kinds of result. 'DEMO BANK RULE' results are the policy of Demo Bank, a fictional bank: "
@@ -21,10 +22,16 @@ SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the se
           "yes/no) and name the rule ID, then cite the RBI clause it implements, or say it is a bank-discretion "
           "rule with no RBI requirement. If only RBI results answer it, answer from RBI. If a Demo Bank rule and an "
           "RBI clause disagree, give both and say so. At most one caveat that the results actually require. "
+          "Each DEMO BANK RULE title names its product (Home Loan, LAP). Apply a rule only to its own product. "
+          "If the question does not say which product and rules of more than one product are given, answer "
+          "for each product separately, starting each part with the product name. "
           "Cite a result for every statement. Quote figures (percentages, amounts, days) exactly. "
           f"If the search results do not answer the question, reply exactly: '{REFUSAL}' "
           "Do not use outside knowledge, and do not guess.")
 PRICE_IN, PRICE_OUT = 0.10, 0.50   # USD per 1M tokens, Claude Haiku 5.5 (financial-viability doc, 18 Nov 2026)
+
+def is_refusal(text: str) -> bool:
+    return text.replace("*", "").strip().rstrip(".") == REFUSAL.rstrip(".")
 
 def clause_link(h: dict) -> str:
     """RBI: opens the page and highlights the clause (text fragment), skipping the '44.' number.
@@ -45,7 +52,8 @@ def _title(h: dict) -> str:
         ref = h.get("rbi_ref") or {}
         basis = (f'implements {ref.get("direction")} para {ref.get("para")}' if not h.get("bank_discretion")
                  else "bank discretion (no RBI requirement)")
-        return (f'DEMO BANK RULE {h["rule_id"]} | {h["chapter"]} > {h["section"]} | '
+        return (f'DEMO BANK RULE {h["rule_id"]} | {prod.NAMES.get(h.get("product"), "")} | '
+                f'{h["chapter"]} > {h["section"]} | '
                 f'{h["version_label"]} | {basis}')
     return (f'RBI | {h["title"]} | {h.get("chapter") or ""} > {h.get("section") or ""} | '
             f'para {h["clause_no"]} ({h["version_label"]})')
@@ -68,11 +76,13 @@ def _sources(hits: list[dict]) -> list[dict]:
             add(h)
     return out
 
-def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi")):
+def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), product: str | None = None):
+    """product: home_loan | lap from the screen selector / API / loan file; None = detect from the question."""
     t0, rid = time.perf_counter(), str(uuid.uuid4())
     timings, before = {}, dict(RETRIES)
     mode = os.environ.get("RETRIEVAL_MODE", "vector")
-    raw = retrieve(q, k, layers=layers, mode=mode, timings=timings)
+    products, product_source = prod.resolve(q, product)
+    raw = retrieve(q, k, layers=layers, mode=mode, timings=timings, products=products)
     # RBI search results in rank order BEFORE de-duplication with traced paragraphs (the eval scores this)
     rbi_search = [f'{h["doc_id"]}:{h["clause_no"]}' for h in raw if h.get("layer") == "rbi"]
     hits = _sources(raw)
@@ -105,6 +115,7 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi")):
     u = msg.usage
     rec = {"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
            "caller": caller, "question": q, "contract": CONTRACT_VERSION, "layers": list(layers),
+           "products": list(products), "product_source": product_source,
            "retrieved": [{"layer": h.get("layer"), "doc_id": h["doc_id"], "clause_no": h["clause_no"],
                           "version_as_on": h["version_as_on"], "score": h["score"],
                           "traced_from": h.get("traced_from")} for h in hits],
@@ -114,7 +125,9 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi")):
            "latency_ms": int((time.perf_counter() - t0) * 1000),
            "retrieval_mode": mode, "timings_ms": timings, "rbi_search": rbi_search,
            "retries": {k: RETRIES.get(k, 0) - before.get(k, 0) for k in ("openai", "qdrant", "anthropic")},
-           "refused": REFUSAL in text,
+           # refused = the whole answer is the refusal. A labelled per-product answer where one product is
+           # "Not covered" is a partial answer (ADR-009), logged separately; before 25 Nov any occurrence counted.
+           "refused": is_refusal(text), "partly_refused": REFUSAL in text and not is_refusal(text),
            "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"] and c["layer"] != "policy"}),
            "cited_rbi": sorted({f'{c["doc_id"]}:{c["clause_no"]}' for c in cites if c["layer"] == "rbi"}),
            "cited_rules": sorted({c["rule_id"] for c in cites if c["layer"] == "policy"}),
