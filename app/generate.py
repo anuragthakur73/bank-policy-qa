@@ -126,7 +126,8 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
            "products": list(products), "product_source": product_source,
            "retrieved": [{"layer": h.get("layer"), "doc_id": h["doc_id"], "clause_no": h["clause_no"],
                           "version_as_on": h["version_as_on"], "score": h["score"],
-                          "traced_from": h.get("traced_from")} for h in hits],
+                          "traced_from": h.get("traced_from"),
+                          "how": (h.get("retrieval") or {}).get("mode")} for h in hits],
            "model": model, "prompt_version": PROMPT_VERSION, "stop_reason": msg.stop_reason,
            "tokens_in": u.input_tokens, "tokens_out": u.output_tokens,
            "cost_usd": round((u.input_tokens * PRICE_IN + u.output_tokens * PRICE_OUT) / 1e6, 6),
@@ -147,6 +148,7 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
     if pre or post:
         text = "\n\n".join(["\n".join(pre)] * bool(pre) + [text] + ["\n".join(post)] * bool(post))
     rec["notices"] = pre + post
+    rec["answer"] = text   # what the user was shown, notices included (an audit trail needs the output, not only the inputs)
     os.makedirs("logs", exist_ok=True)
     with open("logs/audit.jsonl", "a", encoding="utf-8") as f:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")

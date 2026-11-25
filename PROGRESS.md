@@ -193,3 +193,11 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
   retrieve contract v0.4 (as_on filter); answer(as_on=today by default); deterministic notices; audit fields.
 - eval/date_check.py: 6 questions on different dates. Eval and spot checks default AS_ON=2027-01-01.
 - Tests: 64 offline (11 new).
+
+## Week 4 · Session 2b: keyword slot for policy rules (25 Nov 2026) — ADR-011 (proposed)
+- l07 root cause (eval.rank_rule, Anurag): DB-LAP-009 is 8th of 20 LAP rules by vector search; BM25 ranks it 1st.
+- Decision (Anurag): option A - vector top 3 + best keyword match per product. app/policy_keyword.py; contract v0.5.
+- Tests: 67 offline (3 new). Accept only if golden_v2 shows no drop.
+- Result: rules found/cited 30/30, refusals 51/51 (l07 fixed), no score dropped; $0.058, 6.7 s median. ADR-011 accepted.
+  date_check 6/6 still. Keyword slot fires on 16/51 questions, often on weak matches (follow-up: minimum score).
+- Audit log now stores the answer shown to the user (rec["answer"]); before, the d4 answer could not be checked.

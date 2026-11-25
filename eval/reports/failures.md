@@ -89,3 +89,10 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   v2 cited both paras). A mentioned-but-uncited paragraph should fail the S3 citation validator.
 - Scoring bug found: refused = "REFUSAL in text" counted labelled per-product answers with one "Not covered" part as
   refusals (p08, p11, p14 in text mode). Fixed: refused = whole answer; partly_refused logged.
+
+## 25 Nov 2026 - Week 4 S2b keyword slot (ADR-011)
+- l07 fixed: DB-LAP-009 was 8th of 20 by vector search; BM25 ranks it 1st; added as a 4th rule.
+- Open: d4 (LAP question on 15 Dec 2026, LAP not in force) cites RBI para 111 (housing-loan LTV) in 2/2 runs.
+  Para 111 does not apply to LAP; answer text was not logged, so unknown whether the answer misapplied it.
+  Audit now logs the answer.
+- Noise: keyword slot adds weak matches (DB-HL-001, DB-LAP-001) on RBI-only questions.

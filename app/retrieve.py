@@ -10,6 +10,9 @@
 # k_policy quota. New field "product" on policy rows. products=None keeps the v0.2 behaviour (no filter).
 # v0.4 (ADR-010): as_on=date keeps only policy rules in force on that date (every version is indexed).
 # New fields policy_version, policy_status. as_on=None searches all versions (old behaviour, not for answers).
+# v0.5 (ADR-011): with a product and as_on, the policy layer returns the vector top k_policy PLUS the best keyword
+# (BM25) match if it is not already there (retrieval.mode = "keyword"), so up to k_policy + 1 rules per product.
+# Env POLICY_KEYWORD=0 turns it off.
 import logging, os, re, time
 from contextlib import contextmanager
 from functools import lru_cache
@@ -22,7 +25,7 @@ from qdrant_client.http.exceptions import ResponseHandlingException
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from app import keyword
 
-CONTRACT_VERSION = "v0.4"
+CONTRACT_VERSION = "v0.5"
 MODES = ("vector", "hybrid", "hybrid_lc")   # hybrid_lc = same idea built with LangChain (app/retrieve_lc.py)
 N_CANDIDATES = 20                           # each search's shortlist before fusion
 FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor",
@@ -187,10 +190,18 @@ def retrieve(question: str, k: int = 5, layers=("rbi",), k_policy: int = 3,
             qvec = _embed(question)
     if "policy" in layers:
         with _timed(timings, "policy_search_ms"):
-            found = [x for p in (products or (None,)) for x in _search_vec(qvec, k_policy, "policy", p, as_on)]
+            found = []
+            for p in (products or (None,)):
+                if p and as_on and os.environ.get("POLICY_KEYWORD", "1") == "1":
+                    from app import policy_keyword, policy_versions as pv
+                    n_rules = len(pv.in_force(p, as_on)["rules"])      # rank every eligible rule (<= ~40)
+                    found += policy_keyword.merge(_search_vec(qvec, n_rules, "policy", p, as_on),
+                                                  policy_keyword.search(question, p, as_on), k_policy)
+                else:
+                    found += [(d, s, {"mode": "vector"}) for d, s in _search_vec(qvec, k_policy, "policy", p, as_on)]
         with _timed(timings, "trace_ms"):
-            for d, s in found:
-                r = _row(d.metadata, s, "policy", d.page_content, {"mode": "vector"})
+            for d, s, info in found:
+                r = _row(d.metadata, s, "policy", d.page_content, info)
                 r["trace"] = trace(d.metadata)
                 rows.append(r)
     if "rbi" in layers:

@@ -34,7 +34,8 @@ def registry(policy_dir: str = POLICY_DIR) -> dict[str, list[dict]]:
         out.setdefault(pol["product"], []).append({
             "path": p.as_posix(), "product": pol["product"], "version": str(pol["policy_version"]),
             "status": pol["status"], "effective_from": to_date(pol["effective_from"]),
-            "rules": {r["rule_id"]: _norm(r["rule"]) for r in pol["rules"]}})
+            "rules": {r["rule_id"]: _norm(r["rule"]) for r in pol["rules"]},
+            "titles": {r["rule_id"]: f'{r["section"]} {r["title"]}' for r in pol["rules"]}})
     for prod, vs in out.items():
         vs.sort(key=lambda v: v["effective_from"])
         starts = [v["effective_from"] for v in vs]

@@ -5,7 +5,7 @@
 #               search found AND a rule trace added was not counted: the 23 Nov "7/14" was understated.
 #   in_context  expected RBI clause anywhere the model saw (incl. paras traced from a Demo Bank rule)
 #   cited_ok    expected RBI clause cited
-#   rule_hit    expected Demo Bank rule in the policy top 3      rule_cited  expected rule cited
+#   rule_hit    expected Demo Bank rule among the policy rules sent to the model (top 3 + keyword hit, ADR-011)      rule_cited  expected rule cited
 #   answer_ok   every must_contain item appears in the answer (crude check on key figures); an item may list
 #               accepted spellings separated by "|", e.g. "3 working days|three working days"
 #   refusal_ok  refused exactly when expected
@@ -57,7 +57,8 @@ for r in rows:
                         if must and not ref and not manual else None,
            "refusal_ok": None if manual else rec["refused"] == ref,
            "headline_ok": first_figure(text) == r["headline"].replace(",", "") if r.get("headline") and not ref else None,
-           "first_figure": first_figure(text), "products": rec["products"], "product_source": rec["product_source"],
+           "first_figure": first_figure(text),
+           "keyword_rules": [x["clause_no"] for x in rec["retrieved"] if x.get("how") == "keyword"], "products": rec["products"], "product_source": rec["product_source"],
            "retrieved_rbi": got, "retrieved_rules": pol, "cited": sorted(cited),
            "cited_rules": rec.get("cited_rules", []),
            "answer": text[:400], "expected_answer": r.get("expected_answer"),
@@ -95,6 +96,8 @@ summary["retries"] = {k: sum(o["retries"].get(k, 0) for o in out) for k in ("ope
 summary["retrieval_mode"] = MODE
 summary["product_context"] = PRODUCT_CONTEXT
 summary["as_on"] = AS_ON
+summary["policy_keyword"] = os.environ.get("POLICY_KEYWORD", "1")
+summary["keyword_added"] = {o["id"]: o["keyword_rules"] for o in out if o["keyword_rules"]}
 summary["product_source"] = {s: sum(o["product_source"] == s for o in out) for s in ("given", "detected", "unclear")}
 summary["golden_set"] = pathlib.Path(GOLDEN).stem
 summary["prompt_version"] = PROMPT_VERSION
