@@ -1,6 +1,6 @@
 # ADR-016: Run the answer flow as a LangGraph graph
 
-Date: 27 Nov 2026 · Status: proposed (Week 5 S3) - accepted once eval/compare_pipelines.py shows the done-when
+Date: 27 Nov 2026 · Status: accepted 27 Nov 2026 (Week 5 S3) - default PIPELINE=graph; plain kept one release for rollback
 
 ## Context
 The answer flow already had branches and a loop written as if/else in `app/generate.py`: kill switch -> search only
@@ -38,3 +38,10 @@ Cause: text-embedding-3-small returned a slightly different vector for the same 
 flows run the same search code. Fix: optional on-disk embedding cache (EMBED_CACHE, app/retrieve.py), on by default
 in eval/run_eval.py, so repeated runs embed each question once. Done-when NOT yet met: re-run both flows with the
 cache. Default stays PIPELINE=plain until then.
+
+## Second comparison - done-when MET (27 Nov 2026, 02:45 plain vs 02:53 graph, embedding cache 72/72 reused)
+Retrieval identical on all 72 questions. Model metrics: RBI cited 27->28, rules cited 46->47, answers 35->36,
+refusals 69->71, rest equal; $0.086 / 6.4 s -> $0.084 / 6.3 s. All 5 flips come from two validator refusals in the
+plain run (g002, p03), not from the flow: both first drafts were correct but named a retrieved source without citing
+it; the retries named a source that was NOT retrieved and were refused. The graph run passed both first time.
+Accepted; default flipped to graph. The validator retry behaviour is a separate change (ADR-017).

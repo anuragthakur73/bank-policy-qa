@@ -101,3 +101,13 @@ def test_answer_switch(fake, monkeypatch):
     assert gen.answer("Max LTV for a home loan of Rs 50 lakh?", product="home_loan", as_on="2027-01-02")[2]["pipeline"] == "graph"
     monkeypatch.setenv("PIPELINE", "plain")
     assert gen.answer("Max LTV for a home loan of Rs 50 lakh?", product="home_loan", as_on="2027-01-02")[2]["pipeline"] == "plain"
+
+def test_also_named_line_added_by_code(fake):         # ADR-017: named, retrieved, not cited -> warn + link, no retry
+    ref = [{"severity": "warn", "check": "named_retrieved_not_cited", "detail": "names RBI para 39 (retrieved)",
+            "ref": {"label": "RBI CF para 39", "link": "https://rbi.org.in/x#39"}}]
+    r = both(fake, [("12 months under para 39.", ref)])
+    for name in ("plain", "graph"):
+        (text, cites, rec), calls = r[name]
+        assert calls["model"] == 1 and rec["validation"]["action"] == "pass", name
+        assert text.endswith("Also named in this answer (linked by the system, not quoted): RBI CF para 39 (https://rbi.org.in/x#39)")
+        assert rec["named_refs"] == [ref[0]["ref"]] and rec["refused"] is False

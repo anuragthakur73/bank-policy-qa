@@ -1,7 +1,7 @@
 # S3 (ADR-014): planted bad answers must be caught; good answers must pass. No model, no network.
 import datetime as dt
 from app.generate import clause_link, REFUSAL
-from app.validate import validate, blocking, named_paras, figures
+from app.validate import validate, blocking, named_paras, figures, named_refs
 
 JAN, DEC = dt.date(2027, 1, 2), dt.date(2026, 12, 15)
 HL = ("home_loan",)
@@ -53,12 +53,26 @@ def test_planted_housing_para_for_lap():           # d4 (ADR-012)
     issues = validate("RBI caps it at 80% (para 111).", [GOOD_CITES[1]], [P111], ("lap",), DEC)
     assert checks(issues) == ["wrong_product"]
 
-def test_planted_named_not_cited():                # p09 / g005 pattern
+def test_named_retrieved_not_cited_is_warn_with_link():   # p09 / g005 pattern; ADR-017 (g002, p03, 27 Nov)
     text = "No foreclosure charge under DB-HL-017. The rule implements RBI paragraphs 352 and 353."
     r = pol("DB-HL-017", "1.1.0", text="No foreclosure charge on floating-rate home loans to individuals.")
     issues = validate(text, [cite(r, "No foreclosure charge")], [r, rbi("352", "352. x"), rbi("353", "353. y")], HL, JAN)
-    assert [i["detail"] for i in blocking(issues)] == ["names RBI para 352 but does not cite it",
-                                                       "names RBI para 353 but does not cite it"]
+    assert blocking(issues) == [] and [i["check"] for i in issues] == ["named_retrieved_not_cited"] * 2
+    assert [x["label"] for x in named_refs(issues)] == ["RBI CF para 352", "RBI CF para 353"]
+
+def test_named_not_retrieved_still_blocks():        # g002 retry named para 34, p03 retry para 349: not retrieved
+    r = pol("DB-HL-017", "1.1.0", text="No foreclosure charge on floating-rate home loans to individuals.")
+    issues = validate("No charge under DB-HL-017 (see also para 349 and DB-HL-099).", [cite(r, "No foreclosure charge")],
+                      [r], HL, JAN)
+    assert [i["detail"] for i in blocking(issues)] == ["names rule DB-HL-099, which is not among the search results",
+                                                       "names RBI para 349, which is not among the search results"]
+    assert named_refs(issues) == []
+
+def test_named_rule_retrieved_not_cited_is_warn():  # p03 first draft: DB-HL-005 / 007 retrieved, not cited
+    a = pol("DB-HL-013", "1.1.0", text="Repo plus 2.60% for scores 750-799.")
+    b = pol("DB-HL-007", "1.1.0", text="Minimum score 700.")
+    issues = validate("Repo + 2.60% under DB-HL-013; the score meets DB-HL-007.", [cite(a, "Repo plus 2.60%")], [a, b], HL, JAN)
+    assert blocking(issues) == [] and named_refs(issues)[0]["label"] == "DB-HL-007"
 
 def test_reference_inside_cited_rule_is_ok():      # l08: DB-LAP-009 text itself mentions DB-LAP-003
     r = pol("DB-LAP-009", "1.0.0", "lap", "LAP is a term loan over 3 to 15 years, within the maturity age in DB-LAP-003.")
@@ -91,7 +105,9 @@ def test_para_implemented_by_cited_rule_is_warn_only():   # p02, 26 Nov: refused
     assert blocking(issues) == [] and issues[0]["check"] == "implemented_para_not_cited"
     p44 = rbi("44", "44. gold loan LTV")                         # retrieved by search, not implemented by a cited rule
     issues = validate("Yes, under DB-HL-010; see also para 44.", [cite(r, "up to Rs 10 lakh")], [r, p113, p44], HL, JAN)
-    assert checks(issues) == ["named_not_cited"]
+    assert blocking(issues) == [] and [i["check"] for i in issues] == ["named_retrieved_not_cited"]   # ADR-017: was blocking
+    issues = validate("Yes, under DB-HL-010; see also para 45.", [cite(r, "up to Rs 10 lakh")], [r, p113, p44], HL, JAN)
+    assert checks(issues) == ["named_not_retrieved"]
 
 def test_refusal_with_extra_remarks():                    # g010
     from app.generate import is_refusal

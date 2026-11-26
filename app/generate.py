@@ -8,7 +8,7 @@ from dotenv import load_dotenv; load_dotenv()
 import anthropic
 from app.retrieve import CONTRACT_VERSION, RETRIES, count_sdk_retries
 from app.search import search
-from app.validate import validate, blocking
+from app.validate import validate, blocking, named_refs
 from app.pii import mask
 from app import product as prod
 from app import policy_versions as pv
@@ -18,7 +18,7 @@ from functools import lru_cache
 def _client():          # created on first use: importing this module (API, tests) needs no API key
     return anthropic.Anthropic()
 count_sdk_retries("anthropic._base_client", "anthropic")   # hidden API retries show up in the audit log
-PROMPT_VERSION = "answer-v4"   # v4 (Week 5 S2): Car Loan added to the product list; v3 (ADR-009): rules labelled by product; per-product answers
+PROMPT_VERSION = "answer-v5"   # v5 (ADR-017): retry note says not to name sources outside the results; v4 (Week 5 S2): Car Loan added to the product list; v3 (ADR-009): rules labelled by product; per-product answers
 REFUSAL = "Not covered by the indexed documents."
 SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the search results provided. "
           "There are two kinds of result. 'DEMO BANK RULE' results are the policy of Demo Bank, a fictional bank: "
@@ -95,7 +95,8 @@ def _ask(model: str, results: list, q: str, hits: list, retry_note: list | None 
         content.append({"type": "text", "text": "A check of your previous answer to this question found: "
                         + "; ".join(i["detail"] for i in retry_note) + ". Answer again from the same results. Cite a "
                         "result for every rule ID and RBI paragraph you name, and use only rules and clauses that "
-                        "apply to the product and date asked about."})
+                        "apply to the product and date asked about. Do not name any rule ID or RBI paragraph that is "
+                        "not among the results; if a source is not in the results, leave it out."})
     # Haiku 5.5 thinks by default (effort "medium") and thinking tokens count against max_tokens,
     # so a tight cap can end the reply before any answer text. Low effort is enough for grounded Q&A.
     msg = _client().messages.create(model=model, max_tokens=2000, system=SYSTEM, output_config={"effort": "low"},
@@ -167,6 +168,13 @@ def _finish(ctx: dict, caller: str, msg, text: str, cites: list, usage: list, ch
            "cited_rules": sorted({c["rule_id"] for c in cites if c["layer"] == "policy"}),
            "human_action": None, "validation": check, "model_calls": len(usage),
            "pipeline": "plain", **(extra or {})}
+    # ADR-017: sources the answer names that were retrieved but not cited -> one code-written line of links
+    last = check.get("second", check.get("first", [])) if check.get("action") != "refused_after_retry" else []
+    refs = [] if rec["refused"] else named_refs(last)
+    rec["named_refs"] = refs
+    if refs:
+        text += "\n\nAlso named in this answer (linked by the system, not quoted): " + " · ".join(
+            f'{r["label"]} ({r["link"]})' for r in refs)
     # Deterministic notices (not written by the model): product not yet in force / cited rule changes soon.
     pre, post = pv.notices(products, as_on, rec["cited_rules"])
     if pre or post:
@@ -206,8 +214,9 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
     """product: home_loan | lap | vehicle_loan from the screen selector / API / loan file; None = detect from the question.
     as_on: date (or 'YYYY-MM-DD') the answer must hold on; None = today. Only policy rules in force then are used;
     a product whose policy is not yet in force is left out and the answer says so (ADR-010).
-    PIPELINE=graph runs the LangGraph flow (app/graph.py, ADR-016); PIPELINE=plain the original one."""
-    if os.environ.get("PIPELINE", "plain") == "graph":
+    Default: the LangGraph flow (app/graph.py, ADR-016, accepted 27 Nov 2026). PIPELINE=plain runs the original
+    flow - kept one release for rollback."""
+    if os.environ.get("PIPELINE", "graph") == "graph":
         from app.graph import run
         return run(q, k=k, caller=caller, layers=layers, product=product, as_on=as_on)
     return _answer_plain(q, k, caller, layers, product, as_on)

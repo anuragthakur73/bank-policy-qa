@@ -148,3 +148,10 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   in the S2 plain run, so it flips run to run - S4 target). Validator retries differ on 5 questions in both
   directions (p17 plain-only; i05, l08, v06, v09 graph-only) - model variation, not flow logic (tests/test_graph.py).
 - Plain $0.080 / 7.1 s median; graph $0.085 / 6.8 s.
+
+## 27 Nov 2026 - Week 5 S3, plain (02:45) vs graph (02:53), embedding cache 72/72: DONE-WHEN MET
+- Retrieval identical; graph >= plain on every metric. Plain refused two CORRECT answers: g002 and p03 first drafts
+  named retrieved sources (para 39; DB-HL-005/007) without citing them; the retries named unretrieved paras (34; 349)
+  -> refused. Fix: ADR-017 (warn + code-added link for retrieved names; block unretrieved names; retry note says
+  not to add names). ADR-016 accepted, default PIPELINE=graph.
+- Still open: x04 leads with "12 months" (headline scorer reads it before 3%); v09 manual review.
