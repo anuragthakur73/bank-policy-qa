@@ -1,0 +1,58 @@
+# S5 (ADR-015): personal data never reaches the search, the model or the audit log. No network, no API keys.
+import json
+from types import SimpleNamespace as NS
+import pytest
+from app.pii import mask
+
+RAW = ["ABCDE1234F", "2345 6789 0124", "98765 43210", "ramesh@example.com", "123456789012", "4111 1111 1111 1111"]
+Q = ("Customer PAN ABCDE1234F, Aadhaar 2345 6789 0124, mobile 98765 43210, email ramesh@example.com, "
+     "a/c no 123456789012, card 4111 1111 1111 1111 - what is the max LTV for a home loan of Rs 50 lakh?")
+
+def test_mask_all_types():
+    m, found = mask(Q)
+    assert not any(r in m for r in RAW)
+    assert sorted(set(found)) == ["BANK_ACCOUNT", "CREDIT_CARD", "EMAIL_ADDRESS", "IN_AADHAAR", "IN_PAN", "PHONE_NUMBER"]
+    assert "Rs 50 lakh" in m and "home loan" in m                    # the question itself survives
+
+def test_aadhaar_typo_masked_by_context_only():
+    assert mask("Aadhaar 2345 6789 0123")[0] == "Aadhaar <IN_AADHAAR>"   # checksum fails, but next to "Aadhaar"
+    assert mask("a loan of 234567890123 rupees")[1] == []                # 12 digits without context: left alone
+
+@pytest.mark.parametrize("q", ["Rs 50,00,000 for 240 months at 8.5%", "FOIR 55% on Rs 1,00,000 NMI",
+                               "KFS valid for 3 working days", "CF para 219G and RBC 353", "DB-LAP-009 tenure 3 to 15 years"])
+def test_no_false_alarms(q):
+    assert mask(q) == (q, [])
+
+def test_golden_questions_untouched():
+    rows = [json.loads(l) for l in open("eval/golden_v2.jsonl", encoding="utf-8")]
+    assert [r["id"] for r in rows if mask(r["question"])[1]] == []
+
+def test_answer_path_masks_before_search_model_and_log(monkeypatch, tmp_path):
+    import app.generate as gen
+    from app import policy_versions as pv
+    pv.registry()                                           # load policy files before leaving the repo folder
+    seen = {}
+    def fake_search(q, k, **kw):
+        seen["search"] = q
+        return {"rows": [], "as_on": pv.to_date("2027-01-02"), "mode": "vector", "products": ("home_loan",),
+                "product_source": "detected", "layers": ("rbi",), "policy_status": [], "notices": []}
+    def fake_ask(model, results, q, hits, retry_note=None):
+        seen["model"] = q
+        return NS(usage=NS(input_tokens=10, output_tokens=5), stop_reason="end_turn"), gen.REFUSAL, []
+    monkeypatch.setattr(gen, "search", fake_search); monkeypatch.setattr(gen, "_ask", fake_ask)
+    monkeypatch.chdir(tmp_path)                             # audit record goes to a temp folder, not logs/
+    text, cites, rec = gen.answer(Q)
+    log = (tmp_path / "logs" / "audit.jsonl").read_text(encoding="utf-8")
+    for where in (seen["search"], seen["model"], log):
+        assert not any(r in where for r in RAW)
+    assert "IN_PAN" in rec["pii_masked"] and "<IN_PAN>" in rec["question"]
+
+def test_api_retrieve_masks(monkeypatch):
+    from fastapi.testclient import TestClient
+    import app.api as api, app.search as sm
+    got, audit = {}, []
+    monkeypatch.setattr(sm, "retrieve", lambda q, k, layers, **kw: got.setdefault("q", q) and [])
+    monkeypatch.setattr(api, "_audit", audit.append)
+    b = TestClient(api.app).post("/v1/retrieve", json={"query": Q, "as_on": "2027-01-02"}).json()
+    assert "IN_PAN" in b["pii_masked"] and not any(r in got["q"] for r in RAW)
+    assert not any(r in json.dumps(audit, default=str) for r in RAW)

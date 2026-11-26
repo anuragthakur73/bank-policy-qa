@@ -235,3 +235,22 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Run 3: 47 pass, 4 passed after retry, 0 refused; refusals 51/51, RBI cited 22/23 (g001: <span> citation markup
   in text, zero citations) -> new blocking checks no_citations + citation_markup_in_text (to confirm next run).
   ADR-014 accepted. Tests: 97.
+
+## Week 4 · Session 5: PII masking, screen, golden_v2.1 (26 Nov 2026) — ADR-015
+- app/pii.py: Presidio pattern recognisers (PAN, Aadhaar+checksum, passport, voter, vehicle, GSTIN, card, email,
+  India phone) + context patterns (Aadhaar typo, account number). Question masked before search, model, audit (answer
+  path and API). Names NOT masked (no NER model) - stated on the screen.
+- Screen: product selector, "rule as on" date, masking notice, citation-check status, rule versions, feedback
+  (logs/feedback.jsonl, joined to audit by request_id; comments masked), kill switch honoured (search-only).
+- golden_v2_1 = v2 (51) + 9: dates (v01-v04, v08-v09), product detection (v05), PII (v06-v07). New metrics
+  version_ok, notice_ok, pii_ok. run_eval default is now golden_v2_1.
+- Tests: 107 offline + 2 headless screen tests (AppTest; skipped if streamlit is not installed).
+- Result golden_v2_1 (26 Nov 23:43, 60 Qs, as on 1 Jan 2027 unless row says otherwise): RBI para in top 5 24/24,
+  RBI cited 24/24 (first time all), rules found/cited 37/37, product_ok 37/37, answers 26/26, version_ok 4/4,
+  notice_ok 2/2, pii_ok 2/2, headline 13/14 -> 14/14 after scorer fix, refusals 59/60 (v09). $0.067, 6.5 s median.
+  Validator: 59 pass, 1 passed after retry, 0 refused.
+- v01: headline scorer read "25" from the code-written notice -> scorer now skips notices.
+- v09 (HUF as on 15 Dec 2026): model refused; v1.0 says "resident Indian individuals" and RBI CF 219E counts HUFs as
+  individuals elsewhere - genuinely unclear (the reason v1.1 excludes HUFs). Expectation was my inference -> manual review.
+
+## Week 4 summary (25-26 Nov 2026) -> claude/project-1a-week-4-summary.md in the Project

@@ -1,4 +1,4 @@
-# run: python -m eval.run_eval [golden file]   (default eval/golden_v2.jsonl)
+# run: python -m eval.run_eval [golden file]   (default eval/golden_v2_1.jsonl since Week 4 S5)
 # Scores, per question:
 #   hit_at_5    expected RBI clause in the top 5 RBI SEARCH hits, matched by doc_id. Scored on rec["rbi_search"]
 #               (before de-duplication). Before 24 Nov it was scored after de-duplication, so a paragraph that
@@ -16,6 +16,9 @@
 #               PRODUCT_CONTEXT=text passes nothing, so the product is detected from the question (ADR-009)
 #   as_on       AS_ON env (default 2027-01-01: golden_v2 was written against home loan v1.1 + LAP v1.0); a row's own
 #               "as_on" wins (ADR-010)
+#   version_ok  every rule in the row's expected_versions is cited at that policy version (S5)
+#   notice_ok   the answer starts with the row's expect_notice (S5)
+#   pii_ok      none of the row's raw pii values appears in the logged question or answer (S5)
 #   manual      manual_review questions (policy gaps): answer recorded, NOT auto-scored except rule_hit
 #   timings     per-stage ms from the audit record (Week 3); retrieval mode from env RETRIEVAL_MODE (default hybrid)
 import json, datetime, os, pathlib, re, sys
@@ -35,7 +38,7 @@ def first_figure(text: str, question: str = ""):
             return n
     return None
 
-GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2.jsonl"
+GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2_1.jsonl"
 prefix = lambda rid: rid.rsplit("-", 1)[0]          # DB-HL-004 -> DB-HL
 rows = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 out = []
@@ -49,6 +52,9 @@ for r in rows:
     cited = {c.split(":", 1)[1] for c in rec.get("cited_rbi", []) if c.startswith(doc + ":")}
     pol = [x["clause_no"] for x in rec["retrieved"] if x.get("layer") == "policy"]
     must = r.get("must_contain", [])
+    model_text = text                                   # headline: skip the code-written notices (v01, 26 Nov)
+    for n in rec.get("notices", []):
+        model_text = model_text.replace(n, "")
     manual = bool(r.get("manual_review"))
     row = {"id": r["id"], "source": r.get("source"),
            "hit_at_5": any(c in got for c in exp) if exp and not ref else None,
@@ -62,8 +68,12 @@ for r in rows:
            "answer_ok": all(any(a.lower() in text.lower() for a in m.split("|")) for m in must)
                         if must and not ref and not manual else None,
            "refusal_ok": None if manual else rec["refused"] == ref,
-           "headline_ok": first_figure(text, r["question"]) == r["headline"].replace(",", "") if r.get("headline") and not ref else None,
-           "first_figure": first_figure(text, r["question"]),
+           "headline_ok": first_figure(model_text, r["question"]) == r["headline"].replace(",", "") if r.get("headline") and not ref else None,
+           "first_figure": first_figure(model_text, r["question"]),
+           "version_ok": all(rec["cited_rule_versions"].get(k) == v for k, v in r["expected_versions"].items())
+                         if r.get("expected_versions") else None,
+           "notice_ok": text.startswith(r["expect_notice"]) if r.get("expect_notice") else None,
+           "pii_ok": not any(p in rec["question"] or p in rec.get("answer", "") for p in r["pii"]) if r.get("pii") else None,
            "keyword_rules": [x["clause_no"] for x in rec["retrieved"] if x.get("how") == "keyword"],
            "validation": rec["validation"]["action"],
            "issues": [f'{i["severity"]}:{i["check"]}: {i["detail"]}' for i in rec["validation"]["first"]], "products": rec["products"], "product_source": rec["product_source"],
@@ -73,12 +83,13 @@ for r in rows:
            "cost_usd": rec["cost_usd"], "latency_ms": rec["latency_ms"],
            "timings_ms": rec["timings_ms"], "retries": rec["retries"]}
     out.append(row)
-    bad = [k for k in ("cited_ok", "rule_cited", "product_ok", "answer_ok", "headline_ok", "refusal_ok") if row[k] is False]
+    bad = [k for k in ("cited_ok", "rule_cited", "product_ok", "answer_ok", "headline_ok", "version_ok", "notice_ok", "pii_ok",
+                       "refusal_ok") if row[k] is False]
     print("MAN" if manual else ("OK " if not bad else "BAD"), r["id"], "| rules", pol, "cited", row["cited_rules"], "| rbi", got,
           "cited", row["cited"], ("| FAILED " + ",".join(bad)) if bad else "")
 
 METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "product_ok", "answer_ok", "headline_ok",
-           "refusal_ok")
+           "version_ok", "notice_ok", "pii_ok", "refusal_ok")
 def score(k, sub=None):
     vals = [o[k] for o in (sub or out) if o[k] is not None]
     return f"{sum(vals)}/{len(vals)}" if vals else "-"
@@ -87,7 +98,8 @@ summary = {k: score(k) for k in METRICS}
 real = [o for o in out if str(o["source"]).startswith("interview")]
 summary["interview_questions"] = {k: score(k, real) for k in METRICS} if real else "-"
 GROUPS = {"rbi_only": lambda o: "rbi-only" in str(o["source"]), "lap": lambda o: o["id"].startswith("l"),
-          "cross_product": lambda o: o["id"].startswith("x"), "home_loan_policy": lambda o: o["id"].startswith("p")}
+          "cross_product": lambda o: o["id"].startswith("x"), "home_loan_policy": lambda o: o["id"].startswith("p"),
+          "date_pii_s5": lambda o: o["id"].startswith("v")}
 summary["by_group"] = {g: {k: score(k, [o for o in out if f(o)]) for k in METRICS} for g, f in GROUPS.items()}
 summary["n_questions"] = len(out)
 summary["manual_review"] = [{"id": o["id"], "refused": o["answer"].startswith("Not covered"), "answer": o["answer"][:200]}

@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 from app import policy_versions as pv
 from app.retrieve import CONTRACT_VERSION
 from app.search import search
+from app.pii import mask
 
 API_VERSION = "v1"
 Product = Literal["home_loan", "lap"]
@@ -91,6 +92,7 @@ class RetrieveResponse(BaseModel):
     notices: list[str]
     chunks: list[Chunk]
     timings_ms: dict
+    pii_masked: list[str] = Field([], description="Types of personal data masked in the query before search (ADR-015)")
 
 class Citation(BaseModel):
     chunk_id: str | None
@@ -114,6 +116,7 @@ class AnswerResponse(BaseModel):
     products: list[str]
     product_source: str
     chunks: list[Chunk] = Field([], description="Filled in search_only mode")
+    pii_masked: list[str] = []
     cost_usd: float | None
     latency_ms: int
 
@@ -141,8 +144,10 @@ def _chunk(h: dict) -> Chunk:
 
 def _retrieve(req: Query, top_k=5, k_policy=3, sources=("policy", "rbi")):
     timings = {}
-    found = search(req.query, top_k, layers=tuple(sources), product=req.product, as_on=req.as_on,
+    q, pii = mask(req.query)
+    found = search(q, top_k, layers=tuple(sources), product=req.product, as_on=req.as_on,
                    k_policy=k_policy, timings=timings)
+    found["query"], found["pii_masked"] = q, pii
     return found, [_chunk(h) for h in found["rows"]], timings
 
 # ---------- endpoints
@@ -158,13 +163,13 @@ def retrieve_endpoint(req: RetrieveRequest):
     rid, t0 = str(uuid.uuid4()), time.perf_counter()
     found, chunks, timings = _retrieve(req, req.top_k, req.k_policy, req.sources)
     _audit({"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
-            "caller": "api", "endpoint": "retrieve", "question": req.query, "contract": CONTRACT_VERSION,
+            "caller": "api", "endpoint": "retrieve", "question": found["query"], "pii_masked": found["pii_masked"], "contract": CONTRACT_VERSION,
             "as_on": found["as_on"], "products": list(found["products"]), "product_source": found["product_source"],
             "returned": [c.id for c in chunks], "latency_ms": int((time.perf_counter() - t0) * 1000)})
     return RetrieveResponse(api=API_VERSION, contract=CONTRACT_VERSION, request_id=rid, as_on=found["as_on"],
                             products=list(found["products"]), product_source=found["product_source"],
                             policy_status=found["policy_status"], notices=found["notices"], chunks=chunks,
-                            timings_ms=timings)
+                            timings_ms=timings, pii_masked=found["pii_masked"])
 
 @app.post("/v1/answer", response_model=AnswerResponse)
 def answer_endpoint(req: Query):
@@ -174,12 +179,13 @@ def answer_endpoint(req: Query):
         found, chunks, _ = _retrieve(req)
         msg = "Answer generation is switched off (kill switch). Showing the matching rules and clauses only."
         _audit({"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
-                "caller": "api", "endpoint": "answer", "mode": "search_only", "question": req.query,
+                "caller": "api", "endpoint": "answer", "mode": "search_only", "question": found["query"], "pii_masked": found["pii_masked"],
                 "contract": CONTRACT_VERSION, "as_on": found["as_on"], "returned": [c.id for c in chunks]})
         return AnswerResponse(api=API_VERSION, contract=CONTRACT_VERSION, request_id=rid, mode="search_only",
                               answer=None, refused=None, citations=[], notices=[msg] + found["notices"],
                               as_on=found["as_on"], products=list(found["products"]),
                               product_source=found["product_source"], chunks=chunks, cost_usd=0.0,
+                              pii_masked=found["pii_masked"],
                               latency_ms=int((time.perf_counter() - t0) * 1000))
     from app.generate import answer
     text, cites, rec = answer(req.query, caller="api", product=req.product, as_on=req.as_on)
@@ -192,4 +198,5 @@ def answer_endpoint(req: Query):
                           answer=text, refused=rec["refused"], citations=citations, notices=rec["notices"],
                           as_on=datetime.date.fromisoformat(rec["as_on"]), products=rec["products"],
                           product_source=rec["product_source"], cost_usd=rec["cost_usd"],
+                          pii_masked=rec.get("pii_masked", []),
                           latency_ms=rec["latency_ms"])

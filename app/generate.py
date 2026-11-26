@@ -9,6 +9,7 @@ import anthropic
 from app.retrieve import CONTRACT_VERSION, RETRIES, count_sdk_retries
 from app.search import search
 from app.validate import validate, blocking
+from app.pii import mask
 from app import product as prod
 from app import policy_versions as pv
 
@@ -125,6 +126,8 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
     as_on: date (or 'YYYY-MM-DD') the answer must hold on; None = today. Only policy rules in force then are used;
     a product whose policy is not yet in force is left out and the answer says so (ADR-010)."""
     t0, rid = time.perf_counter(), str(uuid.uuid4())
+    # ADR-015: mask personal data FIRST - the search, the model and the audit log only ever see the masked question
+    q, pii_found = mask(q)
     timings, before = {}, dict(RETRIES)
     found = search(q, k, layers=layers, product=product, as_on=as_on, timings=timings)
     raw, as_on, mode = found["rows"], found["as_on"], found["mode"]
@@ -157,7 +160,7 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
                        "output_tokens": sum(x.output_tokens for x in usage)})
     rec = {"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
            "caller": caller, "question": q, "contract": CONTRACT_VERSION, "layers": list(use_layers),
-           "products": list(products), "product_source": product_source,
+           "products": list(products), "product_source": product_source, "pii_masked": pii_found,
            "retrieved": [{"layer": h.get("layer"), "doc_id": h["doc_id"], "clause_no": h["clause_no"],
                           "version_as_on": h["version_as_on"], "score": h["score"],
                           "traced_from": h.get("traced_from"),

@@ -115,3 +115,8 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   g010: refusal followed by extra remarks was not counted as a refusal -> is_refusal = starts with the refusal.
 - Run 3 (00:38): clean on refusals (51/51). g001 answered "80%" with ZERO citations - wrote <span index="10-1"> markup
   into the text. New blocking checks no_citations / citation_markup_in_text; first live check in the next eval.
+
+## 26 Nov 2026 - Week 4 S5, golden_v2_1 (60 Qs)
+- v01 headline_ok false alarm: first figure came from the "not in force" notice -> scorer skips notices.
+- v09 refusal: not a defect. v1.0 DB-HL-003 does not settle whether an HUF is an "individual"; RBI CF 219E treats HUFs
+  as individuals in its own context. Moved to manual review. Shows why v1.1 states the exclusion.
