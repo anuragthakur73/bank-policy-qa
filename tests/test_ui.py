@@ -16,7 +16,8 @@ def app(monkeypatch, tmp_path):
         calls.append({"q": q, **kw}); return "80% under DB-HL-009.", [CITE], dict(REC)
     monkeypatch.setattr(gen, "answer", fake_answer)
     monkeypatch.delenv("KILL_SWITCH", raising=False)
-    at = st_testing.AppTest.from_file("ui/streamlit_app.py", default_timeout=30)
+    # AppTest resolves a relative path against this test file, not the working directory
+    at = st_testing.AppTest.from_file("../ui/streamlit_app.py", default_timeout=30)
     at.calls = calls
     return at
 

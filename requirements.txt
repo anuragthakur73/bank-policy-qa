@@ -40,7 +40,7 @@ langsmith==0.15.0
 MarkupSafe==3.0.4
 narwhals==2.29.0
 nodeenv==1.12.0
-numpy==2.5.5
+numpy==2.4.6
 openai==3.55.1
 opentelemetry-api==1.45.2
 orjson==3.13.0
