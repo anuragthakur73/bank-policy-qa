@@ -1,0 +1,434 @@
+# Demo Bank (fictional) - New Car Loan Policy v1.0.0 (DRAFT)
+# SYNTHETIC. Designed from the public SBI, ICICI Bank and HDFC Bank new-car-loan study
+# (docs/studies/car_loan_sbi_icici_hdfc.md, 27 Nov 2026) and RBI Master Directions.
+# Not based on any bank's internal circulars.
+bank: Demo Bank (fictional)
+product: vehicle_loan
+policy_version: "1.0.0"
+effective_from: 2027-01-01
+status: draft
+synthetic: true
+rbi_corpus_version:
+  RBC: "RBI (Commercial Banks - Responsible Business Conduct) Directions, 2025 - updated as on 2026-10-01"
+design_basis:
+  - id: VL-STUDY
+    title: "New car loans: SBI, ICICI Bank and HDFC Bank published terms, as on 27 Nov 2026"
+    url: docs/studies/car_loan_sbi_icici_hdfc.md
+
+rules:
+
+  # ---------------- ELIGIBILITY ----------------
+  - rule_id: DB-VL-001
+    section: eligibility
+    title: Vehicles covered and purpose
+    rule: >-
+      A Demo Bank new car loan finances the purchase of a new passenger car, MUV or SUV,
+      including an electric or hybrid car, bought from a manufacturer-authorised dealer for
+      the borrower's personal use and registered as a private (non-transport) vehicle in the
+      main applicant's name. This policy version does not cover used cars, two-wheelers,
+      commercial or taxi vehicles, cars bought for a business or fleet, or cars imported other
+      than through an authorised dealer.
+    params:
+      vehicles: [new_passenger_car, muv, suv]
+      fuel: [petrol, diesel, cng, electric, hybrid]
+      registration: private_non_transport
+      seller: manufacturer_authorised_dealer
+      excluded: [used_car, two_wheeler, commercial_vehicle, taxi, business_fleet, private_import]
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, ICICI-VL-S2]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-002
+    section: eligibility
+    title: Eligible applicants and co-applicants
+    rule: >-
+      Only resident Indian individuals may apply: salaried employees, self-employed
+      professionals and self-employed non-professionals. Firms, LLPs, companies, trusts,
+      societies and HUFs cannot be applicants or co-applicants. NRIs are not covered by this
+      policy version. A spouse, parent, son or daughter may join as co-applicant so that their
+      income is counted; the car is registered in the main applicant's name only.
+    params:
+      applicant_types: [salaried, self_employed_professional, self_employed_non_professional]
+      excluded_applicants: [partnership_firm, llp, company, trust, society, huf]
+      co_applicant_relationships: [spouse, parent, son, daughter]
+      nri_covered: false
+      rc_owner: main_applicant
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, HDFC-VL-S1, synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-003
+    section: eligibility
+    title: Age at entry and at maturity
+    rule: >-
+      The applicant must be at least 21 years old on the date of sanction. The car loan must be
+      fully repaid by age 65 for salaried applicants and by age 70 for self-employed
+      applicants, counting the age of the oldest earning co-applicant whose income is used.
+      Unlike the home loan, a salaried applicant who will receive a pension does not get a
+      later maturity age for a car loan.
+    params:
+      min_entry_age: 21
+      max_age_at_maturity: {salaried: 65, self_employed: 70}
+      pension_extension: false
+      age_basis: oldest_earning_co_applicant
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, HDFC-VL-S1, synthetic]
+    review: ok
+    review_note: "Anurag 27 Nov 2026: salaried 65, self-employed 70 (between HDFC 60/65 and SBI 70)"
+
+  - rule_id: DB-VL-004
+    section: eligibility
+    title: Minimum income and work history
+    rule: >-
+      Salaried applicants need a net annual income of at least Rs 3,00,000, which may include
+      a co-applicant's income, and at least 2 years of total work experience including 1 year
+      with the current employer. Self-employed applicants need at least 2 years in the current
+      business and income tax returns for the last 2 years showing a net annual income of at
+      least Rs 3,00,000, which may include a co-applicant's income.
+    params:
+      salaried: {min_net_annual_income: 300000, co_applicant_income_counted: true, min_total_experience_years: 2, min_current_employer_years: 1}
+      self_employed: {min_business_vintage_years: 2, itr_years: 2, min_net_annual_income: 300000, co_applicant_income_counted: true}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, HDFC-VL-S1]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-005
+    section: eligibility
+    title: Credit score
+    rule: >-
+      The minimum credit bureau score is 700. A salaried applicant with no credit history (new
+      to credit) is treated as meeting the minimum and priced in the 700 to 749 band
+      (DB-VL-010); a self-employed applicant with no credit history is not eligible. Scores
+      from 680 to 699 need a deviation approval (DB-VL-020). Scores below 680 are declined.
+    params: {min_score: 700, ntc_allowed: {salaried: true, self_employed: false}, deviation_floor: 680}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  # ---------------- AMOUNT AND MARGIN ----------------
+  - rule_id: DB-VL-006
+    section: amount_ltv
+    title: Loan amount limits
+    rule: >-
+      The minimum car loan is Rs 1 lakh and the maximum is Rs 1 crore, and the loan may not
+      exceed 90% of the on-road price (DB-VL-007). Within these limits, the loan may not
+      exceed 48 times net monthly income for a salaried applicant, or 4 times the net annual
+      income in the latest income tax return (after adding back depreciation) for a
+      self-employed applicant, and must meet the repayment capacity test (DB-VL-008).
+    params:
+      min_amount: 100000
+      max_amount: 10000000
+      income_multiple: {salaried_x_nmi: 48, self_employed_x_annual_income: 4}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, ICICI-VL-S2, synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-007
+    section: amount_ltv
+    title: Finance limit and margin money
+    rule: >-
+      Demo Bank finances at most 90% of the car's on-road price for every borrower, whatever
+      the credit score. The on-road price means the ex-showroom price plus registration
+      charges, road tax and the first year's motor insurance, as shown on the dealer's
+      proforma invoice. Accessories, extended warranty and maintenance packages are not
+      financed. The borrower pays the remaining margin of at least 10% to the dealer and gives
+      the dealer's margin money receipt before the loan is disbursed.
+    params:
+      max_finance_pct_of_on_road: 0.90
+      on_road_includes: [ex_showroom, registration, road_tax, first_year_insurance]
+      not_financed: [accessories, extended_warranty, maintenance_package]
+      margin_receipt_before_disbursement: true
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, ICICI-VL-S3, synthetic]
+    review: ok
+    review_note: "Anurag 27 Nov 2026: 90% for all (stricter than the 100% headline offers of SBI, ICICI and HDFC, on purpose); accessories, extended warranty and maintenance packages stay outside the on-road price"
+
+  - rule_id: DB-VL-008
+    section: amount_ltv
+    title: Repayment capacity (FOIR)
+    rule: >-
+      Total monthly obligations, meaning the proposed car loan EMI plus all existing EMIs and
+      5% of credit card outstanding, may not exceed a share of net monthly income (NMI): 50%
+      for NMI up to Rs 50,000, 55% for NMI above Rs 50,000 up to Rs 1,00,000, and 60% for NMI
+      above Rs 1,00,000.
+    params:
+      foir_bands: [{max_nmi: 50000, max_foir: 0.50}, {max_nmi: 100000, max_foir: 0.55}, {max_nmi: null, max_foir: 0.60}]
+      card_outstanding_pct_as_emi: 0.05
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-009
+    section: amount_ltv
+    title: Tenure and repayment
+    rule: >-
+      A car loan is repaid in equal monthly instalments (EMIs) over 12 to 84 months (1 to 7
+      years), for every fuel type including electric cars, and may not run beyond the maturity
+      age in DB-VL-003. The first EMI falls due one month after disbursement; no advance EMI is
+      collected.
+    params: {min_tenure_months: 12, max_tenure_months: 84, ev_max_tenure_months: 84, advance_emi: false}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, ICICI-VL-S2, HDFC-VL-S1]
+    review: ok
+    review_note: "Anurag 27 Nov 2026: 7 years is the only maximum, EVs included (no 8-year EV option as at HDFC)"
+
+  # ---------------- PRICING ----------------
+  - rule_id: DB-VL-010
+    section: pricing
+    title: Fixed interest rate
+    rule: >-
+      All Demo Bank car loans carry a fixed interest rate, set at sanction by credit score and
+      unchanged for the life of the loan: 800 and above, 8.75% per annum; 750 to 799, 9.15%;
+      700 to 749 and salaried new to credit, 9.65%. Electric and strong-hybrid cars get 0.25%
+      off. Interest is calculated on the daily reducing balance. Because the rate is fixed,
+      there is no interest reset during the loan, and the floating-rate reset options for
+      personal loans do not apply.
+    params:
+      rate_type: fixed
+      rate_by_score: [{min: 800, rate: 0.0875}, {min: 750, rate: 0.0915}, {min: 700, rate: 0.0965}, {ntc_salaried: true, rate: 0.0965}]
+      ev_strong_hybrid_discount: 0.0025
+      interest_method: daily_reducing_balance
+      reset: false
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, ICICI-VL-S1, synthetic]
+    review: ok
+    review_note: "Anurag 27 Nov 2026: fixed rate (SBI/ICICI style). rate levels reviewed 27 Nov 2026, accepted"
+
+  # ---------------- CHARGES ----------------
+  - rule_id: DB-VL-011
+    section: charges
+    title: Processing and documentation charges
+    rule: >-
+      The processing fee is a flat Rs 1,000 plus GST for every loan, whatever the loan amount,
+      charged only after sanction and refunded in full if the loan is not disbursed.
+      Documentation charges are Rs 500 plus GST. Stamp duty is at actuals under the state's
+      stamp act. All fees and charges, and the all-in cost, are listed in the application form,
+      the Key Facts Statement and on Demo Bank's website.
+    params:
+      processing_fee: {flat: 1000, refundable_if_not_disbursed: true}
+      documentation: 500
+      stamp_duty: actuals
+    rbi_ref: {direction: RBC, para: "327", note: "All fees and charges, refund if not sanctioned/disbursed and all-in cost disclosed in the application form and on the website"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [ICICI-VL-S1, synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: processing fee changed from 0.50% (Rs 1,000-8,500) to a flat Rs 1,000 + GST; rest accepted"
+
+  - rule_id: DB-VL-012
+    section: charges
+    title: Foreclosure and part prepayment (fixed rate)
+    rule: >-
+      Demo Bank car loans are fixed-rate loans, so RBI's ban on pre-payment charges for
+      floating-rate loans to individuals does not apply to them; Demo Bank's own charges
+      apply instead. Closing the loan early or prepaying part of it costs 3% plus GST of the
+      amount prepaid if the loan is up to 12 months old, 2% plus GST if it is 13 to 24 months
+      old, and nothing after 24 months. The charge is always on the amount prepaid, never on
+      the original loan amount. A part prepayment must be at least one EMI; there is no limit
+      on the number of part prepayments. No charge applies when the loan is closed from a
+      motor insurance claim after the car is stolen or written off. The charges are stated in
+      the sanction letter, the loan agreement and the Key Facts Statement.
+    params:
+      rate_type: fixed
+      charge_on: amount_prepaid
+      slabs: [{max_age_months: 12, pct: 0.03}, {max_age_months: 24, pct: 0.02}, {max_age_months: null, pct: 0.0}]
+      min_part_prepayment: one_emi
+      max_part_prepayments: null
+      waived: [insurance_claim_total_loss_or_theft]
+    rbi_ref: {direction: RBC, para: "353", note: "353(1) bans pre-payment charges only on floating-rate loans; for other loans 353(5) leaves charges to the bank's approved policy, levied on the amount prepaid"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [SBI-VL-S1, ICICI-VL-S1]
+    review: ok
+    review_note: "Anurag 27 Nov 2026: fixed rate with foreclosure fee. slabs follow ICICI (3%/2%/nil), reviewed 27 Nov 2026, accepted"
+
+  - rule_id: DB-VL-013
+    section: charges
+    title: Penal charges for late payment
+    rule: >-
+      If an EMI is not paid by its due date, a penal charge of 3% per annum is levied on the
+      overdue EMI amount only, for the days it stays overdue. It is a charge, not an addition to
+      the interest rate, and no interest is charged on it. No penal charge is levied on unpaid
+      penal charges. The amount and reason are disclosed in the loan agreement, the Key Facts
+      Statement and on Demo Bank's website, stated in every reminder, and told to the borrower
+      each time it is levied.
+    params: {penal_pct_pa_on_overdue: 0.03}
+    rbi_ref: {direction: RBC, para: "351"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [ICICI-VL-S1, synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-014
+    section: charges
+    title: Dishonour and service charges
+    rule: >-
+      A dishonoured cheque, NACH mandate or standing instruction costs Rs 500 plus GST per
+      instance. A duplicate no-objection certificate (NOC) costs Rs 250 plus GST. Statements,
+      repayment schedules and the NOC are free on digital channels.
+    params: {dishonour: 500, duplicate_noc: 250, digital_statements: 0}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [ICICI-VL-S1]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  # ---------------- VEHICLE AND SECURITY ----------------
+  - rule_id: DB-VL-015
+    section: vehicle
+    title: Hypothecation and registration
+    rule: >-
+      The car is hypothecated to Demo Bank. The hypothecation in Demo Bank's favour must be
+      recorded on the registration certificate (RC) when the car is registered with the
+      Regional Transport Office. The borrower gives Demo Bank a copy of the RC showing the
+      hypothecation within 30 days of disbursement. The car may not be sold, transferred or
+      converted (for example to commercial use) while the loan is outstanding without Demo
+      Bank's written consent.
+    params: {security: hypothecation, rc_endorsement: true, rc_copy_due_days: 30, sale_transfer_needs_consent: true}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [ICICI-VL-S1, synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-016
+    section: vehicle
+    title: Motor insurance
+    rule: >-
+      The car must have comprehensive motor insurance for its insured declared value for the
+      whole loan period, with Demo Bank's hypothecation noted on the policy. The borrower may
+      buy it from any insurer; Demo Bank does not require a particular insurer. The borrower
+      gives proof of renewal every year. Life cover for the borrower is optional and never a
+      condition of sanction.
+    params: {insurance: comprehensive_motor, full_tenure: true, any_insurer: true, renewal_proof: annual, life_cover_mandatory: false}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  # ---------------- PROCESS ----------------
+  - rule_id: DB-VL-017
+    section: process
+    title: Documents and disbursement
+    rule: >-
+      Before sanction the applicant gives: a photograph, the application form, KYC documents,
+      the dealer's proforma invoice, 6 months' bank statements, and income proof (latest salary
+      slip and Form 16 or ITR for 2 years for salaried applicants; ITRs, audited balance sheet
+      and profit and loss account for 2 years for self-employed applicants). The loan is paid
+      directly to the authorised dealer, never to the borrower, after the margin money receipt
+      (DB-VL-007) is received. The borrower gives the dealer's tax invoice and the insurance
+      policy within 15 days of disbursement. A decision on a complete application is given
+      within 2 working days.
+    params:
+      pre_sanction: [photo, application_form, kyc, proforma_invoice, bank_statement_6m, income_proof]
+      disburse_to: authorised_dealer
+      post_disbursement_days: {tax_invoice_and_insurance: 15, rc_copy: 30}
+      decision_tat_working_days: 2
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [SBI-VL-S1, ICICI-VL-S3, synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-018
+    section: process
+    title: Key Facts Statement
+    rule: >-
+      Before sanction, every applicant receives a Key Facts Statement in RBI's standard format,
+      with a unique proposal number, the APR and the amortisation schedule, in a language they
+      understand. Bank staff explain it and obtain the borrower's acknowledgement. It is valid
+      for at least 3 working days, and if the borrower accepts within that period Demo Bank is
+      bound by its terms. It states that the rate is fixed and lists the foreclosure charges
+      (DB-VL-012). No charge missing from the KFS may be levied without the borrower's explicit
+      consent.
+    rbi_ref: {direction: RBC, para: "348"}
+    bank_discretion: false
+    vs_rbi: equal
+    design_basis: [synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-019
+    section: process
+    title: Repossession and recovery
+    rule: >-
+      The loan agreement contains a repossession clause, which staff explain to the borrower
+      when the agreement is signed. Demo Bank may take possession of the car only after at
+      least 3 EMIs are overdue and a written notice of at least 15 days has been given; the
+      notice period may be waived only if the borrower is trying to sell or hide the car.
+      After possession, the borrower gets a final written chance of at least 7 days to repay
+      the overdue amount and charges before the car is sold; if they pay, the car is returned.
+      The car is sold by public auction or through an approved valuer, and any surplus after
+      the dues is paid to the borrower. Recovery agents must carry Demo Bank's notice,
+      authorisation letter and identity card, hold the IIBF Debt Recovery Agent certificate,
+      and may not call the borrower before 8 a.m. or after 7 p.m. or harass or threaten anyone.
+    params:
+      min_overdue_emis: 3
+      notice_days: 15
+      notice_waiver: [attempt_to_sell_or_conceal]
+      final_chance_days: 7
+      sale: [public_auction, approved_valuer]
+      agent_requirements: [notice, authorisation_letter, id_card, iibf_dra_certificate]
+      call_hours: "08:00-19:00"
+    rbi_ref: {direction: RBC, para: "450, 442, 445, 448", note: "450: repossession clause must cover notice period, waiver, procedure, final chance, return and sale; the 3-EMI, 15-day and 7-day values are Demo Bank's own"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  # ---------------- GOVERNANCE ----------------
+  - rule_id: DB-VL-020
+    section: governance
+    title: Deviations
+    rule: >-
+      The Regional Credit Head may approve these deviations, recording the reason and the
+      mitigating strength: FOIR up to 5 percentage points above DB-VL-008; credit score from
+      680 to 699; the income multiple in DB-VL-006 up to 10% higher. No more than two
+      deviations are allowed in one loan. No deviation is permitted on the 90% finance limit
+      (DB-VL-007), maturity age (DB-VL-003), vehicles covered (DB-VL-001), foreclosure charges
+      (DB-VL-012), penal charges (DB-VL-013), the KFS (DB-VL-018) or repossession (DB-VL-019).
+    params: {approver: regional_credit_head, max_deviations: 2}
+    bank_discretion: true
+    vs_rbi: not_applicable
+    design_basis: [synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+
+  - rule_id: DB-VL-021
+    section: governance
+    title: NOC and removal of hypothecation after closure
+    rule: >-
+      Within 15 working days of full repayment, Demo Bank gives the borrower a no-objection
+      certificate and the signed form for removing the hypothecation from the registration
+      certificate, and records the closure wherever its charge was registered, at the branch
+      or another office of the borrower's choice. If this is not done within 30 days, Demo Bank
+      tells the borrower the reason, and if the delay is attributable to Demo Bank it pays the
+      borrower Rs 5,000 for each day of delay. If any original document held by Demo Bank is
+      lost or damaged, Demo Bank helps the borrower obtain duplicate or certified copies at its
+      own cost within a further 30 days, after which the daily compensation applies.
+    params: {noc_working_days: 15, rbi_max_days: 30, compensation_per_day: 5000, lost_document_extra_days: 30}
+    rbi_ref: {direction: RBC, para: "354, 355, 358, 359"}
+    bank_discretion: false
+    vs_rbi: stricter
+    design_basis: [synthetic]
+    review: ok
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted"

@@ -26,7 +26,7 @@ One YAML file per product, e.g. `policy/demo_bank/home_loan_v1.yaml`.
 | Field | Required | Meaning |
 |---|---|---|
 | `rule_id` | yes | Stable ID, `DB-HL-001`. Never reused after deletion. |
-| `section` | yes | Grouping: `eligibility`, `amount_ltv`, `pricing`, `charges`, `property`, `process`, `governance` |
+| `section` | yes | Grouping: `eligibility`, `amount_ltv`, `pricing`, `charges`, `property`, `vehicle`, `process`, `governance` |
 | `title` | yes | Short name |
 | `rule` | yes | Plain-English rule text. This is what gets embedded and cited. |
 | `params` | no | Machine-readable values (numbers, bands, lists) for checks and agents (1B / Project 2) |

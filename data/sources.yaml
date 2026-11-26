@@ -41,6 +41,8 @@ bank_published:
       - {study_id: SBI-LAP-S1, title: "Loans Against Property", url: "https://sbi.bank.in/web/personal-banking/loans/loans-against-property/loans-against-property", effective: null}
       - {study_id: SBI-LAP-S2, title: "Loan Against Mortgage Of Immovable Property", url: "https://sbi.co.in/portal/web/personal-banking/loan-against-mortgage-of-immovable", effective: null}
       - {study_id: SBI-LAP-S3, title: "P-LAP (Personal Loan Against Property) - home loans portal", url: "https://homeloans.sbi.bank.in/products/view/loan-against-property", effective: null}
+      # New car loan study, accessed 27 Nov 2026 (docs/studies/car_loan_sbi_icici_hdfc.md)
+      - {study_id: SBI-VL-S1, title: "SBI New Car Loan Scheme", url: "https://www.sbi.co.in/portal/web/personal-banking/sbi-new-car-loan-scheme", effective: null}
   icici:
     bank: ICICI Bank
     terms_note: "Site reuse terms not yet checked - link only, do not reproduce text."
@@ -54,3 +56,12 @@ bank_published:
       - {study_id: ICICI-LAP-S1, title: "Loan Against Property", url: "https://www.icici.bank.in/personal-banking/loans/home-loan/loan-against-property", effective: null}
       - {study_id: ICICI-LAP-S2, title: "Loan Against Property FAQs", url: "https://www.icici.bank.in/personal-banking/loans/home-loan/loan-against-property/faqs", effective: null}
       - {study_id: ICICI-LAP-S3, title: "Blog: Loan Against Property (eligibility)", url: "https://www.icici.bank.in/personal-banking/blogs/loan/home-loan/loan-against-property", effective: null}
+      # New car loan study, accessed 27 Nov 2026
+      - {study_id: ICICI-VL-S1, title: "Car Loan Service Charges (incl. rate range, quarter ended Sep 2026)", url: "https://www.icici.bank.in/personal-banking/loans/car-loan/service-charges", effective: null}
+      - {study_id: ICICI-VL-S2, title: "Car Loan FAQs", url: "https://www.icici.bank.in/personal-banking/loans/car-loan/car-loans-faqs.html", effective: null}
+      - {study_id: ICICI-VL-S3, title: "Car Loan (documents, margin money receipt)", url: "https://www.icici.bank.in/personal-banking/loans/car-loan-old", effective: null}
+  hdfc:
+    bank: HDFC Bank
+    terms_note: "Site reuse terms not yet checked - link only, do not reproduce text."
+    pages:
+      - {study_id: HDFC-VL-S1, title: "Car Loan Eligibility Criteria (and EV car loan eligibility)", url: "https://www.hdfc.bank.in/car-loan/eligibility", effective: null}
