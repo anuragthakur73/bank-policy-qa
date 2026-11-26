@@ -85,6 +85,7 @@ def _sources(hits: list[dict]) -> list[dict]:
             add(h)
     return out
 
+AUDIT_LOG = os.environ.get("AUDIT_LOG", "logs/audit.jsonl")   # tests point this at a temp file
 VALIDATOR = os.environ.get("VALIDATOR", "enforce")   # enforce: retry once, then refuse | log: record issues only
 
 def _ask(model: str, results: list, q: str, hits: list, retry_note: list | None = None):
@@ -120,25 +121,68 @@ def _ask(model: str, results: list, q: str, hits: list, retry_note: list | None 
                           "cited_text": getattr(c, "cited_text", "")})
     return msg, text, cites
 
-def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), product: str | None = None,
-           as_on=None):
-    """product: home_loan | lap | vehicle_loan from the screen selector / API / loan file; None = detect from the question.
-    as_on: date (or 'YYYY-MM-DD') the answer must hold on; None = today. Only policy rules in force then are used;
-    a product whose policy is not yet in force is left out and the answer says so (ADR-010)."""
+def _prepare(q: str, k: int, layers, product, as_on) -> dict:
+    """Mask -> search -> search_result blocks. Shared by the plain flow and the LangGraph flow (Week 5 S3)."""
     t0, rid = time.perf_counter(), str(uuid.uuid4())
     # ADR-015: mask personal data FIRST - the search, the model and the audit log only ever see the masked question
     q, pii_found = mask(q)
     timings, before = {}, dict(RETRIES)
     found = search(q, k, layers=layers, product=product, as_on=as_on, timings=timings)
-    raw, as_on, mode = found["rows"], found["as_on"], found["mode"]
-    products, product_source, use_layers = found["products"], found["product_source"], found["layers"]
-    # RBI search results in rank order BEFORE de-duplication with traced paragraphs (the eval scores this)
-    rbi_search = [f'{h["doc_id"]}:{h["clause_no"]}' for h in raw if h.get("layer") == "rbi"]
-    hits = _sources(raw)
-    results = [{"type": "search_result", "source": clause_link(h), "title": _title(h),
-                "content": [{"type": "text", "text": h["text"]}],
-                "citations": {"enabled": True}} for h in hits]
-    model = os.environ.get("DEFAULT_MODEL", "claude-haiku-5-5")
+    hits = _sources(found["rows"])
+    return {"t0": t0, "rid": rid, "q": q, "pii_found": pii_found, "timings": timings, "before": before,
+            "found": found, "as_on": found["as_on"], "products": found["products"],
+            # RBI search results in rank order BEFORE de-duplication with traced paragraphs (the eval scores this)
+            "rbi_search": [f'{h["doc_id"]}:{h["clause_no"]}' for h in found["rows"] if h.get("layer") == "rbi"],
+            "hits": hits, "model": os.environ.get("DEFAULT_MODEL", "claude-haiku-5-5"),
+            "results": [{"type": "search_result", "source": clause_link(h), "title": _title(h),
+                         "content": [{"type": "text", "text": h["text"]}],
+                         "citations": {"enabled": True}} for h in hits]}
+
+def _finish(ctx: dict, caller: str, msg, text: str, cites: list, usage: list, check: dict, model_ms: int,
+            extra: dict | None = None):
+    """Audit record + code-written notices + audit log line. Identical for both flows."""
+    found, hits, as_on, products = ctx["found"], ctx["hits"], ctx["as_on"], ctx["products"]
+    timings = ctx["timings"]; timings["model_ms"] = model_ms
+    u_in, u_out = sum(x.input_tokens for x in usage), sum(x.output_tokens for x in usage)
+    rec = {"request_id": ctx["rid"], "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
+           "caller": caller, "question": ctx["q"], "contract": CONTRACT_VERSION, "layers": list(found["layers"]),
+           "products": list(products), "product_source": found["product_source"], "pii_masked": ctx["pii_found"],
+           "retrieved": [{"layer": h.get("layer"), "doc_id": h["doc_id"], "clause_no": h["clause_no"],
+                          "version_as_on": h["version_as_on"], "score": h["score"],
+                          "traced_from": h.get("traced_from"),
+                          "how": (h.get("retrieval") or {}).get("mode")} for h in hits],
+           "model": ctx["model"], "prompt_version": PROMPT_VERSION, "stop_reason": msg.stop_reason,
+           "tokens_in": u_in, "tokens_out": u_out,
+           "cost_usd": round((u_in * PRICE_IN + u_out * PRICE_OUT) / 1e6, 6),
+           "latency_ms": int((time.perf_counter() - ctx["t0"]) * 1000),
+           "retrieval_mode": found["mode"], "timings_ms": timings, "rbi_search": ctx["rbi_search"],
+           "retries": {k: RETRIES.get(k, 0) - ctx["before"].get(k, 0) for k in ("openai", "qdrant", "anthropic")},
+           # refused = the whole answer is the refusal. A labelled per-product answer where one product is
+           # "Not covered" is a partial answer (ADR-009), logged separately; before 25 Nov any occurrence counted.
+           "refused": is_refusal(text), "partly_refused": REFUSAL in text and not is_refusal(text),
+           "as_on": as_on.isoformat(), "policy_status": pv.status(products, as_on),
+           "cited_rule_versions": {c["rule_id"]: c["policy_version"] for c in cites if c["layer"] == "policy"},
+           "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"] and c["layer"] != "policy"}),
+           "cited_rbi": sorted({f'{c["doc_id"]}:{c["clause_no"]}' for c in cites if c["layer"] == "rbi"}),
+           "cited_rules": sorted({c["rule_id"] for c in cites if c["layer"] == "policy"}),
+           "human_action": None, "validation": check, "model_calls": len(usage),
+           "pipeline": "plain", **(extra or {})}
+    # Deterministic notices (not written by the model): product not yet in force / cited rule changes soon.
+    pre, post = pv.notices(products, as_on, rec["cited_rules"])
+    if pre or post:
+        text = "\n\n".join(["\n".join(pre)] * bool(pre) + [text] + ["\n".join(post)] * bool(post))
+    rec["notices"] = pre + post
+    rec["answer"] = text   # what the user was shown, notices included (an audit trail needs the output, not only the inputs)
+    os.makedirs(os.path.dirname(AUDIT_LOG) or ".", exist_ok=True)
+    with open(AUDIT_LOG, "a", encoding="utf-8") as f:
+        f.write(json.dumps(rec, ensure_ascii=False, default=str) + "\n")
+    return text, cites, rec
+
+def _answer_plain(q, k, caller, layers, product, as_on):
+    """The flow as it was through Week 5 S2, kept for comparison with the graph (ADR-016)."""
+    ctx = _prepare(q, k, layers, product, as_on)
+    model, results, hits = ctx["model"], ctx["results"], ctx["hits"]
+    products, as_on, q = ctx["products"], ctx["as_on"], ctx["q"]
     t_model = time.perf_counter()
     msg, text, cites = _ask(model, results, q, hits)
     # S3 (ADR-014): check the answer against what was retrieved; one retry with the problems listed, then refuse.
@@ -155,41 +199,18 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
             check["action"], check["draft_2"], text, cites = "refused_after_retry", text, REFUSAL, []
         else:
             check["action"] = "passed_after_retry"
-    timings["model_ms"] = int((time.perf_counter() - t_model) * 1000)
-    u = type("U", (), {"input_tokens": sum(x.input_tokens for x in usage),
-                       "output_tokens": sum(x.output_tokens for x in usage)})
-    rec = {"request_id": rid, "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
-           "caller": caller, "question": q, "contract": CONTRACT_VERSION, "layers": list(use_layers),
-           "products": list(products), "product_source": product_source, "pii_masked": pii_found,
-           "retrieved": [{"layer": h.get("layer"), "doc_id": h["doc_id"], "clause_no": h["clause_no"],
-                          "version_as_on": h["version_as_on"], "score": h["score"],
-                          "traced_from": h.get("traced_from"),
-                          "how": (h.get("retrieval") or {}).get("mode")} for h in hits],
-           "model": model, "prompt_version": PROMPT_VERSION, "stop_reason": msg.stop_reason,
-           "tokens_in": u.input_tokens, "tokens_out": u.output_tokens,
-           "cost_usd": round((u.input_tokens * PRICE_IN + u.output_tokens * PRICE_OUT) / 1e6, 6),
-           "latency_ms": int((time.perf_counter() - t0) * 1000),
-           "retrieval_mode": mode, "timings_ms": timings, "rbi_search": rbi_search,
-           "retries": {k: RETRIES.get(k, 0) - before.get(k, 0) for k in ("openai", "qdrant", "anthropic")},
-           # refused = the whole answer is the refusal. A labelled per-product answer where one product is
-           # "Not covered" is a partial answer (ADR-009), logged separately; before 25 Nov any occurrence counted.
-           "refused": is_refusal(text), "partly_refused": REFUSAL in text and not is_refusal(text),
-           "as_on": as_on.isoformat(), "policy_status": pv.status(products, as_on),
-           "cited_rule_versions": {c["rule_id"]: c["policy_version"] for c in cites if c["layer"] == "policy"},
-           "cited_clauses": sorted({c["clause_no"] for c in cites if c["clause_no"] and c["layer"] != "policy"}),
-           "cited_rbi": sorted({f'{c["doc_id"]}:{c["clause_no"]}' for c in cites if c["layer"] == "rbi"}),
-           "cited_rules": sorted({c["rule_id"] for c in cites if c["layer"] == "policy"}),
-           "human_action": None, "validation": check, "model_calls": len(usage)}
-    # Deterministic notices (not written by the model): product not yet in force / cited rule changes soon.
-    pre, post = pv.notices(products, as_on, rec["cited_rules"])
-    if pre or post:
-        text = "\n\n".join(["\n".join(pre)] * bool(pre) + [text] + ["\n".join(post)] * bool(post))
-    rec["notices"] = pre + post
-    rec["answer"] = text   # what the user was shown, notices included (an audit trail needs the output, not only the inputs)
-    os.makedirs("logs", exist_ok=True)
-    with open("logs/audit.jsonl", "a", encoding="utf-8") as f:
-        f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-    return text, cites, rec
+    return _finish(ctx, caller, msg, text, cites, usage, check, int((time.perf_counter() - t_model) * 1000))
+
+def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), product: str | None = None,
+           as_on=None):
+    """product: home_loan | lap | vehicle_loan from the screen selector / API / loan file; None = detect from the question.
+    as_on: date (or 'YYYY-MM-DD') the answer must hold on; None = today. Only policy rules in force then are used;
+    a product whose policy is not yet in force is left out and the answer says so (ADR-010).
+    PIPELINE=graph runs the LangGraph flow (app/graph.py, ADR-016); PIPELINE=plain the original one."""
+    if os.environ.get("PIPELINE", "plain") == "graph":
+        from app.graph import run
+        return run(q, k=k, caller=caller, layers=layers, product=product, as_on=as_on)
+    return _answer_plain(q, k, caller, layers, product, as_on)
 
 if __name__ == "__main__":
     for q in ["What is the maximum loan-to-value ratio for a gold loan of 3 lakh rupees?",

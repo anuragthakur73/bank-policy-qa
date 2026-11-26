@@ -5,6 +5,8 @@ data/parsed/
 logs/
 notes/interviews/
 __pycache__/
+# eval embedding cache (eval/run_eval.py, EMBED_CACHE): regenerated on demand, ~25 KB per question
+eval/cache/
 
 # kill switch flag file (app/api.py) - operational state, not code
 KILL_SWITCH

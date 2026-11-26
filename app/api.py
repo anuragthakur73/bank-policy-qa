@@ -23,8 +23,7 @@ app = FastAPI(title="Bank Policy Q&A - retrieval service", version=f"{API_VERSIO
               description="Demo Bank (fictional, synthetic) policy rules and RBI Master Direction clauses, filtered by "
                           "product and by the policy version in force on an as-on date. Not legal advice.")
 
-def kill_switch_on() -> bool:
-    return os.environ.get("KILL_SWITCH") == "1" or pathlib.Path("KILL_SWITCH").exists()
+from app.killswitch import kill_switch_on   # moved to its own module in Week 5 S3; still importable from here
 
 def _audit(rec: dict):
     os.makedirs("logs", exist_ok=True)

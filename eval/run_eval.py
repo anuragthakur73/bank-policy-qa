@@ -21,8 +21,15 @@
 #   pii_ok      none of the row's raw pii values appears in the logged question or answer (S5)
 #   manual      manual_review questions (policy gaps): answer recorded, NOT auto-scored except rule_hit
 #   timings     per-stage ms from the audit record (Week 3); retrieval mode from env RETRIEVAL_MODE (default hybrid)
+#   embed_cache EMBED_CACHE env (default eval/cache/embeddings.jsonl; "off" disables): each question is embedded once
+#               and reused, so two runs retrieve identically (Week 5 S3: plain vs graph differed on p07 by embedding noise)
 import json, datetime, os, pathlib, re, sys
+if os.environ.get("EMBED_CACHE", "").lower() == "off":
+    os.environ.pop("EMBED_CACHE")
+else:
+    os.environ.setdefault("EMBED_CACHE", "eval/cache/embeddings.jsonl")
 from app.generate import answer, PROMPT_VERSION
+from app.retrieve import EMBED_STATS
 MODE = os.environ.get("RETRIEVAL_MODE", "vector")
 PRODUCT_CONTEXT = os.environ.get("PRODUCT_CONTEXT", "given")
 AS_ON = os.environ.get("AS_ON", "2027-01-01")
@@ -38,7 +45,7 @@ def first_figure(text: str, question: str = ""):
             return n
     return None
 
-GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2_1.jsonl"
+GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2_2.jsonl"
 prefix = lambda rid: rid.rsplit("-", 1)[0]          # DB-HL-004 -> DB-HL
 rows = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 out = []
@@ -115,7 +122,9 @@ summary["slowest"] = [{"id": o["id"], "latency_ms": o["latency_ms"], **o["timing
 summary["retries"] = {k: sum(o["retries"].get(k, 0) for o in out) for k in ("openai", "qdrant", "anthropic")}
 summary["retrieval_mode"] = MODE
 summary["product_context"] = PRODUCT_CONTEXT
+summary["pipeline"] = os.environ.get("PIPELINE", "plain")   # Week 5 S3: plain | graph (ADR-016)
 summary["as_on"] = AS_ON
+summary["embed_cache"] = {"path": os.environ.get("EMBED_CACHE"), **EMBED_STATS}
 summary["policy_keyword"] = os.environ.get("POLICY_KEYWORD", "1")
 from collections import Counter
 summary["validator"] = os.environ.get("VALIDATOR", "enforce")
@@ -127,7 +136,7 @@ summary["product_source"] = {s: sum(o["product_source"] == s for o in out) for s
 summary["golden_set"] = pathlib.Path(GOLDEN).stem
 summary["prompt_version"] = PROMPT_VERSION
 pathlib.Path("eval/reports").mkdir(parents=True, exist_ok=True)
-path = f'eval/reports/{datetime.datetime.now():%Y-%m-%d_%H%M}_{PROMPT_VERSION}_{MODE}_product-{PRODUCT_CONTEXT}_{summary["golden_set"]}.json'
+path = f'eval/reports/{datetime.datetime.now():%Y-%m-%d_%H%M}_{PROMPT_VERSION}_{MODE}_product-{PRODUCT_CONTEXT}_{summary["golden_set"]}_{summary["pipeline"]}.json'
 with open(path, "w", encoding="utf-8") as f:
     json.dump({"summary": summary, "rows": out}, f, indent=2, ensure_ascii=False)
 print("\n", json.dumps(summary, indent=1), "\nreport:", path)

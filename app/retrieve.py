@@ -15,7 +15,7 @@
 # Env POLICY_KEYWORD=0 turns it off.
 # v0.6 (ADR-012): with products given, RBI clauses limited to another product (app/rbi_scope.py, e.g. housing
 # finance -> home_loan) are dropped; the RBI search fetches 2k candidates so k remain. New row field "rbi_scope".
-import logging, os, re, time
+import hashlib, json, logging, os, pathlib, re, time
 from contextlib import contextmanager
 from functools import lru_cache
 from dotenv import load_dotenv; load_dotenv()
@@ -69,7 +69,7 @@ def _timed(timings, stage: str):
 
 @lru_cache
 def _embedder():
-    return OpenAIEmbeddings(model="text-embedding-3-small")
+    return OpenAIEmbeddings(model=EMBED_MODEL)   # defined below; read when first called
 
 @lru_cache           # a failed open raises, so it is not cached and the next call tries again
 @_network            # opening the collection is itself a Qdrant call
@@ -80,9 +80,50 @@ def _store(layer: str = "rbi"):
         url=os.environ["QDRANT_URL"], api_key=os.environ["QDRANT_API_KEY"])
 
 @_network
-def _embed(question: str) -> list[float]:
+def _embed_remote(question: str) -> list[float]:
     """OpenAI embedding, retried on connection errors after the SDK's own 2 retries give up."""
     return _embedder().embed_query(question)
+
+# Optional on-disk embedding cache (Week 5 S3). text-embedding-3-small does not return bit-identical vectors for the
+# same text: on 27 Nov p07 scored 0.2993 on one call and 0.302 on the next, which swapped a near-tied 5th RBI clause
+# (170E 0.2757 vs 105 0.281) between the plain and graph eval runs. With EMBED_CACHE set, a question is embedded once
+# and every later run reuses that vector, so retrieval is repeatable. Off unless set (eval/run_eval.py sets it).
+# Lines are {"key": sha256(model + question), "vector": [...]}: the question text itself is not written to disk.
+EMBED_MODEL = "text-embedding-3-small"
+EMBED_STATS = {"hit": 0, "miss": 0}
+_EMBED_CACHE: dict[str, dict[str, list[float]]] = {}   # path -> {key: vector}
+
+def _cache_key(question: str) -> str:
+    return hashlib.sha256(f"{EMBED_MODEL}\n{question}".encode("utf-8")).hexdigest()
+
+def _load_cache(path: str) -> dict[str, list[float]]:
+    if path not in _EMBED_CACHE:
+        cache = {}
+        p = pathlib.Path(path)
+        if p.exists():
+            for line in p.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    row = json.loads(line)
+                    cache[row["key"]] = row["vector"]
+        _EMBED_CACHE[path] = cache
+    return _EMBED_CACHE[path]
+
+def _embed(question: str) -> list[float]:
+    path = os.environ.get("EMBED_CACHE")
+    if not path:
+        return _embed_remote(question)
+    cache, key = _load_cache(path), _cache_key(question)
+    if key in cache:
+        EMBED_STATS["hit"] += 1
+        return cache[key]
+    vec = _embed_remote(question)
+    EMBED_STATS["miss"] += 1
+    cache[key] = vec
+    p = pathlib.Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({"key": key, "vector": vec}) + "\n")
+    return vec
 
 # Transient network/DNS failures reaching Qdrant (e.g. "getaddrinfo failed" on a flaky hotspot)
 # are retried; any other error fails immediately.

@@ -138,3 +138,13 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   multi-product answer to a home-loan question that names no product (p04, p06-p08, p10, p12-p15, i04). With three
   products these answers get longer - the case for the S4 clarifying step. c10 not detected ("finance on a new
   car") -> pattern for new/used/electric car added. x04 headline: answer opened with "12 months". $0.091, 7.1 s.
+
+## 27 Nov 2026 - Week 5 S3, plain (01:50) vs graph (02:08), golden_v2_2, before the embedding cache
+- compare_pipelines: NOT MET on retrieval only - p07 5th RBI clause 170E present in plain, missing in graph. Same
+  search code in both flows; cause is embedding noise (p07 query 0.2993 vs 0.302 on two calls; 170E 0.2757 vs 105
+  0.281 near-tied). Fix: EMBED_CACHE (app/retrieve.py), default on in run_eval. Not answer-relevant (p07 cites
+  DB-HL-006 in both).
+- Model metrics within +-1: g005 cited (graph +1), x04 headline (graph +1), i01 refusal (graph -1; i01 also failed
+  in the S2 plain run, so it flips run to run - S4 target). Validator retries differ on 5 questions in both
+  directions (p17 plain-only; i05, l08, v06, v09 graph-only) - model variation, not flow logic (tests/test_graph.py).
+- Plain $0.080 / 7.1 s median; graph $0.085 / 6.8 s.
