@@ -16,7 +16,7 @@ from app.search import search
 from app.pii import mask
 
 API_VERSION = "v1"
-Product = Literal["home_loan", "lap"]
+Product = Literal["home_loan", "lap", "vehicle_loan"]
 Source = Literal["policy", "rbi"]
 
 app = FastAPI(title="Bank Policy Q&A - retrieval service", version=f"{API_VERSION} (contract {CONTRACT_VERSION})",
@@ -35,7 +35,7 @@ def _audit(rec: dict):
 class Query(BaseModel):
     query: str = Field(min_length=3, max_length=1000, examples=["What is the maximum LTV for a home loan of Rs 50 lakh?"])
     product: Product | None = Field(None, description="From the loan file or screen. Omit to detect from the question; "
-                                                      "if unclear, both products are searched.")
+                                                      "if unclear, every product is searched.")
     as_on: datetime.date | None = Field(None, description="Date the answer must hold on. Default: today.")
 
 class RetrieveRequest(Query):

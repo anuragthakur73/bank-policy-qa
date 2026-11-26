@@ -9,7 +9,7 @@ from app.search import search
 from app.api import kill_switch_on
 from app import policy_versions as pv
 
-PRODUCTS = {"Work out from my question": None, "Home loan": "home_loan", "Loan against property (LAP)": "lap"}
+PRODUCTS = {"Work out from my question": None, "Home loan": "home_loan", "Loan against property (LAP)": "lap", "Car loan (new cars)": "vehicle_loan"}
 PII_NAMES = {"IN_PAN": "PAN", "IN_AADHAAR": "Aadhaar", "PHONE_NUMBER": "phone number", "EMAIL_ADDRESS": "email",
              "BANK_ACCOUNT": "account number", "CREDIT_CARD": "card number", "IN_PASSPORT": "passport",
              "IN_VOTER": "voter ID", "IN_VEHICLE_REGISTRATION": "vehicle number", "IN_GSTIN": "GSTIN"}

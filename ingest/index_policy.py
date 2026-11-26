@@ -30,7 +30,7 @@ for path in paths:
     product = pol["product"]
     doc_id = f"DEMO-BANK-{product.upper().replace('_', '-')}-POLICY"
     names = {"home_loan": "Home Loan", "lap": "Loan Against Property (LAP)",
-             "vehicle_loan": "Vehicle Loan", "education_loan": "Education Loan"}
+             "vehicle_loan": "Car Loan", "education_loan": "Education Loan"}
     ver = pv.version(product, pol["policy_version"])          # effective_to = day before the next version
     title = f"Demo Bank (fictional) {names.get(product, product.replace('_', ' ').title())} Policy"
     for r in pol["rules"]:

@@ -13,6 +13,17 @@ from app.product import detect, resolve, of_rule, PRODUCTS
     ("Can the applicant's grandfather join as a co-applicant?", []),
     ("what will be the max age is case of a pensioner under NPS ?", []),
     ("Is the overlap of two rules a problem?", []),          # 'lap' inside a word must not match
+    # Week 5 S2: new-car loan
+    ("What is the processing fee on a car loan?", ["vehicle_loan"]),
+    ("How much of the on-road price of a new car can we finance?", ["vehicle_loan"]),
+    ("Customer wants a loan to buy a new SUV", ["vehicle_loan"]),
+    ("What is the maximum finance on a new car?", ["vehicle_loan"]),                   # c10, text run 27 Nov
+    ("What is the maximum LTV for a Demo Bank vehicle loan?", ["vehicle_loan"]),       # p17
+    ("When can the bank repossess a car if the borrower stops paying EMIs?", ["vehicle_loan"]),
+    ("Can we give a two-wheeler loan under the car loan policy?", ["vehicle_loan"]),
+    ("Is the car parking space included in the home loan?", ["home_loan"]),   # 'car' alone is not a car loan
+    ("Is a credit card outstanding counted in FOIR?", []),                   # 'card' must not match 'car'
+    ("Car loan vs home loan: which has the higher processing fee?", ["home_loan", "vehicle_loan"]),
 ])
 def test_detect(q, exp):
     assert detect(q) == exp
@@ -28,6 +39,7 @@ def test_resolve_order():
 
 def test_of_rule():
     assert of_rule("DB-HL-032") == "home_loan" and of_rule("DB-LAP-007") == "lap" and of_rule("X-1") is None
+    assert of_rule("DB-VL-012") == "vehicle_loan"
 
 def test_first_figure_ignores_ids_and_paras():
     # run_eval calls the API at import time; load only its helper by reading the source
@@ -44,10 +56,11 @@ def test_first_figure_ignores_ids_and_paras():
 def test_golden_product_context_matches_rules():
     import json
     from app.product import of_rule
-    for l in open("eval/golden_v2.jsonl", encoding="utf-8"):
-        r = json.loads(l)
-        if r.get("expected_rules"):
-            assert {of_rule(x) for x in r["expected_rules"]} == {r["product"]}, r["id"]
+    for f in ("eval/golden_v2.jsonl", "eval/golden_v2_2.jsonl"):
+        for l in open(f, encoding="utf-8"):
+            r = json.loads(l)
+            if r.get("expected_rules") and "product" in r:      # v05 has no product: detected from its text
+                assert {of_rule(x) for x in r["expected_rules"]} == {r["product"]}, (f, r["id"])
 
 def test_partial_refusal_is_not_a_refusal():
     from app.generate import is_refusal, REFUSAL

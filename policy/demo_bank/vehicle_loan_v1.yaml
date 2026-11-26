@@ -242,21 +242,24 @@ rules:
       old, and nothing after 24 months. The charge is always on the amount prepaid, never on
       the original loan amount. A part prepayment must be at least one EMI; there is no limit
       on the number of part prepayments. No charge applies when the loan is closed from a
-      motor insurance claim after the car is stolen or written off. The charges are stated in
-      the sanction letter, the loan agreement and the Key Facts Statement.
+      motor insurance claim after the car is stolen or written off, or when Demo Bank itself
+      asks for early repayment. A charge Demo Bank has waived earlier is never levied later.
+      The charges are stated in the sanction letter, the loan agreement and the Key Facts
+      Statement.
     params:
       rate_type: fixed
       charge_on: amount_prepaid
       slabs: [{max_age_months: 12, pct: 0.03}, {max_age_months: 24, pct: 0.02}, {max_age_months: null, pct: 0.0}]
       min_part_prepayment: one_emi
       max_part_prepayments: null
-      waived: [insurance_claim_total_loss_or_theft]
+      waived: [insurance_claim_total_loss_or_theft, prepayment_at_bank_instance]
+      no_retrospective_charge: true
     rbi_ref: {direction: RBC, para: "353", note: "353(1) bans pre-payment charges only on floating-rate loans; for other loans 353(5) leaves charges to the bank's approved policy, levied on the amount prepaid"}
     bank_discretion: false
     vs_rbi: equal
     design_basis: [SBI-VL-S1, ICICI-VL-S1]
     review: ok
-    review_note: "Anurag 27 Nov 2026: fixed rate with foreclosure fee. slabs follow ICICI (3%/2%/nil), reviewed 27 Nov 2026, accepted"
+    review_note: "Anurag 27 Nov 2026: fixed rate with foreclosure fee. slabs follow ICICI (3%/2%/nil), reviewed 27 Nov 2026, accepted. 27 Nov (S2): added no charge when the bank asks for early repayment and no retrospective charge, from the conflict check's coverage list (RBC 353(7), 353(9))"
 
   - rule_id: DB-VL-013
     section: charges
@@ -417,9 +420,9 @@ rules:
     section: governance
     title: NOC and removal of hypothecation after closure
     rule: >-
-      Within 15 working days of full repayment, Demo Bank gives the borrower a no-objection
-      certificate and the signed form for removing the hypothecation from the registration
-      certificate, and records the closure wherever its charge was registered, at the branch
+      Within 15 working days of full repayment, Demo Bank returns any original documents it
+      holds and gives the borrower a no-objection certificate and the signed form for removing
+      the hypothecation from the registration certificate, and records the closure wherever its charge was registered, at the branch
       or another office of the borrower's choice. If this is not done within 30 days, Demo Bank
       tells the borrower the reason, and if the delay is attributable to Demo Bank it pays the
       borrower Rs 5,000 for each day of delay. If any original document held by Demo Bank is
@@ -431,4 +434,4 @@ rules:
     vs_rbi: stricter
     design_basis: [synthetic]
     review: ok
-    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted. 27 Nov (S2): return of all original documents added, from the conflict check's coverage list (RBC 354)"

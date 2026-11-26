@@ -1,0 +1,571 @@
+{
+  "summary": {
+    "prompt_version": "conflict-v3",
+    "runs_per_rule": 3,
+    "policy_file": "policy/demo_bank/vehicle_loan_v1.yaml",
+    "policy_version": "1.0.0",
+    "policy_rules_checked": 6,
+    "policy_outcomes": {
+      "pass": 6
+    },
+    "policy_flagged_looser": [],
+    "overridden": {},
+    "unstable": [],
+    "coverage_gaps_non_blocking": {
+      "DB-VL-011": [
+        "327 pre-payment options and charges, if any, must be disclosed",
+        "327 penalty for delayed repayments, if any, must be disclosed",
+        "327 conversion charges for switching between fixed and floating rates must be disclosed",
+        "327 existence of any interest reset clause must be disclosed",
+        "327 any other matter which affects the borrower's interest must be disclosed",
+        "327 loan application forms must be comprehensive for all categories of loans regardless of amount",
+        "327 all disclosed information must also be displayed on the bank's website for all categories of loan products",
+        "327 disclosure of pre-payment options and charges, if any",
+        "327 disclosure of penalty for delayed repayments, if any",
+        "327 disclosure of conversion charges for switching from fixed to floating rates or vice versa",
+        "327 disclosure of existence of any interest reset clause",
+        "327 disclosure of any other matter which affects the borrower's interest",
+        "327 disclosure of pre-payment options and charges",
+        "327 disclosure of penalty for delayed repayments",
+        "327 disclosure of conversion charges for switching between fixed and floating rates",
+        "327 disclosure of any interest reset clause",
+        "327 disclosure of any other matter affecting the borrower's interest",
+        "327 refund amount stated explicitly if loan is not sanctioned, not only if not disbursed",
+        "327 fees and charges must be non-discriminatory (rule states a flat fee, so this is met, but no non-discrimination statement is given)"
+      ],
+      "DB-VL-012": [
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(9) no retrospective charges or fees at pre-payment that the bank waived earlier",
+        "353(9) no retrospective charges at pre-payment for charges the bank earlier waived",
+        "353(7) no charges where pre-payment is effected at the instance of the bank (rule is silent on bank-initiated pre-payment)",
+        "353(9) no retrospective levy of charges that the bank earlier waived (rule is silent)"
+      ],
+      "DB-VL-013": [
+        "351(1)(vii) disclose fees and charges, including penal charges, in 'Schedule 14: Other Income'",
+        "351(1)(iv) follow CBIC instructions on GST applicability to penal charges",
+        "351(1) Note (ii) penal charges must be reasonable and levied in a non-discriminatory manner per a Board-approved policy",
+        "351(1)(vi) reverse penal charges uncollected on NPA accounts for non-recognition of income",
+        "351(3) Board or delegated committee must approve a policy on penal charges",
+        "351(4) quantum must be reasonable and commensurate with the non-compliance, uniform within a product category irrespective of borrower constitution",
+        "351(4) Note (ii) penal charges must not be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers for similar non-compliance",
+        "351(2) no additional component may be added to the rate of interest",
+        "351(6) disclosure must state the quantum and reason upfront, and a website reference alone does not suffice (rule's disclosure is compliant)",
+        "351(1)(iv) GST on penal charges must follow CBIC instructions",
+        "351(3) penal charge policy must be approved by the Board or delegated committee",
+        "351(4) quantum must be reasonable and commensurate with the non-compliance, not a revenue tool",
+        "351(4) note (i) structure must be uniform within a loan/product category regardless of borrower constitution",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(1) note (vi) penal charges on NPA accounts must be reversed to the extent uncollected",
+        "351(1) note (vii) penal charges must be disclosed in 'Schedule 14: Other Income'",
+        "351(1)(ii) penal charges must not be levied on the basis of anything other than the amount under default",
+        "351(1) note (ii): penal charges must be reasonable and levied in a non-discriminatory manner under a Board- or committee-approved policy",
+        "351(3): bank must have a Board or delegated-committee approved policy on penal charges",
+        "351(4): quantum must be reasonable and commensurate with the non-compliance, and uniform within a loan/product category irrespective of borrower constitution",
+        "351(5): penal charges for individual borrowers for non-business purposes must not exceed those for non-individual borrowers for similar non-compliance",
+        "351(1) note (vi): in NPA accounts, uncollected penal charges must be reversed for income recognition purposes",
+        "351(1) note (iv): GST treatment on penal charges must follow CBIC instructions",
+        "351(1) note (vii): penal charges recovered must be disclosed in 'Schedule 14: Other Income'",
+        "351(1): interest on unpaid EMI continues at the contracted rate until remediation, not at the penal rate",
+        "351(2): no additional component may be added to the rate of interest"
+      ],
+      "DB-VL-018": [
+        "348(3) KFS must include a computation sheet of APR, not just the APR figure",
+        "348(3) APR must include all charges levied by the bank",
+        "348(4) third-party charges recovered by the bank (e.g., insurance, legal) must form part of APR and be disclosed separately",
+        "348(4) receipts and related documents must be given to the borrower for each such payment within a reasonable time",
+        "348(6) KFS must be included as a summary box exhibited as part of the loan agreement",
+        "348(4) third-party charges recovered by the bank must be disclosed separately in the KFS and forms part of APR",
+        "348(4) receipts and related documents must be provided to the borrower for each such payment within a reasonable time",
+        "348(6) KFS must also be included as a summary box exhibited as part of the loan agreement",
+        "APR must include all charges levied by the bank (348(3))",
+        "Charges recovered on behalf of third-party providers must form part of APR, be disclosed separately, and have receipts and related documents provided for each payment within a reasonable time (348(4))",
+        "KFS must also be included as a summary box exhibited as part of the loan agreement (348(6))"
+      ],
+      "DB-VL-019": [
+        "450: repossession clause must be legally valid and comply with the Indian Contract Act in letter and spirit",
+        "450: terms must be strictly in line with the bank's recovery policy",
+        "450: the procedure for taking possession of the security is not described",
+        "450: the procedure for returning possession to the borrower is not fully described",
+        "442(2): due diligence process for engaging recovery agents, conforming to RBI outsourcing directions",
+        "442(2): verification of antecedents of agents' employees, including pre-employment police verification, and a set re-verification periodicity",
+        "442(3): inform the borrower of recovery agency firm details when forwarding default cases",
+        "442(3): agent must carry a copy of the notice and authorisation letter, and a new agent must do so when the agency changes",
+        "442(3)-(4): notice and authorisation letter must include the agency's telephone numbers",
+        "442(4): tape-record recovery calls and intimate the customer that the conversation is recorded",
+        "442(5): post updated recovery agency details on the bank's website",
+        "442(6): do not forward cases to recovery agencies while a grievance is pending, unless complaints are proven frivolous",
+        "442(6): exercise utmost caution in referring sub judice matters to recovery agencies",
+        "442(7): grievance mechanism for recovery process, with details furnished to the borrower",
+        "445: no publicly humiliating acts, privacy intrusion on family, referees or friends, inappropriate messages, threatening or anonymous calls, or false representations",
+        "450 procedure for taking possession of the security must be stated in the contract",
+        "450 procedure for giving repossession back to the borrower must be stated in the contract",
+        "450 repossession clause must be checked for legal validity under the Indian Contract Act",
+        "442(2) due diligence process for engaging recovery agents, including antecedent and police verification and re-verification periodicity",
+        "442(3) notice to borrower of recovery agency firm details when cases are forwarded",
+        "442(4) notice and authorisation letter must include the recovery agency's telephone numbers",
+        "442(4) tape recording of all calls between recovery agents and customers, with the customer told the call is recorded",
+        "442(5) updated recovery agency details posted on the bank's website",
+        "442(6) no forwarding of cases to recovery agencies while a grievance is pending, and caution where the dues are sub judice",
+        "442(7) grievance mechanism for recovery process, with details given to the borrower",
+        "445 no intimidation, public humiliation, intrusion on family, referees or friends, inappropriate or anonymous messages, or persistent calls",
+        "448 all recovery agents must pass the IIBF examination and service providers must employ only IIBF-certified personnel",
+        "450: the repossession clause must be legally valid and comply with the Indian Contract Act in letter and spirit",
+        "450: the procedure for taking possession of the security is not stated",
+        "450: the procedure for giving repossession to the borrower is only partly stated (return on payment)",
+        "442(2): due diligence process for engaging recovery agents, including antecedent verification and pre-employment police verification, with a set re-verification periodicity",
+        "442(4): the notice and authorisation letter must include the recovery agency's telephone numbers",
+        "442(4): tape recording of all recovery agent calls, with the customer intimated that the call is recorded",
+        "442(5): updated details of recovery agency firms must be posted on the bank's website",
+        "442(6): no forwarding of cases to recovery agencies while a grievance is pending, and caution where the dues are sub judice",
+        "442(7): a mechanism for addressing borrowers' recovery-process grievances, with its details furnished to the borrower",
+        "442(3): on a change of recovery agency, the bank must notify the borrower and the new agent must carry the notice and authorisation letter",
+        "445: no humiliating publicity, privacy intrusion on family, referees or friends, inappropriate or anonymous messages or calls, persistent calling, or false and misleading representations",
+        "448: service providers must employ only IIBF-trained personnel, and agents must pass the IIBF examination"
+      ],
+      "DB-VL-021": [
+        "354: release all original movable/immovable property documents (the rule covers NOC and removal form, not explicit return of all originals)",
+        "354: release of all original movable/immovable property documents (not just the NOC and signed form) within 30 days after full repayment is not expressly stated"
+      ]
+    },
+    "fixtures_caught": "5/5",
+    "total_cost_usd": 0.01557
+  },
+  "rows": [
+    {
+      "kind": "policy",
+      "id": "DB-VL-011",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "327",
+      "reason": "The bank rule discloses all processing fees, documentation charges, stamp duty and the all-in cost in the application form, KFS and website, and refunds the processing fee in full if the loan is not disbursed, which is more protective than RBI's requirement to disclose the refundable amount, and the flat fee is non-discriminatory.",
+      "omissions": [
+        "327 pre-payment options and charges, if any, must be disclosed",
+        "327 penalty for delayed repayments, if any, must be disclosed",
+        "327 conversion charges for switching between fixed and floating rates must be disclosed",
+        "327 existence of any interest reset clause must be disclosed",
+        "327 any other matter which affects the borrower's interest must be disclosed",
+        "327 loan application forms must be comprehensive for all categories of loans regardless of amount",
+        "327 all disclosed information must also be displayed on the bank's website for all categories of loan products",
+        "327 disclosure of pre-payment options and charges, if any",
+        "327 disclosure of penalty for delayed repayments, if any",
+        "327 disclosure of conversion charges for switching from fixed to floating rates or vice versa",
+        "327 disclosure of existence of any interest reset clause",
+        "327 disclosure of any other matter which affects the borrower's interest",
+        "327 disclosure of pre-payment options and charges",
+        "327 disclosure of penalty for delayed repayments",
+        "327 disclosure of conversion charges for switching between fixed and floating rates",
+        "327 disclosure of any interest reset clause",
+        "327 disclosure of any other matter affecting the borrower's interest",
+        "327 refund amount stated explicitly if loan is not sanctioned, not only if not disbursed",
+        "327 fees and charges must be non-discriminatory (rule states a flat fee, so this is met, but no non-discrimination statement is given)"
+      ],
+      "trace": [
+        [
+          "327",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.00121,
+      "latency_ms": 9554,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass",
+      "override": null
+    },
+    {
+      "kind": "policy",
+      "id": "DB-VL-012",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "353(5)",
+      "reason": "Under 353(5), for cases outside 353(1) and 353(2), pre-payment charges \"shall be as per the approved policy of the bank\" and, for term loans, \"shall be based on the amount being prepaid,\" which is exactly how the bank's 3%/2% charge on the amount prepaid operates.",
+      "omissions": [
+        "353(7) no charges where pre-payment is effected at the instance of the bank",
+        "353(9) no retrospective charges or fees at pre-payment that the bank waived earlier",
+        "353(9) no retrospective charges at pre-payment for charges the bank earlier waived",
+        "353(7) no charges where pre-payment is effected at the instance of the bank (rule is silent on bank-initiated pre-payment)",
+        "353(9) no retrospective levy of charges that the bank earlier waived (rule is silent)"
+      ],
+      "trace": [
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001635,
+      "latency_ms": 12252,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass",
+      "override": null
+    },
+    {
+      "kind": "policy",
+      "id": "DB-VL-013",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "351(1) and Note (iii) to 351(1)",
+      "reason": "The bank rule levies the charge only on the overdue EMI and says it is 'a charge, not an addition to the interest rate, and no interest is charged on it', matching RBI's 'shall not be levied in the form of penal interest' and 'no capitalisation of penal charges', and no penal charge is levied on unpaid penal charges, matching 'Additional / fresh penal charges shall not be levied on the earlier out",
+      "omissions": [
+        "351(1)(vii) disclose fees and charges, including penal charges, in 'Schedule 14: Other Income'",
+        "351(1)(iv) follow CBIC instructions on GST applicability to penal charges",
+        "351(1) Note (ii) penal charges must be reasonable and levied in a non-discriminatory manner per a Board-approved policy",
+        "351(1)(vi) reverse penal charges uncollected on NPA accounts for non-recognition of income",
+        "351(3) Board or delegated committee must approve a policy on penal charges",
+        "351(4) quantum must be reasonable and commensurate with the non-compliance, uniform within a product category irrespective of borrower constitution",
+        "351(4) Note (ii) penal charges must not be used as a revenue enhancement tool",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers for similar non-compliance",
+        "351(2) no additional component may be added to the rate of interest",
+        "351(6) disclosure must state the quantum and reason upfront, and a website reference alone does not suffice (rule's disclosure is compliant)",
+        "351(1)(iv) GST on penal charges must follow CBIC instructions",
+        "351(3) penal charge policy must be approved by the Board or delegated committee",
+        "351(4) quantum must be reasonable and commensurate with the non-compliance, not a revenue tool",
+        "351(4) note (i) structure must be uniform within a loan/product category regardless of borrower constitution",
+        "351(5) charges for individual non-business borrowers must not exceed those for non-individual borrowers",
+        "351(1) note (vi) penal charges on NPA accounts must be reversed to the extent uncollected",
+        "351(1) note (vii) penal charges must be disclosed in 'Schedule 14: Other Income'",
+        "351(1)(ii) penal charges must not be levied on the basis of anything other than the amount under default",
+        "351(1) note (ii): penal charges must be reasonable and levied in a non-discriminatory manner under a Board- or committee-approved policy",
+        "351(3): bank must have a Board or delegated-committee approved policy on penal charges",
+        "351(4): quantum must be reasonable and commensurate with the non-compliance, and uniform within a loan/product category irrespective of borrower constitution",
+        "351(5): penal charges for individual borrowers for non-business purposes must not exceed those for non-individual borrowers for similar non-compliance",
+        "351(1) note (vi): in NPA accounts, uncollected penal charges must be reversed for income recognition purposes",
+        "351(1) note (iv): GST treatment on penal charges must follow CBIC instructions",
+        "351(1) note (vii): penal charges recovered must be disclosed in 'Schedule 14: Other Income'",
+        "351(1): interest on unpaid EMI continues at the contracted rate until remediation, not at the penal rate",
+        "351(2): no additional component may be added to the rate of interest"
+      ],
+      "trace": [
+        [
+          "351",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.002025,
+      "latency_ms": 12828,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass",
+      "override": null
+    },
+    {
+      "kind": "policy",
+      "id": "DB-VL-018",
+      "declared": "equal",
+      "verdict": "complies",
+      "rbi_para": "348(5)",
+      "reason": "The bank rule matches 348(5), which bars charging any fee or charge not mentioned in the KFS \"without explicit consent of the borrower.\" The rule's other stated terms (standard-format KFS, unique proposal number, language, acknowledgement, at least 3 working days' validity, fixed-rate statement) also meet or exceed 348(1) and 348(2).",
+      "omissions": [
+        "348(3) KFS must include a computation sheet of APR, not just the APR figure",
+        "348(3) APR must include all charges levied by the bank",
+        "348(4) third-party charges recovered by the bank (e.g., insurance, legal) must form part of APR and be disclosed separately",
+        "348(4) receipts and related documents must be given to the borrower for each such payment within a reasonable time",
+        "348(6) KFS must be included as a summary box exhibited as part of the loan agreement",
+        "348(4) third-party charges recovered by the bank must be disclosed separately in the KFS and forms part of APR",
+        "348(4) receipts and related documents must be provided to the borrower for each such payment within a reasonable time",
+        "348(6) KFS must also be included as a summary box exhibited as part of the loan agreement",
+        "APR must include all charges levied by the bank (348(3))",
+        "Charges recovered on behalf of third-party providers must form part of APR, be disclosed separately, and have receipts and related documents provided for each payment within a reasonable time (348(4))",
+        "KFS must also be included as a summary box exhibited as part of the loan agreement (348(6))"
+      ],
+      "trace": [
+        [
+          "348",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001945,
+      "latency_ms": 11213,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass",
+      "override": null
+    },
+    {
+      "kind": "policy",
+      "id": "DB-VL-019",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "450",
+      "reason": "The bank rule matches the RBI minimums in para 450 (at least 3 EMIs overdue, 15-day notice, waiver only for sale or concealment, a final chance to repay before sale, and sale by auction or valuer), and it sets no weaker limit, amount or deadline than RBI.",
+      "omissions": [
+        "450: repossession clause must be legally valid and comply with the Indian Contract Act in letter and spirit",
+        "450: terms must be strictly in line with the bank's recovery policy",
+        "450: the procedure for taking possession of the security is not described",
+        "450: the procedure for returning possession to the borrower is not fully described",
+        "442(2): due diligence process for engaging recovery agents, conforming to RBI outsourcing directions",
+        "442(2): verification of antecedents of agents' employees, including pre-employment police verification, and a set re-verification periodicity",
+        "442(3): inform the borrower of recovery agency firm details when forwarding default cases",
+        "442(3): agent must carry a copy of the notice and authorisation letter, and a new agent must do so when the agency changes",
+        "442(3)-(4): notice and authorisation letter must include the agency's telephone numbers",
+        "442(4): tape-record recovery calls and intimate the customer that the conversation is recorded",
+        "442(5): post updated recovery agency details on the bank's website",
+        "442(6): do not forward cases to recovery agencies while a grievance is pending, unless complaints are proven frivolous",
+        "442(6): exercise utmost caution in referring sub judice matters to recovery agencies",
+        "442(7): grievance mechanism for recovery process, with details furnished to the borrower",
+        "445: no publicly humiliating acts, privacy intrusion on family, referees or friends, inappropriate messages, threatening or anonymous calls, or false representations",
+        "450 procedure for taking possession of the security must be stated in the contract",
+        "450 procedure for giving repossession back to the borrower must be stated in the contract",
+        "450 repossession clause must be checked for legal validity under the Indian Contract Act",
+        "442(2) due diligence process for engaging recovery agents, including antecedent and police verification and re-verification periodicity",
+        "442(3) notice to borrower of recovery agency firm details when cases are forwarded",
+        "442(4) notice and authorisation letter must include the recovery agency's telephone numbers",
+        "442(4) tape recording of all calls between recovery agents and customers, with the customer told the call is recorded",
+        "442(5) updated recovery agency details posted on the bank's website",
+        "442(6) no forwarding of cases to recovery agencies while a grievance is pending, and caution where the dues are sub judice",
+        "442(7) grievance mechanism for recovery process, with details given to the borrower",
+        "445 no intimidation, public humiliation, intrusion on family, referees or friends, inappropriate or anonymous messages, or persistent calls",
+        "448 all recovery agents must pass the IIBF examination and service providers must employ only IIBF-certified personnel",
+        "450: the repossession clause must be legally valid and comply with the Indian Contract Act in letter and spirit",
+        "450: the procedure for taking possession of the security is not stated",
+        "450: the procedure for giving repossession to the borrower is only partly stated (return on payment)",
+        "442(2): due diligence process for engaging recovery agents, including antecedent verification and pre-employment police verification, with a set re-verification periodicity",
+        "442(4): the notice and authorisation letter must include the recovery agency's telephone numbers",
+        "442(4): tape recording of all recovery agent calls, with the customer intimated that the call is recorded",
+        "442(5): updated details of recovery agency firms must be posted on the bank's website",
+        "442(6): no forwarding of cases to recovery agencies while a grievance is pending, and caution where the dues are sub judice",
+        "442(7): a mechanism for addressing borrowers' recovery-process grievances, with its details furnished to the borrower",
+        "442(3): on a change of recovery agency, the bank must notify the borrower and the new agent must carry the notice and authorisation letter",
+        "445: no humiliating publicity, privacy intrusion on family, referees or friends, inappropriate or anonymous messages or calls, persistent calling, or false and misleading representations",
+        "448: service providers must employ only IIBF-trained personnel, and agents must pass the IIBF examination"
+      ],
+      "trace": [
+        [
+          "450",
+          "found"
+        ],
+        [
+          "442",
+          "found"
+        ],
+        [
+          "445",
+          "found"
+        ],
+        [
+          "448",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.002509,
+      "latency_ms": 16678,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass",
+      "override": null
+    },
+    {
+      "kind": "policy",
+      "id": "DB-VL-021",
+      "declared": "stricter",
+      "verdict": "complies",
+      "rbi_para": "354",
+      "reason": "The bank rule requires the NOC, signed hypothecation-removal form and closure recording within 15 working days, which is stricter than RBI's 'within a period of 30 days after full repayment / settlement'.",
+      "omissions": [
+        "354: release all original movable/immovable property documents (the rule covers NOC and removal form, not explicit return of all originals)",
+        "354: release of all original movable/immovable property documents (not just the NOC and signed form) within 30 days after full repayment is not expressly stated"
+      ],
+      "trace": [
+        [
+          "354",
+          "found"
+        ],
+        [
+          "355",
+          "found"
+        ],
+        [
+          "358",
+          "found"
+        ],
+        [
+          "359",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001358,
+      "latency_ms": 11162,
+      "votes": {
+        "complies": 3
+      },
+      "stable": true,
+      "outcome": "pass",
+      "override": null
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-001",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "111",
+      "reason": "For individual housing loans above ₹30 lakh and up to ₹75 lakh, the RBI text sets the LTV ratio at \"≤ 80\", but the bank rule allows loans up to 85% of property cost.",
+      "omissions": [
+        "111 risk weight of 35% for individual housing loans above ₹30 lakh and up to ₹75 lakh at LTV ≤ 80%",
+        "111 risk weight of 35% for individual housing loans above ₹30 lakh up to ₹75 lakh with LTV ≤80%",
+        "111 for loans sanctioned till June 06, 2017, LTV must be ≤75% for loans above ₹30 lakh up to ₹75 lakh (proviso)",
+        "111 for loans sanctioned till June 06, 2017, risk weight of 50% for LTV >75% and ≤80% in the ₹30-75 lakh band (proviso)",
+        "111 for loans above ₹30 lakh up to ₹75 lakh, LTV must be ≤80% with a 35% risk weight",
+        "111 the 85% LTV band (>80 and ≤90) applies only to loans up to ₹30 lakh, carrying a 50% risk weight"
+      ],
+      "trace": [
+        [
+          "111",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001085,
+      "latency_ms": 8548,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-002",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "353(1)",
+      "reason": "For floating rate loans granted for purposes other than business to individuals, \"a bank shall not levy pre-payment charges\", but the bank rule imposes a 2% foreclosure charge on a floating-rate home loan closed within 3 years.",
+      "omissions": [
+        "353(3) pre-payment charge prohibition applies irrespective of source of funds and without any minimum lock-in period, so a 3-year lock-in is not permitted",
+        "353(8) applicability of pre-payment charges must be clearly disclosed in the sanction letter and loan agreement, and in the KFS where applicable",
+        "353(9) no charges may be levied retrospectively on pre-payment where the bank had earlier waived them",
+        "353(3) the no-prepayment-charge rule applies irrespective of the source of funds used for prepayment, in part or in full",
+        "353(3) no minimum lock-in period may be imposed before prepayment",
+        "353(8) the applicability or otherwise of pre-payment charges must be clearly disclosed in the sanction letter, loan agreement and, where KFS applies, the KFS",
+        "353 preamble applies only to loans sanctioned or renewed on or after January 01, 2026",
+        "353(1) applies with or without co-obligant(s)",
+        "353(3) pre-payment ban applies irrespective of source of funds and without any minimum lock-in period, which the 3-year window contradicts",
+        "353(8) applicability of pre-payment charges (or their absence) must be clearly disclosed in sanction letter and loan agreement, and in KFS where applicable",
+        "353(9) no charges may be levied retrospectively at pre-payment if previously waived",
+        "353 applies only to loans sanctioned or renewed on or after January 01, 2026"
+      ],
+      "trace": [
+        [
+          "353",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.0012,
+      "latency_ms": 8139,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-003",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "113",
+      "reason": "RBI says bank 'shall not include stamp duty, registration and other documentation charges in the cost of the housing property', permitting such inclusion only where the cost does not exceed ₹10 lakh, whereas the bank rule adds them on all loans.",
+      "omissions": [
+        "113 inclusion of stamp duty and registration charges in LTV cost allowed only where house/dwelling unit cost does not exceed ₹10 lakh",
+        "113 purpose is uniformity in valuation and so that effectiveness of LTV norms is not diluted",
+        "113 stamp duty and registration charges may be added to cost for LTV only where house/dwelling unit cost does not exceed ₹10 lakh",
+        "113 other documentation charges must likewise be excluded from property cost for LTV purposes",
+        "113 bank shall not include stamp duty, registration and other documentation charges in the cost of the housing property for LTV",
+        "113 exemption to add such charges applies only where the cost of the house/dwelling unit does not exceed ₹10 lakh",
+        "113 purpose is uniformity in valuation so that the effectiveness of LTV norms is not diluted"
+      ],
+      "trace": [
+        [
+          "113",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.00063,
+      "latency_ms": 5239,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-004",
+      "declared": "possible_conflict",
+      "verdict": "looser",
+      "rbi_para": "349(3)",
+      "reason": "RBI says \"The borrower shall also be given the choice to opt for (i) enhancement in EMI or elongation of tenor or for a combination of both options\", but the bank rule gives the bank, not the borrower, the option to increase EMI, extend tenure, or both.",
+      "omissions": [
+        "349(1) at sanction, communicate the possible impact of benchmark rate changes on EMI and/or tenor",
+        "349(1) communicate any increase in EMI/tenor to the borrower immediately through appropriate channels",
+        "349(2) at reset, offer the borrower a choice to switch to a fixed rate where the bank provides this option, per Board-approved policy",
+        "349(3)(ii) borrower may prepay in part or in full at any point during the tenor, subject to extant pre-payment charge instructions",
+        "349 Note: on a class-wide reset due to benchmark increase, borrower gets EMI enhancement or tenor elongation (or combination) with EMI unchanged, fixed-rate switch where offered, and prepayment in part or full during residual tenor",
+        "349(4) charges for floating-to-fixed switching and related service/administrative costs to be disclosed in sanction letter and on revision, as approved by Board/delegated committee and displayed on website",
+        "349(5) tenor elongation on floating rate loans must not result in negative amortisation",
+        "349(6) quarterly statement showing principal and interest recovered, EMI amount, EMIs left and annualised rate/APR, kept simple and easily understood",
+        "349(1) communicate at sanction the possible impact of benchmark rate changes on EMI and/or tenor, and immediately communicate any later EMI/tenor increase",
+        "349(2) at reset, offer borrowers a choice to switch to a fixed rate under the Board-approved policy (may limit number of switches)",
+        "349(3)(ii) borrower may prepay in part or in full at any point during the tenor, subject to extant prepayment charge instructions",
+        "349(3) Note: on a class-wide reset due to benchmark increase, offer EMI enhancement/tenor elongation choice, fixed-rate switch where available, and prepayment during residual tenor",
+        "349(4) disclose switching and other service/administrative charges in the sanction letter and on revision, as Board-approved and displayed on the website",
+        "349(6) quarterly statement showing principal and interest recovered, EMI amount, EMIs left, and annualised rate/APR, kept simple and easy to understand",
+        "349(1) clearly communicate at sanction the impact of benchmark rate change on EMI and/or tenor, and communicate any later increase immediately",
+        "349(2) at reset, offer the borrower a choice to switch to a fixed rate, if the bank opts to provide it, per Board-approved policy",
+        "349(3)(ii) borrower must be able to prepay in part or in full at any point during the tenor, subject to extant prepayment charge rules",
+        "349(3) Note: on a class-wide reset, borrower options include switching to fixed rate for the remaining loan and prepaying during residual tenor",
+        "349(4) charges for floating-to-fixed switching and other incidental costs must be disclosed in the sanction letter and on the website",
+        "349(5) tenor elongation on a floating rate loan must not result in negative amortisation"
+      ],
+      "trace": [
+        [
+          "349",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.001588,
+      "latency_ms": 11002,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    },
+    {
+      "kind": "fixture",
+      "id": "FX-005",
+      "declared": "looser_than_rbi",
+      "verdict": "looser",
+      "rbi_para": "354",
+      "reason": "The bank rule sets a 45-day deadline for returning original title deeds, whereas RBI requires release of original property documents 'within a period of 30 days after full repayment / settlement of the loan account.'",
+      "omissions": [
+        "354 bank must remove charges registered with any registry within 30 days of full repayment/settlement",
+        "354 deadline runs from full repayment/settlement of the loan account (30 days)",
+        "354 applies to original movable and immovable property documents, not only title deeds",
+        "354 release of original movable/immovable property documents must be within 30 days"
+      ],
+      "trace": [
+        [
+          "354",
+          "found"
+        ]
+      ],
+      "cost_usd": 0.000387,
+      "latency_ms": 3249,
+      "votes": {
+        "looser": 3
+      },
+      "stable": true,
+      "outcome": "caught"
+    }
+  ]
+}

@@ -9,7 +9,7 @@
 #   answer_ok   every must_contain item appears in the answer (crude check on key figures); an item may list
 #               accepted spellings separated by "|", e.g. "3 working days|three working days"
 #   refusal_ok  refused exactly when expected
-#   product_ok  every cited Demo Bank rule belongs to the expected product (DB-HL vs DB-LAP); questions with rules only
+#   product_ok  every cited Demo Bank rule belongs to the expected product (DB-HL / DB-LAP / DB-VL); questions with rules only
 #   headline_ok the FIRST figure in the answer (rule IDs and para numbers ignored) equals the row's "headline"
 #               (Week 4: l01 said "75%" first and "65%" later, so must_contain passed on a wrong answer)
 #   product     PRODUCT_CONTEXT=given (default) passes the row's "product", as the screen selector would;
@@ -97,7 +97,7 @@ def score(k, sub=None):
 summary = {k: score(k) for k in METRICS}
 real = [o for o in out if str(o["source"]).startswith("interview")]
 summary["interview_questions"] = {k: score(k, real) for k in METRICS} if real else "-"
-GROUPS = {"rbi_only": lambda o: "rbi-only" in str(o["source"]), "lap": lambda o: o["id"].startswith("l"),
+GROUPS = {"rbi_only": lambda o: "rbi-only" in str(o["source"]), "lap": lambda o: o["id"].startswith("l"), "car_loan": lambda o: o["id"].startswith("c"),
           "cross_product": lambda o: o["id"].startswith("x"), "home_loan_policy": lambda o: o["id"].startswith("p"),
           "date_pii_s5": lambda o: o["id"].startswith("v")}
 summary["by_group"] = {g: {k: score(k, [o for o in out if f(o)]) for k in METRICS} for g, f in GROUPS.items()}

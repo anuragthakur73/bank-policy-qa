@@ -120,3 +120,21 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - v01 headline_ok false alarm: first figure came from the "not in force" notice -> scorer skips notices.
 - v09 refusal: not a defect. v1.0 DB-HL-003 does not settle whether an HUF is an "individual"; RBI CF 219E treats HUFs
   as individuals in its own context. Moved to manual review. Shows why v1.1 states the exclusion.
+
+## 27 Nov 2026 - Week 5 S2, golden_v2_2 (72 Qs), answer-v4, car loan v1.0 indexed
+- Product given (01:10): RBI para top 5 28/28, RBI cited 28/28, rules found 47/47, cited 46/46, product_ok 47/47,
+  answers 35/35, headline 21/22, version 4/4, notice 3/3, PII 2/2, refusals 68/71. $0.088, 6.6 s median.
+  Car-loan group: rules 8/8, product 8/8, answers 7/7. Traps passed: c02/x04 fixed-rate foreclosure 2%/3% (not
+  the RBC 353(1) floating-rate ban), x03 pension age 65 (not the home-loan 70), c06 two-wheeler not covered.
+- p17 refusal miss: NOT a defect. "Max LTV for a Demo Bank vehicle loan?" was a refusal when no vehicle policy
+  existed; it now answers 90% (DB-VL-007). Golden row updated (expected DB-VL-007, headline 90).
+- c10 refusal miss: golden error (mine). Notice + "Not covered" is the right answer before 1 Jan 2027 (same as v04).
+- c03 headline miss: scorer, not answer. "No ... would run to age 67" - first figure is 67. Headline dropped.
+- i01 (stamp duty, interview question) refusal miss: REAL change. Unclear product -> three products searched -> the
+  model writes "Home Loan: the results do not give a stamp duty amount..." per product instead of the one-line
+  refusal; DB-VL-011 ("stamp duty at actuals") pulls it in. No invented figure, but not a clean refusal. Fix idea:
+  S4 clarifying step / per-product refusal counted as refusal when every part refuses. Kept as a failure.
+- Text context (01:19): product_ok 37/47 (was 22/30 with two products): every miss a correctly labelled
+  multi-product answer to a home-loan question that names no product (p04, p06-p08, p10, p12-p15, i04). With three
+  products these answers get longer - the case for the S4 clarifying step. c10 not detected ("finance on a new
+  car") -> pattern for new/used/electric car added. x04 headline: answer opened with "12 months". $0.091, 7.1 s.

@@ -3,9 +3,9 @@
 # Unclear -> search every product, each with its own quota; the answer labels each part by product.
 import re
 
-PRODUCTS = ("home_loan", "lap")
-NAMES = {"home_loan": "Home Loan", "lap": "Loan Against Property (LAP)"}
-PREFIX = {"DB-HL": "home_loan", "DB-LAP": "lap"}      # rule ID prefix -> product
+PRODUCTS = ("home_loan", "lap", "vehicle_loan")
+NAMES = {"home_loan": "Home Loan", "lap": "Loan Against Property (LAP)", "vehicle_loan": "Car Loan"}
+PREFIX = {"DB-HL": "home_loan", "DB-LAP": "lap", "DB-VL": "vehicle_loan"}      # rule ID prefix -> product
 
 _PATTERNS = {
     "lap": [r"\blap\b", r"\bloans? against (?:an? |the |his |her |their |my )?[\w-]*\s?"
@@ -13,6 +13,13 @@ _PATTERNS = {
             r"\bmortgage loans?\b", r"\bproperty loans?\b"],
     "home_loan": [r"\bhome[- ]loans?\b", r"\bhousing loans?\b", r"\bcomposite loans?\b",
                   r"\bhome (?:improvement|extension|construction) loans?\b"],
+    # Week 5 S2: new-car loan v1.0. Two-wheeler and used-car words also map here, so the answer can say
+    # they are not covered (DB-VL-001) instead of borrowing a home-loan or LAP rule.
+    "vehicle_loan": [r"\b(?:car|vehicle|auto|motor|four[- ]wheeler|two[- ]wheeler|ev|suv|muv) loans?\b",
+                     r"\bloans? (?:to buy|for|to purchase) (?:an? |the |my |his |her |their )?(?:new |used |electric )?"
+                     r"(?:car|suv|muv|vehicle|ev|scooter|bike)\b",
+                     r"\b(?:new|used|second[- ]hand|electric) cars?\b",          # c10: "finance on a new car"
+                     r"\bon[- ]road price\b", r"\bhypothecat\w*", r"\brepossess\w*", r"\bex[- ]showroom\b"],
 }
 
 def detect(question: str) -> list[str]:
@@ -29,7 +36,7 @@ def resolve(question: str, product: str | None = None) -> tuple[tuple[str, ...],
     found = detect(question)
     if len(found) == 1:
         return (found[0],), "detected"
-    return PRODUCTS, "unclear"          # none named, or both named (e.g. "home loan vs LAP")
+    return PRODUCTS, "unclear"          # none named, or two or more named (e.g. "home loan vs LAP")
 
 def of_rule(rule_id: str) -> str | None:
     return PREFIX.get(rule_id.rsplit("-", 1)[0])

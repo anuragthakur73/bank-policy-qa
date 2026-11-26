@@ -18,7 +18,7 @@ from functools import lru_cache
 def _client():          # created on first use: importing this module (API, tests) needs no API key
     return anthropic.Anthropic()
 count_sdk_retries("anthropic._base_client", "anthropic")   # hidden API retries show up in the audit log
-PROMPT_VERSION = "answer-v3"   # v3 (ADR-009): rules labelled by product; per-product answers
+PROMPT_VERSION = "answer-v4"   # v4 (Week 5 S2): Car Loan added to the product list; v3 (ADR-009): rules labelled by product; per-product answers
 REFUSAL = "Not covered by the indexed documents."
 SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the search results provided. "
           "There are two kinds of result. 'DEMO BANK RULE' results are the policy of Demo Bank, a fictional bank: "
@@ -29,7 +29,7 @@ SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the se
           "yes/no) and name the rule ID, then cite the RBI clause it implements, or say it is a bank-discretion "
           "rule with no RBI requirement. If only RBI results answer it, answer from RBI. If a Demo Bank rule and an "
           "RBI clause disagree, give both and say so. At most one caveat that the results actually require. "
-          "Each DEMO BANK RULE title names its product (Home Loan, LAP). Apply a rule only to its own product. "
+          "Each DEMO BANK RULE title names its product (Home Loan, LAP, Car Loan). Apply a rule only to its own product. "
           "If the question does not say which product and rules of more than one product are given, answer "
           "for each product separately, starting each part with the product name. "
           "Cite a result for every statement. Quote figures (percentages, amounts, days) exactly. "
@@ -122,7 +122,7 @@ def _ask(model: str, results: list, q: str, hits: list, retry_note: list | None 
 
 def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), product: str | None = None,
            as_on=None):
-    """product: home_loan | lap from the screen selector / API / loan file; None = detect from the question.
+    """product: home_loan | lap | vehicle_loan from the screen selector / API / loan file; None = detect from the question.
     as_on: date (or 'YYYY-MM-DD') the answer must hold on; None = today. Only policy rules in force then are used;
     a product whose policy is not yet in force is left out and the answer says so (ADR-010)."""
     t0, rid = time.perf_counter(), str(uuid.uuid4())

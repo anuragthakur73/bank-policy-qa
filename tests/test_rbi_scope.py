@@ -12,3 +12,7 @@ def test_applies():
     assert applies(CF, "111", ("home_loan",)) and applies(CF, "111", ("home_loan", "lap"))   # unclear keeps it
     assert applies(CF, "111", None) and applies(CF, "111", ())            # product unknown: no filter
     assert applies(RBC, "353", ("lap",))                                  # pre-payment applies to every loan
+
+def test_car_loan_gets_no_housing_finance_paras():
+    assert not applies(CF, "111", ("vehicle_loan",)) and not applies(CF, "113", ("vehicle_loan",))
+    assert applies(RBC, "353", ("vehicle_loan",)) and applies(RBC, "450", ("vehicle_loan",))
