@@ -269,3 +269,6 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
   mode are RBI-only questions and are excluded).
 - To run on Windows: golden_v2_4, product given and product from text. Watch for the new sentence over-applying
   (e.g. answering "No" where a rule is silent rather than listing who may apply).
+- Live (28 Nov): v09 answers "No." in both contexts; refusals 77/77 both; rules cited 52/52 both (was 51/51);
+  headline 23/23; RBI cited 28/29 given (c08 variation) / 29/29 text; 2 checker retries in text mode (g008, i06),
+  both caught names that were not retrieved. $0.084 / $0.086. No over-application of the new sentence. S1 done.

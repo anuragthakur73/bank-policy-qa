@@ -178,3 +178,17 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - v09 manual review closed (Anurag): expected "No" under v1.0 (DB-HL-003 lists who may apply; HUF not listed).
   answer-v6 + verdict_ok metric; golden_v2_4. Live run pending (Windows).
 - ADR-020 check on the Week 5 runs: named_not_cited = 0 bank-rule questions; r04/r07 (text mode) are RBI-only.
+- Live runs, golden_v2_4, answer-v6, graph (28 Nov 00:12 given / 00:20 text):
+  given: RBI top 5 29/29, RBI cited 28/29 (c08), rules cited 52/52, product_ok 52/52, answers 40/40, headline 23/23,
+  verdict_ok 1/1 (v09 "No."), refusals 77/77, clarify 25/25, named_not_cited []; $0.084, 5.7 s median, 77 pass.
+  text: RBI cited 29/29, rules cited 52/52, product_ok 52/52, verdict_ok 1/1, refusals 77/77, clarify 38/38,
+  named_not_cited []; $0.086, 5.6 s; 75 pass + 2 passed after retry (g008 named CF 34, i06 named DB-HL-009/020 -
+  neither retrieved; the checker caught both, as designed).
+- Over-application check (answer-v6 sentence): opening yes/no changed only on v09 (given); in text mode also l04
+  ("Yes, ... no charge" -> "No." - better, the question asks "is there a charge?") and g002/g004 (dropped the
+  "No Demo Bank rule covers..." lead-in; not verdicts). No wrong "No".
+- c08 (given): named RBI 354/358 in the text but cited none - warn-only (implemented by cited DB-VL-021, Week 4 p02
+  rule); same question cited 354 in text mode. One-run model variation. Gap: such paras get no "Also named" link
+  (ADR-017 links only named_retrieved_not_cited) - open.
+- Note for the S3 report: the 27 Nov 21:49/21:57 report files say headline 22/24 (c07, x04); the Week 5 summary's
+  22/22 is after the scorer fix in 87780b8. The report page must rescore from rows, not copy stored summaries.
