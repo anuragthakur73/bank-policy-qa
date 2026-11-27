@@ -48,6 +48,21 @@ Seven discovery interviews with branch and retail-credit staff (Nov 2026) change
 - **Operable.** `/v1` API with OpenAPI docs, kill switch to search-only mode, audit log of every request with
   cost, latency per stage and retries ([ADR-013](docs/adr/013-retrieval-api-v1.md)).
 
+## Screens
+
+A question with a made-up customer name and address: both are masked before anything leaves the machine, and the
+answer gives the bank rule, the RBI paragraph it implements, and a link that highlights that paragraph on rbi.org.in.
+
+<img src="docs/img/answer-masked-cited.png" alt="Answer with masking notice, Demo Bank rule DB-HL-009 and RBI para 111" width="640">
+
+No product named, three products in force: it asks instead of answering three times (no search, no model call).
+
+<img src="docs/img/clarify-product.png" alt="Clarifying question: which product?" width="640">
+
+Outside the indexed documents: the exact refusal, no guess.
+
+<img src="docs/img/refusal.png" alt="Refusal: Not covered by the indexed documents" width="640">
+
 ## Results (golden_v2_4, 77 questions, 28 Nov 2026)
 
 | Metric | Product given by the screen | Product read from the question |

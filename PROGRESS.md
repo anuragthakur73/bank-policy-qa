@@ -288,3 +288,11 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Lesson: tuning set 100%, held-out 95% - a test set the rules were built on proves nothing.
 - Anurag's own 7 questions (independent): names 7/7, 0 traps, localities 0/6 (spec gap). Option A (mask localities
   tied to the customer/property, keep cities) -> locality rule: 6/6; all sets 0 traps; golden 0 changed. Tests 183.
+
+## Week 6 · Session 2: README (28 Nov 2026)
+- README rewritten: worked example, discovery findings -> design, what it does, results, screens, Mermaid
+  architecture (parsed OK by Mermaid 11), Windows run steps, ADR-001..021 index, lessons, limits.
+- Screens captured from the running app with the built-in browser (as on 15 Jan 2027): masked name + address with
+  a cited answer (DB-HL-009, RBI para 111), the clarifying question, the KYC refusal. docs/img/.
+- Found while capturing: the answer's second paragraph shows the raw clause text after a citation ("risk weight of
+  35 111. The bank shall abide by ...") - the cited passage is pasted into the prose. Open; cosmetic.
