@@ -21,6 +21,10 @@
 #   version_ok  every rule in the row's expected_versions is cited at that policy version (S5)
 #   notice_ok   the answer starts with the row's expect_notice (S5)
 #   pii_ok      none of the row's raw pii values appears in the logged question or answer (S5)
+#   verdict_ok  the answer opens with the row's "verdict" (yes/no), after any notice and product label (Week 6 S1, v09:
+#               "not clearly yes ... is not among these categories" passed a must_contain check but is not a "No")
+#   named_not_cited (summary, ADR-020 deferred) bank-rule questions answered with NO Demo Bank rule cited although a retrieved rule was
+#               named and linked by the system. Revisit ADR-020 if this is ever non-empty.
 #   manual      manual_review questions (policy gaps): answer recorded, NOT auto-scored except rule_hit
 #   timings     per-stage ms from the audit record (Week 3); retrieval mode from env RETRIEVAL_MODE (default hybrid)
 #   clarify_ok  asked a clarifying question exactly when expected (S4, ADR-018). Row field "clarify": "always" (asks in
@@ -45,6 +49,12 @@ _WORDS = {w: str(i) for i, w in enumerate("one two three four five six seven eig
 # A number word counts as a figure only before a unit ("three or more EMIs", "two years"), not in "one of the" (c07, 27 Nov)
 _NUM_WORD = re.compile(r"\b(" + "|".join(_WORDS) + r")\b(?=\s+(?:or more\s+|working\s+)?(?:EMIs?|instalments?|months?|"
                        r"years?|days?|weeks?|times|lakh|crore|per\s*cent)\b)", re.I)
+VERDICT = re.compile(r"^[\W_]*(?:(?:home loan|lap|car loan)[\W_]*)?(no|yes)\b")
+def opening_verdict(text: str):
+    """'no' / 'yes' if the answer opens with it (markdown, notices and a product label skipped), else None."""
+    m = VERDICT.match(text.strip().lower())
+    return m.group(1) if m else None
+
 def _digits(s: str) -> str:
     return _NUM_WORD.sub(lambda m: _WORDS[m[1].lower()], s)
 
@@ -58,7 +68,7 @@ def first_figure(text: str, question: str = ""):
             return n
     return None
 
-GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2_3.jsonl"
+GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2_4.jsonl"   # Week 6 S1
 prefix = lambda rid: rid.rsplit("-", 1)[0]          # DB-HL-004 -> DB-HL
 rows = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 out = []
@@ -100,6 +110,7 @@ for r in rows:
            "refusal_ok": None if manual else rec["refused"] == ref,
            "headline_ok": first_figure(model_text, r["question"]) == r["headline"].replace(",", "") if r.get("headline") and not ref else None,
            "first_figure": first_figure(model_text, r["question"]),
+           "verdict_ok": opening_verdict(model_text) == r["verdict"] if r.get("verdict") and not ref and not manual else None,
            "version_ok": all(rec["cited_rule_versions"].get(k) == v for k, v in r["expected_versions"].items())
                          if r.get("expected_versions") else None,
            "notice_ok": text.startswith(r["expect_notice"]) if r.get("expect_notice") else None,
@@ -115,12 +126,12 @@ for r in rows:
            "clarify_ok": (asked == want_ask) if (want_ask or asked or r.get("clarify") == "never") else None,
            "asked": asked, "clarifying_question": first_q}
     out.append(row)
-    bad = [k for k in ("cited_ok", "rule_cited", "product_ok", "answer_ok", "headline_ok", "version_ok", "notice_ok", "pii_ok",
+    bad = [k for k in ("cited_ok", "rule_cited", "product_ok", "answer_ok", "headline_ok", "verdict_ok", "version_ok", "notice_ok", "pii_ok",
                        "refusal_ok", "clarify_ok") if row[k] is False]
     print("MAN" if manual else ("OK " if not bad else "BAD"), r["id"], "| rules", pol, "cited", row["cited_rules"], "| rbi", got,
           "cited", row["cited"], ("| FAILED " + ",".join(bad)) if bad else "")
 
-METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "rule_linked", "product_ok", "answer_ok", "headline_ok",
+METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "rule_linked", "product_ok", "answer_ok", "headline_ok", "verdict_ok",
            "version_ok", "notice_ok", "pii_ok", "refusal_ok", "clarify_ok")
 def score(k, sub=None):
     vals = [o[k] for o in (sub or out) if o[k] is not None]
@@ -156,6 +167,10 @@ from collections import Counter
 summary["validator"] = os.environ.get("VALIDATOR", "enforce")
 summary["validation_actions"] = dict(Counter(o["validation"] for o in out))
 summary["first_pass_issues"] = dict(Counter(i.split(": ")[0] for o in out for i in o["issues"]))
+# ADR-020 deferred: questions that EXPECT a Demo Bank rule, answered with none cited though one was named + linked.
+# RBI-only questions are left out: naming a bank rule in passing there is harmless (r04, r07 on 27 Nov, text mode).
+summary["named_not_cited"] = [o["id"] for o in out if o["rule_hit"] is not None and not o["answer"].startswith("Not covered")
+                              and not o["cited_rules"] and o["linked_rules"]]   # revisit ADR-020 if non-empty
 summary["flagged"] = {o["id"]: o["issues"] for o in out if o["issues"]}
 summary["keyword_added"] = {o["id"]: o["keyword_rules"] for o in out if o["keyword_rules"]}
 summary["product_source"] = {s: sum(o["product_source"] == s for o in out) for s in ("given", "detected", "unclear")}

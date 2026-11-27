@@ -72,3 +72,22 @@ def test_first_figure_skips_numbers_from_question():
     ns = {"re": __import__("re")}; exec(src[src.index("_IGNORE ="):src.index("GOLDEN =")], ns)
     q = "Applicant's net monthly income is Rs 80,000. What is the maximum FOIR?"
     assert ns["first_figure"]("For Rs 80,000 net monthly income, the maximum FOIR is 55%.", q) == "55"
+
+def test_opening_verdict():   # Week 6 S1, v09: verdict_ok reads the opening yes/no
+    src = open("eval/run_eval.py", encoding="utf-8").read()
+    ns = {"re": __import__("re")}; exec(src[src.index("_IGNORE ="):src.index("GOLDEN =")], ns)
+    ov = ns["opening_verdict"]
+    assert ov("**No.** DB-HL-003 lets only resident Indian individuals apply.") == "no"
+    assert ov("**Home Loan:** No, an HUF is not on the DB-HL-003 list.") == "no"
+    assert ov("Yes - up to 90% of the on-road price (DB-VL-004).") == "yes"
+    assert ov("Not covered by the indexed documents.") is None        # 'not' is not 'no'
+    assert ov("Based on the search results, the answer is **not clearly yes**.") is None   # v09, answer-v5
+
+def test_golden_v2_4_v09_scored():
+    import json
+    rows = {json.loads(l)["id"]: json.loads(l) for l in open("eval/golden_v2_4.jsonl", encoding="utf-8")}
+    assert len(rows) == 77 and rows["v09"]["verdict"] == "no" and not rows["v09"]["manual_review"]
+
+def test_eligibility_list_sentence_in_prompt():   # answer-v6
+    from app.generate import SYSTEM, PROMPT_VERSION
+    assert PROMPT_VERSION == "answer-v6" and "complete list" in SYSTEM

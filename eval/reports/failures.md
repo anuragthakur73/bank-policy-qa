@@ -173,3 +173,8 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - 10 groups / 21 clauses shared one link (incl. RBC 351 penal charges with RBC 46 and 173); 54 more links crossed a
   heading block break and would match nothing. New phrases: 972/975 unique within one block, 3 deleted paras use the
   section anchor, 0 shared. Live check ALL OK (514 CF + 458 RBC); 6 links verified in a browser. ADR-019 accepted.
+
+## 27 Nov 2026 - Week 6 S1
+- v09 manual review closed (Anurag): expected "No" under v1.0 (DB-HL-003 lists who may apply; HUF not listed).
+  answer-v6 + verdict_ok metric; golden_v2_4. Live run pending (Windows).
+- ADR-020 check on the Week 5 runs: named_not_cited = 0 bank-rule questions; r04/r07 (text mode) are RBI-only.

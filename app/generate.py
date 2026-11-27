@@ -18,7 +18,7 @@ from functools import lru_cache
 def _client():          # created on first use: importing this module (API, tests) needs no API key
     return anthropic.Anthropic()
 count_sdk_retries("anthropic._base_client", "anthropic")   # hidden API retries show up in the audit log
-PROMPT_VERSION = "answer-v5"   # v5 (ADR-017): retry note says not to name sources outside the results; v4 (Week 5 S2): Car Loan added to the product list; v3 (ADR-009): rules labelled by product; per-product answers
+PROMPT_VERSION = "answer-v6"   # v6 (Week 6 S1, v09): an eligibility list in a Demo Bank rule is complete; v5 (ADR-017): retry note says not to name sources outside the results; v4 (Week 5 S2): Car Loan added to the product list; v3 (ADR-009): rules labelled by product; per-product answers
 REFUSAL = "Not covered by the indexed documents."
 SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the search results provided. "
           "There are two kinds of result. 'DEMO BANK RULE' results are the policy of Demo Bank, a fictional bank: "
@@ -29,6 +29,8 @@ SYSTEM = ("You answer questions from Indian bank lending staff using ONLY the se
           "yes/no) and name the rule ID, then cite the RBI clause it implements, or say it is a bank-discretion "
           "rule with no RBI requirement. If only RBI results answer it, answer from RBI. If a Demo Bank rule and an "
           "RBI clause disagree, give both and say so. At most one caveat that the results actually require. "
+          "A Demo Bank rule that lists who may apply is a complete list: a borrower type it does not list is not "
+          "eligible under that rule, so answer 'No' and name the rule. "
           "Each DEMO BANK RULE title names its product (Home Loan, LAP, Car Loan). Apply a rule only to its own product. "
           "If the question does not say which product and rules of more than one product are given, answer "
           "for each product separately, starting each part with the product name. "

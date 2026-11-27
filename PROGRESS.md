@@ -254,3 +254,18 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
   individuals elsewhere - genuinely unclear (the reason v1.1 excludes HUFs). Expectation was my inference -> manual review.
 
 ## Week 4 summary (25-26 Nov 2026) -> claude/project-1a-week-4-summary.md in the Project
+
+## Week 5 (26-27 Nov 2026) -> claude/project-1a-week-5-summary.md in the Project; run notes in eval/reports/failures.md
+
+## Week 6 · Session 1: close-out (27 Nov 2026) — ADR-020 (deferred)
+- S5 (ADR-019) was already committed (59a939d).
+- v09 manual review (Anurag): the answer under home loan v1.0 should be "No" - DB-HL-003's list of who may apply is
+  complete, and an HUF is not on it. answer-v6: one prompt sentence - a Demo Bank rule that lists who may apply is a
+  complete list; an unlisted borrower type is not eligible, answer "No" and name the rule.
+- golden_v2_4 = v2_3 with v09 scored (verdict "no", DB-HL-003 v1.0) instead of manual review.
+- New metric verdict_ok: the answer opens with the row's yes/no (after notices and a product label). Needed because
+  v09's "not clearly yes ... not among these categories" would pass a must_contain check.
+- ADR-020 deferred: summary field named_not_cited. Week 5 runs: 0 bank-rule questions affected (r04, r07 in text
+  mode are RBI-only questions and are excluded).
+- To run on Windows: golden_v2_4, product given and product from text. Watch for the new sentence over-applying
+  (e.g. answering "No" where a rule is silent rather than listing who may apply).
