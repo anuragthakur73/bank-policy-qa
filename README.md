@@ -77,6 +77,8 @@ Outside the indexed documents: the exact refusal, no guess.
 
 Name and address masking (ADR-021), on questions not used to build the rules: names 20/21 (95.2%), address parts
 25/27; on 7 questions written by a banker, names 7/7. Run notes and every miss: [eval/reports/failures.md](eval/reports/failures.md).
+Week-by-week report, every question, test-set changes: [docs/eval/index.html](docs/eval/index.html)
+(rebuild with `python -m eval.report`).
 
 ## Architecture
 

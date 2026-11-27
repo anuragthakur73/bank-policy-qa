@@ -296,3 +296,14 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
   a cited answer (DB-HL-009, RBI para 111), the clarifying question, the KYC refusal. docs/img/.
 - Found while capturing: the answer's second paragraph shows the raw clause text after a citation ("risk weight of
   35 111. The bank shall abide by ...") - the cited passage is pasted into the prose. Open; cosmetic.
+
+## Week 6 · Session 3: eval report page (28 Nov 2026)
+- eval/report.py -> docs/eval/index.html (python -m eval.report; offline, no API calls). Recomputes every score from
+  the per-question rows with today's scorer and golden files (code-written notices skipped, as run_eval does), and
+  lists where that differs from the stored summary. Sections: week by week (W3-W6 milestone runs), every question
+  of the latest run in both contexts (filter: failures only), golden-set changes v2 -> v2_4, masking (recomputed),
+  lessons.
+- Rescored = weekly summaries on every metric except one: the Week 5 summary's "first figure 22/22" was the
+  golden_v2_2 count; the golden_v2_3 runs score 23/23 (c07 scorer fix, x04 headline dropped). Corrected.
+- Report found its own bug first: v01 failed because the stored answer includes the "not in force" notice.
+- Tests: 186 passed (3 new in tests/test_report.py; skipped where spaCy is missing).
