@@ -33,6 +33,11 @@ Transformer NER (Hugging Face) and PyTorch could not be downloaded from the Cowo
    one strong part (Flat/House/Plot/Door/Shop/Villa/Gat/Survey + number, number + street word, PIN after a place
    name). A bare city or state is not masked: it identifies no one and can matter to the answer. A PIN-like number
    after money words ("salary of 450000") is not a PIN.
+3b. Localities (S4b, Anurag's option A, 28 Nov): place words after a residence cue ("resident of", "r/o",
+   "lives in", any case) or, when the question mentions a person, after "from" / "flat|property|plot in"
+   (capitalised words) are masked up to the first city or state, which is kept. Banks, acronyms, money words end
+   the run. "a flat in Lavasa" with no person in the question is left alone. Workplace ("works in Hinjewadi") is
+   not masked.
 4. Fails closed: if the spaCy model is missing, masking raises instead of passing a name through.
 5. Switches: PII_NER=0 (names off), PII_ADDRESS=0 (addresses off), PII_NER_MODEL (default en_core_web_lg).
 6. Answers are still not masked (ADR-015 point 3).
@@ -40,6 +45,13 @@ Transformer NER (Hugging Face) and PyTorch could not be downloaded from the Cowo
 ## Checked (offline, 28 Nov)
 0 of 77 golden_v2_4 questions get a name or address mask. ~5 ms per question after a one-time ~2 s model load.
 Offline tests: 178 passed (UI tests skipped in the Linux shell).
+
+## Independent check (Anurag's own 7 questions, eval/pii_names_v1_anurag.jsonl, 28 Nov 01:06)
+Scored before any change: names 7/7 (incl. lower case "bimal", surname-only "Chatterjee"), 0 words wrongly masked,
+localities 0/6 - not a detection miss but a spec gap: the address rule needed a house number or PIN, and Anurag
+decided (option A) that a locality tied to the customer must be masked too. After the locality rule: 6/6, 0 traps;
+tuning and held-out sets unchanged (all pass, 0 traps), 0 golden questions changed. His 7 are now tuning data:
+a fresh set of ~10 is the next independent check.
 
 ## Limits
 - Both test sets were written by Claude; the 95.2% held-out figure is the honest one. Next: a set written by

@@ -126,10 +126,82 @@ def address_spans(text):
             i = j + 1 if j == i else j
     return out
 
+# --- localities tied to the customer or the property (Week 6 S4b; Anurag's set, option A) -------------------------
+# "resident of Kharadi in Pune", "from Salt Lake", "flat in Springdale in Walker, Pune": place words after a residence
+# or property cue are masked up to the first city/state, which is kept ("a flat in Pune" identifies no one).
+CITIES = {"mumbai", "navi mumbai", "thane", "pune", "nashik", "nasik", "nagpur", "aurangabad", "kolhapur", "satara",
+          "solapur", "amravati", "delhi", "new delhi", "delhi ncr", "ncr", "noida", "gurugram", "gurgaon", "faridabad",
+          "ghaziabad", "bengaluru", "bangalore", "mysuru", "mysore", "mangaluru", "chennai", "coimbatore", "madurai",
+          "hyderabad", "secunderabad", "visakhapatnam", "vijayawada", "kolkata", "howrah", "ahmedabad", "surat",
+          "vadodara", "rajkot", "jaipur", "jodhpur", "udaipur", "lucknow", "kanpur", "varanasi", "agra", "indore",
+          "bhopal", "patna", "ranchi", "bhubaneswar", "cuttack", "guwahati", "chandigarh", "ludhiana", "amritsar",
+          "kochi", "cochin", "thiruvananthapuram", "trivandrum", "kozhikode", "goa", "panaji", "dehradun", "shimla",
+          "srinagar", "jammu", "raipur", "nanded", "latur", "jalgaon", "ahmednagar", "sangli", "lonavala",
+          "maharashtra", "karnataka", "kerala", "tamil nadu", "telangana", "andhra pradesh", "gujarat", "rajasthan",
+          "uttar pradesh", "madhya pradesh", "bihar", "west bengal", "odisha", "assam", "punjab", "haryana",
+          "jharkhand", "chhattisgarh", "uttarakhand", "himachal pradesh", "india", "dubai", "uae", "usa", "uk",
+          "singapore", "canada", "australia", "abroad"}
+LOC_CUE_ANYCASE = re.compile(r"(?i)\b(?:resident of|residing (?:at|in)|r/o|r\.o\.|lives? (?:in|at)|living (?:in|at)|"
+                             r"stay(?:s|ing)? (?:in|at)|native of)\s+")
+LOC_CUE_CAPS = re.compile(r"(?i)\b(?:from|based in|located (?:in|at)|situated (?:in|at)|(?:flat|house|property|plot|"
+                          r"bungalow|shop|land|apartment|villa|row house|office)\s+(?:is\s+)?(?:in|at))\s+")
+LOC_STOP = {"want", "wants", "wanted", "is", "are", "was", "were", "he", "she", "they", "can", "could", "and", "who",
+            "which", "has", "have", "had", "for", "to", "with", "but", "the", "a", "an", "our", "his", "her", "their",
+            "another", "other", "same", "near", "will", "would", "should", "does", "do", "did", "of", "on", "by",
+            "floating", "fixed", "next", "last", "this", "that", "under", "over", "in", "at", "or", "versus", "vs", "rs", "inr", "lakh", "lakhs", "crore", "crores"}
+ORG = re.compile(r"(?i)\b(?:bank|finance|financial|ltd|limited|corporation|corp|industries|company|pvt|nbfc|"
+                 r"rbi|insurance|services)\b")
+
+def _place_pieces(text, start, caps):
+    """Place-word pieces from `start`: split at ',' and ' in '; stop at a stop word, a city or punctuation."""
+    pieces, pos = [], start
+    while True:
+        m = re.match(r"\s*([A-Za-z][A-Za-z'-]*(?:\s+[A-Za-z][A-Za-z'-]*){0,3})", text[pos:])
+        if not m:
+            break
+        words = m.group(1).split()
+        keep = []
+        for w in words:
+            if w.lower().strip(".") in LOC_STOP or (caps and not w[0].isupper()):
+                break
+            keep.append(w)
+        if not keep:
+            break
+        piece = " ".join(keep)
+        ps = pos + m.start(1); pe = ps + len(piece)
+        if piece.lower().strip(".") in CITIES or ORG.search(piece) or all(w.isupper() for w in keep):
+            break                                              # a city / state / bank / acronym ends the run
+        # a city at the end of the piece ("Ram Nagar Pune"): keep it
+        for n in (2, 1):
+            if len(keep) > n and " ".join(keep[-n:]).lower() in CITIES:
+                pe = ps + len(" ".join(keep[:-n])); pieces.append((ps, pe)); return pieces
+        pieces.append((ps, pe))
+        nxt = re.match(r"(?:\s*,\s*|\s+in\s+)", text[pe:])
+        if not nxt:
+            break
+        pos = pe + nxt.end()
+    return pieces
+
+PERSON_HINT = re.compile(r"(?i)\b(?:customer|cust|borrower|applicant|co-applicant|guarantor|he|she|his|her|him|"
+                         r"they|their)\b")
+
+def locality_spans(text, has_name=False):
+    # "resident of" / "r/o" always describes a person; "from" / "flat in" only when a person is in the question
+    # ("Can a loan be given for a flat in Lavasa?" identifies no one)
+    out, person = [], has_name or bool(PERSON_HINT.search(text))
+    for rx, caps in ((LOC_CUE_ANYCASE, False), (LOC_CUE_CAPS, True)):
+        if caps and not person:
+            continue
+        for m in rx.finditer(text):
+            pieces = _place_pieces(text, m.end(), caps)
+            if pieces:
+                out.append((pieces[0][0], pieces[-1][1], "ADDRESS"))
+    return out
+
 def find(text):
     spans = []
     if os.environ.get("PII_NER", "1") != "0":
         spans += name_spans(text)
     if os.environ.get("PII_ADDRESS", "1") != "0":
-        spans += address_spans(text)
+        spans += address_spans(text) + locality_spans(text, has_name=bool(spans))
     return spans

@@ -87,3 +87,13 @@ def test_switches_turn_names_and_addresses_off(monkeypatch):
     q = "Customer Ramesh Sharma of 45 Laxmi Road, Pune 411030 wants a car loan."
     monkeypatch.setenv("PII_NER", "0"); monkeypatch.setenv("PII_ADDRESS", "0")
     assert mask(q) == (q, [])
+
+def test_anurag_set_localities_option_a():   # Week 6 S4b: localities tied to the customer/property masked, city kept
+    test_names_and_addresses_masked_traps_kept("eval/pii_names_v1_anurag.jsonl")
+
+@pytest.mark.parametrize("q", ["Can a loan be given for a flat in Lavasa or Amby Valley?",     # no person: generic place
+                               "Can he transfer his home loan from HDFC Bank?",               # a bank, not a place
+                               "She wants to switch from floating to fixed.",
+                               "The customer is from Rs 40 lakh bracket?"])
+def test_locality_rule_leaves_these_alone(q):
+    assert "ADDRESS" not in mask(q)[1]

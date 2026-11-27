@@ -286,3 +286,5 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Not testable from the Cowork shell: Hugging Face / PyTorch downloads (transformer NER).
 - Tests: 178 passed (Linux shell; UI tests skipped). requirements.txt: en_core_web_lg wheel added.
 - Lesson: tuning set 100%, held-out 95% - a test set the rules were built on proves nothing.
+- Anurag's own 7 questions (independent): names 7/7, 0 traps, localities 0/6 (spec gap). Option A (mask localities
+  tied to the customer/property, keep cities) -> locality rule: 6/6; all sets 0 traps; golden 0 changed. Tests 183.

@@ -21,6 +21,9 @@ def adr015(text):                          # the Week 4 patterns only (PAN, Aadh
 def kind(row, item):
     if covered(row["text"], item, adr015(row["text"])):                     # PAN, account no. - already covered by ADR-015 patterns
         return "pattern"
+    if row["id"].startswith("s"):
+        return "name" if item[0].isupper() and item in ("Avanish Menon", "Chatterjee", "Gaurav Das", "Thea Menon",
+                                                         "Saurav Namdev") or item in ("bimal", "namita das") else "address"
     if row["id"][0] in "nh" or (row["id"] == "a06" and item == "Sunil Joshi"):
         return "name"
     return "address"
