@@ -221,6 +221,8 @@ def answer(q: str, k: int = 5, caller: str = "cli", layers=("policy", "rbi"), pr
     a product whose policy is not yet in force is left out and the answer says so (ADR-010).
     Default: the LangGraph flow (app/graph.py, ADR-016, accepted 27 Nov 2026). PIPELINE=plain runs the original
     flow - kept one release for rollback."""
+    if product == "rbi_only":      # the "RBI rule only" reply to a clarifying question (ADR-018)
+        product, layers = None, tuple(l for l in layers if l != "policy")
     if os.environ.get("PIPELINE", "graph") == "graph":
         from app.graph import run
         return run(q, k=k, caller=caller, layers=layers, product=product, as_on=as_on)

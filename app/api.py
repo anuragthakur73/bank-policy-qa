@@ -16,7 +16,7 @@ from app.search import search
 from app.pii import mask
 
 API_VERSION = "v1"
-Product = Literal["home_loan", "lap", "vehicle_loan"]
+Product = Literal["home_loan", "lap", "vehicle_loan", "rbi_only"]   # rbi_only: the reply to a clarifying question
 Source = Literal["policy", "rbi"]
 
 app = FastAPI(title="Bank Policy Q&A - retrieval service", version=f"{API_VERSION} (contract {CONTRACT_VERSION})",
@@ -106,7 +106,7 @@ class AnswerResponse(BaseModel):
     api: str
     contract: str
     request_id: str
-    mode: Literal["answer", "search_only"]
+    mode: Literal["answer", "search_only", "clarify"]
     answer: str | None
     refused: bool | None
     citations: list[Citation]
@@ -118,6 +118,8 @@ class AnswerResponse(BaseModel):
     pii_masked: list[str] = []
     cost_usd: float | None
     latency_ms: int
+    clarify: dict | None = Field(None, description="mode=clarify (ADR-018): {missing, question, options}. Ask again "
+                                                  "with product set to one option's value")
 
 # ---------- helpers
 def _id(h: dict) -> str:
@@ -144,7 +146,10 @@ def _chunk(h: dict) -> Chunk:
 def _retrieve(req: Query, top_k=5, k_policy=3, sources=("policy", "rbi")):
     timings = {}
     q, pii = mask(req.query)
-    found = search(q, top_k, layers=tuple(sources), product=req.product, as_on=req.as_on,
+    product = req.product
+    if product == "rbi_only":                     # reply to a clarifying question: RBI clauses only (ADR-018)
+        product, sources = None, [s for s in sources if s != "policy"]
+    found = search(q, top_k, layers=tuple(sources), product=product, as_on=req.as_on,
                    k_policy=k_policy, timings=timings)
     found["query"], found["pii_masked"] = q, pii
     return found, [_chunk(h) for h in found["rows"]], timings
@@ -188,6 +193,13 @@ def answer_endpoint(req: Query):
                               latency_ms=int((time.perf_counter() - t0) * 1000))
     from app.generate import answer
     text, cites, rec = answer(req.query, caller="api", product=req.product, as_on=req.as_on)
+    if rec.get("mode") == "clarify":
+        return AnswerResponse(api=API_VERSION, contract=CONTRACT_VERSION, request_id=rec["request_id"], mode="clarify",
+                              answer=text, refused=False, citations=[], notices=[],
+                              as_on=datetime.date.fromisoformat(rec["as_on"]), products=rec["products"],
+                              product_source=rec["product_source"], cost_usd=0.0,
+                              pii_masked=rec.get("pii_masked", []), clarify=rec["clarify"],
+                              latency_ms=int((time.perf_counter() - t0) * 1000))
     citations = [Citation(chunk_id=(f'{c["doc_id"]}:{c["rule_id"]}@{c.get("policy_version")}' if c["layer"] == "policy"
                                     else f'{c["doc_id"]}:{c["clause_no"]}') if c.get("doc_id") else None,
                           rule_id=c.get("rule_id"), policy_version=c.get("policy_version"), doc_id=c.get("doc_id"),

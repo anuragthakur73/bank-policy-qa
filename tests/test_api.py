@@ -91,3 +91,16 @@ def test_answer_mode(client, monkeypatch):
     b = client.post("/v1/answer", json={"query": "Max LTV for a home loan of Rs 50 lakh?"}).json()
     assert b["mode"] == "answer" and b["answer"].startswith("80%") and b["refused"] is False
     assert b["citations"][0]["chunk_id"] == "DEMO-BANK-HOME-LOAN-POLICY:DB-HL-009@1.1.0"
+
+def test_answer_clarify_mode(client, monkeypatch):            # S4, ADR-018
+    import app.generate as gen
+    rec = {"request_id": "r1", "mode": "clarify", "as_on": "2027-01-02", "products": ["home_loan", "lap", "vehicle_loan"],
+           "product_source": "unclear", "pii_masked": [],
+           "clarify": {"missing": ["product"], "question": "Which product?", "options": [{"value": "lap", "label": "LAP"}]}}
+    monkeypatch.setattr(gen, "answer", lambda q, **k: ("Which product?", [], rec))
+    b = client.post("/v1/answer", json={"query": "What is the minimum credit score?"}).json()
+    assert b["mode"] == "clarify" and b["clarify"]["options"][0]["value"] == "lap" and b["cost_usd"] == 0.0
+
+def test_retrieve_rbi_only(client):
+    b = client.post("/v1/retrieve", json={"query": "Penal interest on overdue EMI?", "product": "rbi_only"}).json()
+    assert client.calls[-1]["layers"] == ("rbi",) and all(c["source_type"] == "rbi" for c in b["chunks"])

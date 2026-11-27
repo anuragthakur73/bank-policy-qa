@@ -1,5 +1,6 @@
 # run: streamlit run ui/streamlit_app.py
 # Week 4 S5: product selector, "rule as on" date, validation and masking status, feedback buttons, kill switch.
+# Week 5 S4 (ADR-018): if the product is unclear, the answer is a question with one button per product.
 import datetime, json, os, sys, pathlib, uuid
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 import streamlit as st
@@ -47,9 +48,24 @@ if asked and q:
                                           "pii": pii, "request_id": str(uuid.uuid4())}
         else:
             text, cites, rec = answer(q, caller="streamlit", product=product, as_on=as_on)
-            st.session_state["result"] = {"search_only": False, "text": text, "cites": cites, "rec": rec}
+            st.session_state["result"] = {"search_only": False, "text": text, "cites": cites, "rec": rec,
+                                          "q": q, "as_on": as_on}
 
 res = st.session_state.get("result")
+if res and not res["search_only"] and res["rec"].get("mode") == "clarify":
+    st.info(res["text"])
+    opts = res["rec"]["clarify"]["options"]
+    cols = st.columns(len(opts))
+    for col, o in zip(cols, opts):
+        if col.button(o["label"], key=f'clar_{o["value"]}_{res["rec"]["request_id"]}'):
+            with st.spinner("Searching Demo Bank policy and RBI directions…"):
+                text, cites, rec = answer(res["q"], caller="streamlit", product=o["value"], as_on=res["as_on"])
+            rec["clarified_from"] = res["rec"]["request_id"]
+            st.session_state["result"] = {"search_only": False, "text": text, "cites": cites, "rec": rec,
+                                          "q": res["q"], "as_on": res["as_on"]}
+            st.rerun()
+    st.caption("Tip: choose the product in the Product box to skip this question.")
+    res = None
 if res and res["search_only"]:
     st.error("Answer generation is switched off (kill switch). Showing the matching rules and clauses only.")
     for n in res["notices"]:

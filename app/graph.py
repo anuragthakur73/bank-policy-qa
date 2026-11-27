@@ -2,19 +2,22 @@
 # in app/generate.py; the graph makes the branches explicit and records which steps ran (graph_trace in the audit).
 #
 #   mask -> [kill switch on?] -> search_only -> END
-#        -> route -> retrieve -> generate -> validate -> [pass]              -> finish -> END
+#        -> route -> [product unknown? S4] -> clarify -> END          (ADR-018: asks, no model call)
+#              -> retrieve -> generate -> validate -> [pass]              -> finish -> END
 #                                    ^                -> [blocking, 1st try] -> generate (retry with the problems)
 #                                    |________________-> [blocking, 2nd try] -> refuse -> finish -> END
 #
 # route records which products and policy versions apply (product filter ADR-009, version by date ADR-010); the
-# search itself still applies them, so retrieval is identical to the plain flow. S4 adds a clarify branch after route.
+# search itself still applies them, so retrieval is identical to the plain flow. S4: clarify branch after route
+# (CLARIFY=0 turns it off, e.g. to compare with the S3 behaviour).
 # run: PIPELINE=graph python -m app.generate     |  diagram: python -m app.graph  (prints Mermaid)
-import datetime, time
+import datetime, json, os, time, uuid
 from typing import Any, TypedDict
 from langgraph.graph import StateGraph, START, END
 from app import generate as gen
 from app import product as prod, policy_versions as pv
 from app.killswitch import kill_switch_on
+from app import clarify as clar
 from app.pii import mask
 from app.search import search
 from app.validate import validate, blocking
@@ -56,8 +59,29 @@ def n_route(state: State) -> State:
     products, source = prod.resolve(q, state["product"])
     as_on = pv.to_date(state["as_on"]) if state["as_on"] else datetime.date.today()   # as app/search.py
     live = [p for p in products if pv.in_force(p, as_on)]
+    ask = (clar.needed(q, state["product"], state["layers"], live)
+           if os.environ.get("CLARIFY", "1") != "0" else None)
     return {"trace": _step(state, "route"),
-            "route": {**state["route"], "products": list(products), "product_source": source, "in_force": live}}
+            "route": {**state["route"], "products": list(products), "product_source": source, "in_force": live,
+                      "as_on": as_on.isoformat(), "clarify": ask}}
+
+def after_route(state: State) -> str:
+    return "clarify" if state["route"].get("clarify") else "retrieve"
+
+def n_clarify(state: State) -> State:
+    """Code-written question back to the asker; nothing is searched or sent to the model (ADR-018)."""
+    r = state["route"]
+    trace = _step(state, "clarify")
+    rec = {"request_id": str(uuid.uuid4()), "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
+           "caller": state["caller"], "pipeline": "graph", "mode": "clarify", "question": r["masked_question"],
+           "pii_masked": r["pii_masked"], "as_on": r["as_on"], "products": r["products"],
+           "product_source": r["product_source"], "clarify": r["clarify"], "answer": r["clarify"]["question"],
+           "refused": False, "cost_usd": 0.0, "model_calls": 0, "cited_rules": [], "notices": [],
+           "graph_trace": trace, "graph_route": r}
+    os.makedirs(os.path.dirname(gen.AUDIT_LOG) or ".", exist_ok=True)
+    with open(gen.AUDIT_LOG, "a", encoding="utf-8") as f:
+        f.write(json.dumps(rec, ensure_ascii=False, default=str) + "\n")
+    return {"trace": trace, "result": (r["clarify"]["question"], [], rec)}
 
 def n_retrieve(state: State) -> State:
     ctx = gen._prepare(state["question"], state["k"], state["layers"], state["product"], state["as_on"])
@@ -103,13 +127,15 @@ def n_finish(state: State) -> State:
 
 def build():
     g = StateGraph(State)
-    for name, fn in [("mask", n_mask), ("search_only", n_search_only), ("route", n_route), ("retrieve", n_retrieve),
+    for name, fn in [("mask", n_mask), ("search_only", n_search_only), ("route", n_route), ("clarify", n_clarify),
+                     ("retrieve", n_retrieve),
                      ("generate", n_generate), ("validate", n_validate), ("refuse", n_refuse), ("finish", n_finish)]:
         g.add_node(name, fn)
     g.add_edge(START, "mask")
     g.add_conditional_edges("mask", after_mask, {"search_only": "search_only", "route": "route"})
     g.add_edge("search_only", END)
-    g.add_edge("route", "retrieve")
+    g.add_conditional_edges("route", after_route, {"clarify": "clarify", "retrieve": "retrieve"})
+    g.add_edge("clarify", END)
     g.add_edge("retrieve", "generate")
     g.add_edge("generate", "validate")
     g.add_conditional_edges("validate", after_validate, {"finish": "finish", "generate": "generate", "refuse": "refuse"})

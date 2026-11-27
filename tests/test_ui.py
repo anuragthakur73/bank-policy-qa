@@ -46,3 +46,20 @@ def test_feedback_written_and_not_reasked(app, monkeypatch, tmp_path):
     assert rec["rating"] == "up" and rec["request_id"] == "req-12345678" and "ABCDE1234F" not in rec["comment"]
     assert len(app.calls) == 1                     # clicking feedback did not re-ask the model
     assert any("Thanks" in c.value for c in app.caption)
+
+def test_clarify_buttons_ask_again_with_the_product(app, monkeypatch):    # S4, ADR-018
+    import app.generate as gen
+    clar = {"request_id": "req-c1", "mode": "clarify", "refused": False, "as_on": "2027-01-02",
+            "products": ["home_loan", "lap", "vehicle_loan"], "product_source": "unclear",
+            "clarify": {"missing": ["product"], "question": "Which product is this about?",
+                        "options": [{"value": "home_loan", "label": "Home Loan"}, {"value": "lap", "label": "LAP"}]}}
+    def fake(q, **kw):
+        app.calls.append({"q": q, **kw})
+        return ("Which product is this about?", [], dict(clar)) if not kw.get("product") else ("720 under DB-LAP-005.", [CITE], dict(REC))
+    monkeypatch.setattr(gen, "answer", fake)
+    app.run()
+    app.text_input[0].input("What is the minimum credit score?")
+    app.button[0].click().run()
+    assert any("Which product is this about?" in i.value for i in app.info)
+    [b for b in app.button if b.label == "LAP"][0].click().run()
+    assert app.calls[-1]["product"] == "lap" and any("720 under DB-LAP-005" in s.value for s in app.success)

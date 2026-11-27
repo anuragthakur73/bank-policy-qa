@@ -23,6 +23,10 @@
 #   pii_ok      none of the row's raw pii values appears in the logged question or answer (S5)
 #   manual      manual_review questions (policy gaps): answer recorded, NOT auto-scored except rule_hit
 #   timings     per-stage ms from the audit record (Week 3); retrieval mode from env RETRIEVAL_MODE (default hybrid)
+#   clarify_ok  asked a clarifying question exactly when expected (S4, ADR-018). Row field "clarify": "always" (asks in
+#               both contexts), "text_only" (asks only when the product is not passed). When it asks, the eval answers
+#               as staff would - with the row's "reply", else its "product", else rbi_only - and scores THAT answer;
+#               cost and latency of both steps are added. CLARIFY=0 turns the step off.
 #   embed_cache EMBED_CACHE env (default eval/cache/embeddings.jsonl; "off" disables): each question is embedded once
 #               and reused, so two runs retrieve identically (Week 5 S3: plain vs graph differed on p07 by embedding noise)
 import json, datetime, os, pathlib, re, sys
@@ -37,23 +41,37 @@ PRODUCT_CONTEXT = os.environ.get("PRODUCT_CONTEXT", "given")
 AS_ON = os.environ.get("AS_ON", "2027-01-01")
 assert PRODUCT_CONTEXT in ("given", "text"), "PRODUCT_CONTEXT must be given or text"
 _IGNORE = re.compile(r"DB-[A-Z]+-\d{3}|\bparas?(?:graphs?)?\s*[\d(),\s-]+(?:and\s*\d+)?|\b(?:CF|RBC)\s*\d+", re.I)
+_WORDS = {w: str(i) for i, w in enumerate("one two three four five six seven eight nine ten".split(), start=1)}
+# A number word counts as a figure only before a unit ("three or more EMIs", "two years"), not in "one of the" (c07, 27 Nov)
+_NUM_WORD = re.compile(r"\b(" + "|".join(_WORDS) + r")\b(?=\s+(?:or more\s+|working\s+)?(?:EMIs?|instalments?|months?|"
+                       r"years?|days?|weeks?|times|lakh|crore|per\s*cent)\b)", re.I)
+def _digits(s: str) -> str:
+    return _NUM_WORD.sub(lambda m: _WORDS[m[1].lower()], s)
+
 def first_figure(text: str, question: str = ""):
     """First figure in the answer that is not just repeated from the question (p06 opened by restating
-    'Rs 80,000 net monthly income' before giving 55%)."""
-    asked = {x.replace(",", "") for x in re.findall(r"\d[\d,]*(?:\.\d+)?", question)}
-    for m in re.finditer(r"\d[\d,]*(?:\.\d+)?", _IGNORE.sub(" ", text)):
+    'Rs 80,000 net monthly income' before giving 55%). Number words before a unit count as figures."""
+    asked = {x.replace(",", "") for x in re.findall(r"\d[\d,]*(?:\.\d+)?", _digits(question))}
+    for m in re.finditer(r"\d[\d,]*(?:\.\d+)?", _IGNORE.sub(" ", _digits(text))):
         n = m[0].replace(",", "").rstrip(".")
         if n and n not in asked:
             return n
     return None
 
-GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2_2.jsonl"
+GOLDEN = sys.argv[1] if len(sys.argv) > 1 else "eval/golden_v2_3.jsonl"
 prefix = lambda rid: rid.rsplit("-", 1)[0]          # DB-HL-004 -> DB-HL
 rows = [json.loads(l) for l in open(GOLDEN, encoding="utf-8")]
 out = []
 for r in rows:
     ctx = r.get("product") if PRODUCT_CONTEXT == "given" else None
     text, cites, rec = answer(r["question"], caller="eval", product=ctx, as_on=r.get("as_on") or AS_ON)
+    asked = rec.get("mode") == "clarify"
+    first_q = text if asked else None
+    if asked:                                        # staff pick a product and ask again (ADR-018)
+        reply = r.get("reply") or r.get("product") or "rbi_only"
+        t2, cites, rec = answer(r["question"], caller="eval", product=reply, as_on=r.get("as_on") or AS_ON)
+        text = t2
+    want_ask = r.get("clarify") == "always" or (r.get("clarify") == "text_only" and PRODUCT_CONTEXT == "text")
     doc = r.get("expected_doc", "RBI-CB-CREDIT-FAC-2025")
     exp, rules, ref = r.get("expected_clauses", []), r.get("expected_rules", []), r["expect_refusal"]
     got = [c.split(":", 1)[1] for c in rec["rbi_search"][:5] if c.startswith(doc + ":")]
@@ -93,15 +111,17 @@ for r in rows:
            "cited_rules": rec.get("cited_rules", []), "linked_rules": rec.get("linked_rules", []),
            "answer": text[:400], "expected_answer": r.get("expected_answer"),
            "cost_usd": rec["cost_usd"], "latency_ms": rec["latency_ms"],
-           "timings_ms": rec["timings_ms"], "retries": rec["retries"]}
+           "timings_ms": rec["timings_ms"], "retries": rec["retries"],
+           "clarify_ok": (asked == want_ask) if (want_ask or asked or r.get("clarify") == "never") else None,
+           "asked": asked, "clarifying_question": first_q}
     out.append(row)
     bad = [k for k in ("cited_ok", "rule_cited", "product_ok", "answer_ok", "headline_ok", "version_ok", "notice_ok", "pii_ok",
-                       "refusal_ok") if row[k] is False]
+                       "refusal_ok", "clarify_ok") if row[k] is False]
     print("MAN" if manual else ("OK " if not bad else "BAD"), r["id"], "| rules", pol, "cited", row["cited_rules"], "| rbi", got,
           "cited", row["cited"], ("| FAILED " + ",".join(bad)) if bad else "")
 
 METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "rule_linked", "product_ok", "answer_ok", "headline_ok",
-           "version_ok", "notice_ok", "pii_ok", "refusal_ok")
+           "version_ok", "notice_ok", "pii_ok", "refusal_ok", "clarify_ok")
 def score(k, sub=None):
     vals = [o[k] for o in (sub or out) if o[k] is not None]
     return f"{sum(vals)}/{len(vals)}" if vals else "-"
@@ -127,7 +147,8 @@ summary["slowest"] = [{"id": o["id"], "latency_ms": o["latency_ms"], **o["timing
 summary["retries"] = {k: sum(o["retries"].get(k, 0) for o in out) for k in ("openai", "qdrant", "anthropic")}
 summary["retrieval_mode"] = MODE
 summary["product_context"] = PRODUCT_CONTEXT
-summary["pipeline"] = os.environ.get("PIPELINE", "graph")   # Week 5 S3: plain | graph (ADR-016)
+summary["pipeline"] = os.environ.get("PIPELINE", "graph")
+summary["clarify"] = {"on": os.environ.get("CLARIFY", "1") != "0", "asked": sum(o["asked"] for o in out)}   # S4, ADR-018
 summary["as_on"] = AS_ON
 summary["embed_cache"] = {"path": os.environ.get("EMBED_CACHE"), **EMBED_STATS}
 summary["policy_keyword"] = os.environ.get("POLICY_KEYWORD", "1")
