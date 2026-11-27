@@ -106,8 +106,10 @@ SHORT = {"RBI-CB-CREDIT-FAC-2025": "CF", "RBI-CB-RBC-2025": "RBC"}
 
 def _ref(h: dict) -> dict:
     from app.generate import clause_link
-    label = h["rule_id"] if h.get("layer") == "policy" else f'RBI {SHORT.get(h["doc_id"], h["doc_id"])} para {h["clause_no"]}'
-    return {"label": label, "link": clause_link(h)}
+    if h.get("layer") == "policy":   # rule_id / rbi id kept so callers can act on the link, not only show it (c07, 27 Nov)
+        return {"label": h["rule_id"], "link": clause_link(h), "rule_id": h["rule_id"]}
+    return {"label": f'RBI {SHORT.get(h["doc_id"], h["doc_id"])} para {h["clause_no"]}', "link": clause_link(h),
+            "rbi": f'{h["doc_id"]}:{h["clause_no"]}'}
 
 def named_refs(issues: list[dict]) -> list[dict]:
     """Sources the answer names that were retrieved but not cited (ADR-017): linked by code, not quoted by the model."""

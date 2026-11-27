@@ -111,3 +111,20 @@ def test_also_named_line_added_by_code(fake):         # ADR-017: named, retrieve
         assert calls["model"] == 1 and rec["validation"]["action"] == "pass", name
         assert text.endswith("Also named in this answer (linked by the system, not quoted): RBI CF para 39 (https://rbi.org.in/x#39)")
         assert rec["named_refs"] == [ref[0]["ref"]] and rec["refused"] is False
+
+def test_linked_rule_gets_its_change_notice_but_is_not_counted_as_cited(fake):
+    # c07 (27 Nov): a rule the answer names and the system links must get the same "due to change" note as a cited
+    # rule; cited_rules still records only what the model cited (ADR-017 option b). DB-HL-004 changes on 1 Jan 2027
+    # (home loan v1.1); the model's own citation, DB-HL-009, does not change.
+    ref = [{"severity": "warn", "check": "named_retrieved_not_cited", "detail": "names rule DB-HL-004 (retrieved)",
+            "ref": {"label": "DB-HL-004", "link": "policy/demo_bank/home_loan_v1.yaml#DB-HL-004", "rule_id": "DB-HL-004"}}]
+    args = dict(q="Max age for a pensioner?", k=5, caller="test", layers=("policy", "rbi"), product="home_loan",
+                as_on="2026-12-15")
+    fake([("70 under DB-HL-004; LTV per DB-HL-009.", ref)])
+    text, _, rec = gen._answer_plain(**args)
+    assert rec["cited_rules"] == ["DB-HL-009"] and rec["linked_rules"] == ["DB-HL-004"] and rec["linked_rbi"] == []
+    assert any(n.startswith("Note: DB-HL-004 is due to change on 1 Jan 2027") for n in rec["notices"])
+    assert text.endswith(rec["notices"][-1])
+    fake([("70 under DB-HL-004; LTV per DB-HL-009.", [])])     # same answer, no link -> no note for DB-HL-004
+    _, _, rec = gen._answer_plain(**args)
+    assert rec["linked_rules"] == [] and not any("DB-HL-004" in n for n in rec["notices"])

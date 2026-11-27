@@ -6,6 +6,8 @@
 #   in_context  expected RBI clause anywhere the model saw (incl. paras traced from a Demo Bank rule)
 #   cited_ok    expected RBI clause cited
 #   rule_hit    expected Demo Bank rule among the policy rules sent to the model (top 3 + keyword hit, ADR-011)      rule_cited  expected rule cited
+#   rule_linked expected rule cited by the model OR named and linked by the system (ADR-017 option b); rule_cited is
+#               still what the model cited itself, so the gap between the two is the code's contribution
 #   answer_ok   every must_contain item appears in the answer (crude check on key figures); an item may list
 #               accepted spellings separated by "|", e.g. "3 working days|three working days"
 #   refusal_ok  refused exactly when expected
@@ -70,6 +72,9 @@ for r in rows:
            "manual": manual, "note": r.get("note"),
            "rule_hit": any(x in pol for x in rules) if rules and not ref else None,
            "rule_cited": any(x in rec.get("cited_rules", []) for x in rules) if rules and not ref and not manual else None,
+           # rule_linked: cited by the model OR linked by the system (ADR-017 option b). rule_cited stays the model's own.
+           "rule_linked": any(x in rec.get("cited_rules", []) + rec.get("linked_rules", []) for x in rules)
+                          if rules and not ref and not manual else None,
            "product_ok": all(prefix(c) in {prefix(x) for x in rules} for c in rec.get("cited_rules", []))
                          if rules and not ref else None,
            "answer_ok": all(any(a.lower() in text.lower() for a in m.split("|")) for m in must)
@@ -85,7 +90,7 @@ for r in rows:
            "validation": rec["validation"]["action"],
            "issues": [f'{i["severity"]}:{i["check"]}: {i["detail"]}' for i in rec["validation"]["first"]], "products": rec["products"], "product_source": rec["product_source"],
            "retrieved_rbi": got, "retrieved_rules": pol, "cited": sorted(cited),
-           "cited_rules": rec.get("cited_rules", []),
+           "cited_rules": rec.get("cited_rules", []), "linked_rules": rec.get("linked_rules", []),
            "answer": text[:400], "expected_answer": r.get("expected_answer"),
            "cost_usd": rec["cost_usd"], "latency_ms": rec["latency_ms"],
            "timings_ms": rec["timings_ms"], "retries": rec["retries"]}
@@ -95,7 +100,7 @@ for r in rows:
     print("MAN" if manual else ("OK " if not bad else "BAD"), r["id"], "| rules", pol, "cited", row["cited_rules"], "| rbi", got,
           "cited", row["cited"], ("| FAILED " + ",".join(bad)) if bad else "")
 
-METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "product_ok", "answer_ok", "headline_ok",
+METRICS = ("hit_at_5", "in_context", "cited_ok", "rule_hit", "rule_cited", "rule_linked", "product_ok", "answer_ok", "headline_ok",
            "version_ok", "notice_ok", "pii_ok", "refusal_ok")
 def score(k, sub=None):
     vals = [o[k] for o in (sub or out) if o[k] is not None]

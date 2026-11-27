@@ -172,11 +172,16 @@ def _finish(ctx: dict, caller: str, msg, text: str, cites: list, usage: list, ch
     last = check.get("second", check.get("first", [])) if check.get("action") != "refused_after_retry" else []
     refs = [] if rec["refused"] else named_refs(last)
     rec["named_refs"] = refs
+    # Kept apart from cited_rules / cited_rbi, which stay "what the model cited" (ADR-017 option b, 27 Nov).
+    rec["linked_rules"] = sorted({r["rule_id"] for r in refs if r.get("rule_id")})
+    rec["linked_rbi"] = sorted({r["rbi"] for r in refs if r.get("rbi")})
     if refs:
         text += "\n\nAlso named in this answer (linked by the system, not quoted): " + " · ".join(
             f'{r["label"]} ({r["link"]})' for r in refs)
-    # Deterministic notices (not written by the model): product not yet in force / cited rule changes soon.
-    pre, post = pv.notices(products, as_on, rec["cited_rules"])
+    # Deterministic notices (not written by the model): product not yet in force / a rule in the answer changes soon.
+    # A rule the system linked is as much in front of the reader as one the model cited, so it gets its notice too
+    # (c07, 27 Nov: DB-VL-019 named but not cited, so a change to it would not have been flagged).
+    pre, post = pv.notices(products, as_on, sorted(set(rec["cited_rules"]) | set(rec["linked_rules"])))
     if pre or post:
         text = "\n\n".join(["\n".join(pre)] * bool(pre) + [text] + ["\n".join(post)] * bool(post))
     rec["notices"] = pre + post
