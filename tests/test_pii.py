@@ -56,3 +56,34 @@ def test_api_retrieve_masks(monkeypatch):
     b = TestClient(api.app).post("/v1/retrieve", json={"query": Q, "as_on": "2027-01-02"}).json()
     assert "IN_PAN" in b["pii_masked"] and not any(r in got["q"] for r in RAW)
     assert not any(r in json.dumps(audit, default=str) for r in RAW)
+
+# --- Week 6 S4 (ADR-021): names and addresses ---------------------------------------------------------------------
+def _rows(path):
+    return [json.loads(l) for l in open(path, encoding="utf-8")]
+
+@pytest.mark.parametrize("path", ["eval/pii_names_v1.jsonl", "eval/pii_names_v1_holdout.jsonl"])
+def test_names_and_addresses_masked_traps_kept(path):
+    for r in _rows(path):
+        m, _ = mask(r["text"])
+        for item in r["mask"]:
+            # every name and every address part is gone (house numbers are checked as part of their address)
+            assert item not in m or item.isdigit(), (r["id"], item, m)
+        for item in r["keep"]:
+            assert item in m, (r["id"], item, m)
+
+def test_person_and_address_tokens():
+    m, found = mask("Customer Ramesh Kumar Sharma, Flat 302, Sai Krupa Apartments, Baner Road, Pune 411045. Max LTV?")
+    assert "Ramesh" not in m and "411045" not in m and "Baner" not in m and "Max LTV?" in m
+    assert set(found) == {"PERSON", "ADDRESS"}
+
+def test_city_alone_is_not_an_address():
+    assert mask("Is the LTV different for a flat in Mumbai versus a flat in Pune?")[1] == []
+
+def test_golden_v2_4_untouched():
+    new = [r["id"] for r in _rows("eval/golden_v2_4.jsonl") if {"PERSON", "ADDRESS"} & set(mask(r["question"])[1])]
+    assert new == []          # v06/v07 keep their ADR-015 PAN/Aadhaar/phone masks; no name or address anywhere
+
+def test_switches_turn_names_and_addresses_off(monkeypatch):
+    q = "Customer Ramesh Sharma of 45 Laxmi Road, Pune 411030 wants a car loan."
+    monkeypatch.setenv("PII_NER", "0"); monkeypatch.setenv("PII_ADDRESS", "0")
+    assert mask(q) == (q, [])

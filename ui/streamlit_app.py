@@ -13,7 +13,8 @@ from app import policy_versions as pv
 PRODUCTS = {"Work out from my question": None, "Home loan": "home_loan", "Loan against property (LAP)": "lap", "Car loan (new cars)": "vehicle_loan"}
 PII_NAMES = {"IN_PAN": "PAN", "IN_AADHAAR": "Aadhaar", "PHONE_NUMBER": "phone number", "EMAIL_ADDRESS": "email",
              "BANK_ACCOUNT": "account number", "CREDIT_CARD": "card number", "IN_PASSPORT": "passport",
-             "IN_VOTER": "voter ID", "IN_VEHICLE_REGISTRATION": "vehicle number", "IN_GSTIN": "GSTIN"}
+             "IN_VOTER": "voter ID", "IN_VEHICLE_REGISTRATION": "vehicle number", "IN_GSTIN": "GSTIN",
+             "PERSON": "name", "ADDRESS": "address"}
 
 FEEDBACK_LOG = os.environ.get("FEEDBACK_LOG", "logs/feedback.jsonl")   # joins audit.jsonl on request_id
 
@@ -29,7 +30,8 @@ starts = ", ".join(f'{p.replace("_", " ")} from {pv.fmt(vs[0]["effective_from"])
 st.caption(f"Answers from **Demo Bank** policy (a fictional bank; synthetic rules; {starts}) and RBI (Commercial "
            "Banks) Credit Facilities and Responsible Business Conduct Directions, 2025, updated as on 1 Oct 2026. "
            "Check the cited rule and clause before acting. Not legal advice. Do not enter customer details: "
-           "PAN, Aadhaar, phone and account numbers are masked, names are not.")
+           "PAN, Aadhaar, phone and account numbers, names and addresses are masked, but masking can miss "
+           "an unusual name or address.")
 
 with st.form("ask"):
     q = st.text_input("Question", placeholder="e.g. What is the maximum LTV for a home loan of ₹50 lakh?")

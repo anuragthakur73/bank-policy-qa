@@ -4,9 +4,11 @@
 # IN_VOTER, IN_VEHICLE_REGISTRATION, IN_GSTIN, CREDIT_CARD, EMAIL_ADDRESS, PHONE_NUMBER (India).
 # Plus two custom patterns that need a context word: an Aadhaar-like 12-digit number next to "Aadhaar"/"UID" even if
 # its checksum fails (a typo is still personal data), and a bank account number next to "account"/"a/c".
-# NOT covered: person names and addresses (need an NER model; see ADR-015).
+# Person names (spaCy NER + rules) and postal addresses (rules): app/pii_ner.py (Week 6 S4, ADR-021). If the NER
+# model is missing, find() raises: masking fails closed rather than letting a name through.
 import re
 from functools import lru_cache
+from app import pii_ner
 
 CUSTOM = [
     ("IN_AADHAAR", re.compile(r"(?i)\b(?:aadhaa?r|uid(?:ai)?)\b[^\d]{0,15}(\d{4}\s?\d{4}\s?\d{4})\b")),
@@ -30,6 +32,7 @@ def find(text: str) -> list[tuple[int, int, str]]:
         spans += [(x.start, x.end, x.entity_type) for x in r.analyze(text, r.supported_entities, None) if x.score > 0]
     for ent, rx in CUSTOM:
         spans += [(m.start(1), m.end(1), ent) for m in rx.finditer(text)]
+    spans += pii_ner.find(text)                              # PERSON, ADDRESS (ADR-021)
     out = []
     for s, e, ent in sorted(spans, key=lambda x: (x[0], -(x[1] - x[0]))):
         if not out or s >= out[-1][1]:

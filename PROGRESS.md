@@ -272,3 +272,17 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - Live (28 Nov): v09 answers "No." in both contexts; refusals 77/77 both; rules cited 52/52 both (was 51/51);
   headline 23/23; RBI cited 28/29 given (c08 variation) / 29/29 text; 2 checker retries in text mode (g008, i06),
   both caught names that were not retrieved. $0.084 / $0.086. No over-application of the new sentence. S1 done.
+
+## Week 6 · Session 4: name and address masking (28 Nov 2026) — ADR-021
+- Anurag: name recall >= 95%, mask addresses too, model download OK.
+- Test sets first: eval/pii_names_v1.jsonl (30 name, 15 address, 20 trap rows) for tuning; then
+  eval/pii_names_v1_holdout.jsonl (20 / 10 / 15) written after round-1 rules. eval/pii_ner_compare.py scores options.
+- spaCy lg alone: names 32/34, addresses ~0, masks EMI / "Max tenure" / "Kothrud branch" / "Ganesh Chaturthi", and
+  "max" in a golden question. lg + rules (app/pii_ner.py): held-out names 20/21 (95.2%), address parts 25/27, 3 traps
+  masked -> generic fixes (ordinals in localities, PIN needs a place name, occasions and vehicle makes, "Can <name>
+  get ...") -> 21/21, 27/27, 0 (no longer an independent number). md + rules misses 2 names on the tuning set.
+- Wired into app/pii.find (answer path, API, audit, feedback): <PERSON>, <ADDRESS>. Fails closed if the model is
+  missing. 0 of 77 golden questions changed. ~5 ms per question, ~2 s first load. Screen notice updated.
+- Not testable from the Cowork shell: Hugging Face / PyTorch downloads (transformer NER).
+- Tests: 178 passed (Linux shell; UI tests skipped). requirements.txt: en_core_web_lg wheel added.
+- Lesson: tuning set 100%, held-out 95% - a test set the rules were built on proves nothing.

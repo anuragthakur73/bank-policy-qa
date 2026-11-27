@@ -1,0 +1,45 @@
+{"id": "h01", "text": "Customer Bhavesh Nanalal Thakkar wants to know if his wife's salary can be clubbed for the home loan.", "mask": ["Bhavesh Nanalal Thakkar"], "keep": ["home loan"]}
+{"id": "h02", "text": "Smt Kamala Devi is 67 and has a pension. Can she take a 10-year LAP?", "mask": ["Kamala Devi"], "keep": ["67", "10-year LAP"]}
+{"id": "h03", "text": "Can Anjali Kulkarni prepay her fixed-rate car loan in year 2 without charge?", "mask": ["Anjali Kulkarni"], "keep": ["fixed-rate car loan"]}
+{"id": "h04", "text": "S. P. Natarajan wants to transfer his home loan from another bank. What is the process?", "mask": ["S. P. Natarajan"], "keep": ["home loan"]}
+{"id": "h05", "text": "borrower name - imran qureshi. he missed 3 emis. what happens now?", "mask": ["imran qureshi"], "keep": ["3 emis"]}
+{"id": "h06", "text": "Is Manpreet Kaur's husband, a self-employed trader, acceptable as co-applicant?", "mask": ["Manpreet Kaur"], "keep": ["co-applicant"]}
+{"id": "h07", "text": "Mr. Cyrus Wadia owns a commercial office. Can it be mortgaged for LAP?", "mask": ["Cyrus Wadia"], "keep": ["commercial office", "LAP"]}
+{"id": "h08", "text": "What LTV applies if Deepak Chaurasia's flat is valued at Rs 90 lakh?", "mask": ["Deepak Chaurasia"], "keep": ["LTV", "Rs 90 lakh"]}
+{"id": "h09", "text": "Applicant Elizabeth Mathew is a nurse in the UAE. Is NRI income accepted for a car loan?", "mask": ["Elizabeth Mathew"], "keep": ["NRI", "UAE"]}
+{"id": "h10", "text": "The guarantor Ravindra Bhat has a CIBIL of 640. Is that a problem?", "mask": ["Ravindra Bhat"], "keep": ["CIBIL", "640"]}
+{"id": "h11", "text": "Can we waive the processing fee for Arjun Nair, a staff member's relative?", "mask": ["Arjun Nair"], "keep": ["processing fee"]}
+{"id": "h12", "text": "Tanvi and Rohit Malhotra want a joint car loan. Is a joint loan allowed for a car?", "mask": ["Tanvi", "Rohit Malhotra"], "keep": ["joint car loan"]}
+{"id": "h13", "text": "Dr Fatima Begum runs a clinic. Is she self-employed professional or non-professional?", "mask": ["Fatima Begum"], "keep": ["self-employed professional"]}
+{"id": "h14", "text": "How many years can Chandrashekhar Gowda's home loan run if he is 50 and salaried?", "mask": ["Chandrashekhar Gowda"], "keep": ["50"]}
+{"id": "h15", "text": "Shri Hemant Joshi, Aadhaar 4567 8901 2346, PAN PQRSX6789K, wants LAP. Which documents?", "mask": ["Hemant Joshi", "PQRSX6789K"], "keep": ["LAP"]}
+{"id": "h16", "text": "Neha wants a car loan but has no salary slip. What else can she give?", "mask": ["Neha"], "keep": ["car loan", "salary slip"]}
+{"id": "h17", "text": "Is a home loan possible for Sameer Khan if the property is in his mother's name?", "mask": ["Sameer Khan"], "keep": ["home loan"]}
+{"id": "h18", "text": "Ganesh Shinde wants a top-up of Rs 10 lakh on his home loan. Max top-up?", "mask": ["Ganesh Shinde"], "keep": ["Rs 10 lakh", "Max top-up"]}
+{"id": "h19", "text": "Our customer Lalitha Krishnamurthy wants to know the switch fee from floating to fixed.", "mask": ["Lalitha Krishnamurthy"], "keep": ["switch fee"]}
+{"id": "h20", "text": "Can Baljit Singh Dhillon get 90% financing on a new tractor-trailer under car loan?", "mask": ["Baljit Singh Dhillon"], "keep": ["90%"]}
+{"id": "j01", "text": "Flat 1203, Orchid Heights, Wakad, Pune 411057 - builder is not RERA registered. Can we fund it?", "mask": ["1203", "Orchid Heights", "Wakad", "411057"], "keep": ["RERA"]}
+{"id": "j02", "text": "House no. 56, Gandhi Chowk, Ward 4, Amravati 444601. Is a ground-floor house with shop allowed?", "mask": ["56", "Gandhi Chowk", "444601"], "keep": ["ground-floor"]}
+{"id": "j03", "text": "Plot No. 23, MIDC Bhosari, Pune. Can an industrial plot be taken as LAP collateral?", "mask": ["Plot No. 23", "MIDC Bhosari"], "keep": ["industrial plot"]}
+{"id": "j04", "text": "Customer's address: 7/2 Park Street, Kolkata 700016. Is a utility bill enough?", "mask": ["7/2 Park Street", "700016"], "keep": ["utility bill"]}
+{"id": "j05", "text": "The property is Survey No. 45/2, Hinjewadi Phase 1, Pune. Agricultural or NA - which matters?", "mask": ["Survey No. 45/2", "Hinjewadi Phase 1"], "keep": ["Agricultural"]}
+{"id": "j06", "text": "Shop No. 3, Crawford Market, Mumbai 400001 - LAP on a shop in a market, what LTV?", "mask": ["Shop No. 3", "Crawford Market", "400001"], "keep": ["LTV"]}
+{"id": "j07", "text": "She lives at 14, 5th Main, Jayanagar 4th Block, Bengaluru 560011 and works in Whitefield.", "mask": ["5th Main", "Jayanagar 4th Block", "560011"], "keep": ["Whitefield"]}
+{"id": "j08", "text": "Row house 9, Silver Oak Society, Kharadi, Pune. Can a row house get 80%?", "mask": ["Silver Oak Society", "Kharadi"], "keep": ["80%"]}
+{"id": "j09", "text": "C-12, Defence Colony, New Delhi 110024. Is a builder floor treated as a flat?", "mask": ["C-12", "Defence Colony", "110024"], "keep": ["builder floor"]}
+{"id": "j10", "text": "Is the flat at 3rd floor, Krishna Residency, Vijay Nagar, Indore 452010 under the city limits?", "mask": ["3rd floor", "Krishna Residency", "452010"], "keep": ["city limits"]}
+{"id": "u01", "text": "What does Demo Bank charge for a duplicate NOC on a car loan?", "mask": [], "keep": ["Demo Bank", "NOC"]}
+{"id": "u02", "text": "Can a loan be given against a flat in Navi Mumbai developed by CIDCO?", "mask": [], "keep": ["Navi Mumbai", "CIDCO"]}
+{"id": "u03", "text": "Is Diwali a holiday for counting the 15 working days of the NOC timeline?", "mask": [], "keep": ["Diwali", "15 working days"]}
+{"id": "u04", "text": "Does the RBI Master Direction allow a moratorium on home loans for a property under construction?", "mask": [], "keep": ["RBI Master Direction", "moratorium"]}
+{"id": "u05", "text": "Can State Bank of India home loan customers take a top-up with us?", "mask": [], "keep": ["State Bank of India"]}
+{"id": "u06", "text": "What is the LTV for a home loan of Rs 75,00,000 under CF 111?", "mask": [], "keep": ["Rs 75,00,000", "CF 111"]}
+{"id": "u07", "text": "Can a Hyundai Creta or Kia Seltos be financed at 90%?", "mask": [], "keep": ["Hyundai Creta", "Kia Seltos"]}
+{"id": "u08", "text": "Does the Credit Guarantee Fund Trust cover home loans?", "mask": [], "keep": ["Credit Guarantee Fund Trust"]}
+{"id": "u09", "text": "Is a Gram Panchayat NOC needed for a house in rural Karnataka?", "mask": [], "keep": ["Gram Panchayat", "Karnataka"]}
+{"id": "u10", "text": "Does a salaried employee of Reliance Industries need Form 16 and 3 months' salary slips?", "mask": [], "keep": ["Reliance Industries", "Form 16"]}
+{"id": "u11", "text": "Under DB-LAP-013, is there a foreclosure charge for a floating-rate LAP?", "mask": [], "keep": ["DB-LAP-013", "floating-rate LAP"]}
+{"id": "u12", "text": "What is the penal charge if the EMI of 25,000 is paid 10 days late?", "mask": [], "keep": ["EMI", "25,000"]}
+{"id": "u13", "text": "Can a loan be given for a flat in Lavasa or Amby Valley?", "mask": [], "keep": ["Lavasa", "Amby Valley"]}
+{"id": "u14", "text": "Is a Ram Navami offer on interest rates allowed for car loans?", "mask": [], "keep": ["Ram Navami"]}
+{"id": "u15", "text": "Is salary of 450000 a year enough for a car loan of 6 lakh?", "mask": [], "keep": ["450000", "6 lakh"]}
