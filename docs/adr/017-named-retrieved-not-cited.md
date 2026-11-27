@@ -34,3 +34,11 @@ fewer retries than 02:53 (passed_after_retry); named_not_retrieved still blocks 
 ## Trade-off
 Staff now see a source the model named without quoting. The line says so, and the link opens the clause, so a
 reader can check it; it is not presented as a citation. An unretrieved name is still caught.
+
+## Result (27 Nov 2026, 21:08, graph, golden_v2_2, embedding cache 72/72)
+g002 and p03 passed first time. Retries 4 -> 0 (validator: 72 pass); no refusal caused by the validator.
+Retrieval identical to 02:53. RBI cited 28/28, answers 36/36, headline 22/22, product 48/48; $0.080, 5.9 s median.
+Refusals 70/71: i01 (stamp duty), which flips run to run and is the S4 target - not caused by this change.
+New trade-off seen: c07 (repossession) named DB-VL-019, its main rule, without citing it (rule_cited 46/47). Before
+ADR-017 a retry would probably have added the citation; now the rule is linked by the "Also named" line instead.
+Follow-up idea (not done): retry - never refuse - when the answer cites no Demo Bank rule but names a retrieved one.

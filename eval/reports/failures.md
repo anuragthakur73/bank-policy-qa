@@ -155,3 +155,10 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   -> refused. Fix: ADR-017 (warn + code-added link for retrieved names; block unretrieved names; retry note says
   not to add names). ADR-016 accepted, default PIPELINE=graph.
 - Still open: x04 leads with "12 months" (headline scorer reads it before 3%); v09 manual review.
+
+## 27 Nov 2026 21:08 - ADR-017 check, graph, golden_v2_2 (answer-v5)
+- g002, p03 pass first time; 0 retries (was 4); validator never refused. Same retrieval as 02:53.
+- RBI cited 28/28, rules cited 46/47, answers 36/36, headline 22/22 (x04 now leads with 3%), refusals 70/71; $0.080, 5.9 s.
+- c07: named its main rule DB-VL-019 without citing it - now a warning with a code-added link, so rule_cited fails.
+  Cost of ADR-017. Idea: retry (never refuse) when no Demo Bank rule is cited but a retrieved one is named.
+- i01 flips run to run (02:53 refused, 21:08 answered per product) -> S4.
