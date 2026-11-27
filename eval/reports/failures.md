@@ -162,3 +162,9 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
 - c07: named its main rule DB-VL-019 without citing it - now a warning with a code-added link, so rule_cited fails.
   Cost of ADR-017. Idea: retry (never refuse) when no Demo Bank rule is cited but a retrieved one is named.
 - i01 flips run to run (02:53 refused, 21:08 answered per product) -> S4.
+
+## 27 Nov 2026 21:49 / 21:57 - Week 5 S4, golden_v2_3 (77 Qs), clarify step (ADR-018)
+- Both contexts: clarify_ok 25/25 (given, 3 asked) and 38/38 (text, 16 asked); product_ok 52/52 (text was 37/47);
+  RBI cited 29/29; rules cited 51/51; answers 40/40; refusals 76/76; 0 validator retries. $0.085 / $0.084.
+- i01 stable: asks, then "RBI rule only" -> clean refusal. ADR-018 accepted.
+- Headline c07 / x04: scorer issues, fixed in commit 87780b8 (number words; x04 headline dropped).

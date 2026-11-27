@@ -1,6 +1,6 @@
 # ADR-018: Ask which product when the question and the caller do not say
 
-Date: 27 Nov 2026 · Status: proposed (Week 5 S4) - accepted after golden_v2_3 runs (product given + text)
+Date: 27 Nov 2026 · Status: accepted 27 Nov 2026 (Week 5 S4) - done-when met on golden_v2_3, both contexts
 
 ## Context
 With three products, a question that names none ("What penal charge applies if an EMI is paid late?") was searched
@@ -30,3 +30,17 @@ on the 13 text_only rows only when the product is not passed; never on the 22 "n
 ## Trade-off
 One extra step for staff who leave the product on "Work out from my question" and do not name it; free and instant.
 A question on an RBI-only topic missing from the list is asked about unnecessarily; "RBI rule only" answers it.
+
+## Result (27 Nov 2026, golden_v2_3, graph, answer-v5; 21:49 product given, 21:57 product from text)
+| Metric | Given | Text | Text before S4 (v2_2, 01:19) |
+|---|---|---|---|
+| Asked / clarify_ok | 3 (i01, k01, k02) / 25/25 | 16 / 38/38 | - |
+| Right-product rules | 52/52 | 52/52 | 37/47 |
+| RBI cited / rules cited | 29/29 / 51/51 | 29/29 / 51/51 | 28/28 / 46/46 |
+| Answers / refusals | 40/40 / 76/76 | 40/40 / 76/76 | 35/35 / 69/71 |
+| Validator | 77 pass, 0 retries | 77 pass, 0 retries | 4 retries |
+| Cost / median latency | $0.085 / 6.4 s | $0.084 / 6.1 s | $0.091 / 7.1 s |
+Every text-context home-loan question that used to get a three-product answer now asks, and after the reply cites
+only home-loan rules. i01 (stamp duty) asks, and after "RBI rule only" refuses cleanly: stable for the first time.
+Headline 22/24 in the report; after the scorer change in the same commit (number words before a unit; x04 headline
+dropped) c07 reads 3 and x04 is unscored, so 22/22.
