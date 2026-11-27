@@ -42,13 +42,34 @@ def is_refusal(text: str) -> bool:
     with one product 'Not covered' starts with the product name, so it is not a refusal (ADR-009)."""
     return text.replace("*", "").strip().startswith(REFUSAL.rstrip("."))
 
+LINK_FRAGMENTS = os.environ.get("LINK_FRAGMENTS", "data/parsed/link_fragments.json")   # ingest/link_fragments.py
+
+@lru_cache
+def _fragments() -> dict:
+    try:
+        with open(LINK_FRAGMENTS, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def _enc(s: str) -> str:
+    return quote(s, safe="").replace("-", "%2D")     # '-' and ',' are syntax inside a text directive
+
 def clause_link(h: dict) -> str:
-    """RBI: opens the page and highlights the clause (text fragment), skipping the '44.' number.
+    """RBI: opens the page and highlights the clause (text fragment).
+    ADR-019 (Week 5 S5): the phrase comes from ingest/link_fragments.py - unique on RBI's page and inside one page
+    block, with the para number as prefix where needed ("38.-,A bank shall not:"). Without that file: the clause's
+    first 8 words (ADR-003), which can be shared (CF 108/109) or cross a block break. Deleted paras: section anchor.
     Demo Bank: the rule's place in the policy file (a fictional bank has no web page)."""
     if h.get("layer") == "policy":
         return f'{h["source_url"]}#{h["rule_id"]}'
+    f = _fragments().get(f'{h.get("doc_id")}|{h.get("clause_no")}')
+    if f and f.get("status") == "ok":
+        return h["source_url"] + "#:~:text=" + (_enc(f["prefix"]) + "-," if f.get("prefix") else "") + _enc(f["start"])
+    if f and f.get("status") == "deleted":
+        return h["source_url"] + ("#" + h["section_anchor"] if h.get("section_anchor") else "")
     words = " ".join(h["text"].split()[1:9])
-    return h["source_url"] + "#:~:text=" + quote(words, safe="").replace("-", "%2D")
+    return h["source_url"] + "#:~:text=" + _enc(words)
 
 def section_link(h: dict) -> str:
     """Fallback: RBI's own section anchor, e.g. #C4D."""

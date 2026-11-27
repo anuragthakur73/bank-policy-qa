@@ -168,3 +168,8 @@ generation (right clause retrieved but answer/citation wrong), refusal (refused 
   RBI cited 29/29; rules cited 51/51; answers 40/40; refusals 76/76; 0 validator retries. $0.085 / $0.084.
 - i01 stable: asks, then "RBI rule only" -> clean refusal. ADR-018 accepted.
 - Headline c07 / x04: scorer issues, fixed in commit 87780b8 (number words; x04 headline dropped).
+
+## 27 Nov 2026 - Week 5 S5, citation links (ADR-019), offline against data/raw
+- 10 groups / 21 clauses shared one link (incl. RBC 351 penal charges with RBC 46 and 173); 54 more links crossed a
+  heading block break and would match nothing. New phrases: 972/975 unique within one block, 3 deleted paras use the
+  section anchor, 0 shared. Live check ALL OK (514 CF + 458 RBC); 6 links verified in a browser. ADR-019 accepted.

@@ -91,7 +91,9 @@ def test_parsers():
     assert named_paras("RBI paragraphs 352 and 353; CF 111; para 4(xxxvi); paras 114-118") == {"352", "353", "111", "4", "114", "118"}
     assert figures("80%, Rs 2,500, 15 working days, 0.75 per cent, DB-HL-009, para 111") == {"80", "2500", "15", "0.75"}
 
-def test_shared_link_mapped_by_index():           # r04: CF 108 and 109 share a text-fragment link
+def test_shared_link_mapped_by_index(monkeypatch):   # r04: CF 108 and 109 share a text-fragment link
+    import app.generate as gen
+    monkeypatch.setattr(gen, "_fragments", lambda: {})  # the old 8-word links (ADR-003); ADR-019 makes them differ
     a = rbi("108", "108. The bank may grant term loans to housing intermediary agencies against the direct loans sanctioned by the latter.")
     b = rbi("109", "109. The bank may grant term loans to housing intermediary agencies against loans to NRIs also.")
     assert clause_link(a) == clause_link(b)        # the collision itself
