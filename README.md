@@ -1,5 +1,7 @@
 # bank-policy-qa
 
+[![CI](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/ci.yml/badge.svg)](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/ci.yml)
+
 **Cited answers to lending-policy questions for Indian bank staff: the bank's own rule first, the RBI clause it
 implements next, and a refusal when the documents don't support an answer.**
 
@@ -148,7 +150,7 @@ Use it:
 ```powershell
 streamlit run ui/streamlit_app.py           # the staff screen
 uvicorn app.api:app --port 8000             # the /v1 API; OpenAPI docs at http://127.0.0.1:8000/docs
-python -m pytest -q                         # offline tests, no API keys needed
+python -m pytest -q                         # offline tests, no API keys needed (CI adds --disable-socket)
 python -m eval.run_eval                     # golden set, product given (about 8 min, about $0.09)
 $env:PRODUCT_CONTEXT = "text"; python -m eval.run_eval; Remove-Item Env:PRODUCT_CONTEXT
 ```
@@ -178,6 +180,7 @@ $env:PRODUCT_CONTEXT = "text"; python -m eval.run_eval; Remove-Item Env:PRODUCT_
 | [019](docs/adr/019-citation-link-phrases.md) | Citation links use a phrase unique on RBI's page and inside one block | accepted |
 | [020](docs/adr/020-retry-when-bank-rule-named-not-cited.md) | Retry when a bank-rule answer names a rule but cites none | deferred: measured, 0 cases so far |
 | [021](docs/adr/021-name-and-address-masking.md) | Mask person names and addresses (spaCy + rules), fail closed | accepted |
+| [023](docs/adr/023-ci-offline-tests.md) | CI on every push: complete lock file, Python 3.12, tests blocked from the network | accepted |
 
 ## What went wrong, and what it taught
 
@@ -192,6 +195,9 @@ $env:PRODUCT_CONTEXT = "text"; python -m eval.run_eval; Remove-Item Env:PRODUCT_
 - **The builder's test set shares the builder's blind spots.** Name masking scored 100% on the set its rules were
   built on and 95% on held-out questions; a banker's own 7 questions found a case neither set had (a locality with
   no house number).
+- **A cache hid a network call.** Masking an email quietly downloaded a list from publicsuffix.org the first time
+  it ran on a machine; the developer PC had it cached, so no test saw it. CI with sockets blocked on a fresh machine
+  found it. Test on a clean machine, and block the network rather than assume it is unused.
 
 ## Limits
 

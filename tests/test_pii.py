@@ -14,6 +14,21 @@ def test_mask_all_types():
     assert sorted(set(found)) == ["BANK_ACCOUNT", "CREDIT_CARD", "EMAIL_ADDRESS", "IN_AADHAAR", "IN_PAN", "PHONE_NUMBER"]
     assert "Rs 50 lakh" in m and "home loan" in m                    # the question itself survives
 
+def test_email_masking_needs_no_network(tmp_path):
+    """ADR-023: on a machine with an empty tldextract cache, masking an email must not try to download the Public
+    Suffix List. Runs in a fresh process with HOME / cache dirs pointed at an empty folder and sockets blocked."""
+    import os, subprocess, sys
+    code = ("import socket\n"
+            "def no_net(*a, **k): raise RuntimeError('network call attempted')\n"
+            "socket.getaddrinfo = no_net; socket.create_connection = no_net\n"
+            "from app.pii import mask\n"
+            "m, found = mask('email ramesh@example.co.in about the KFS')\n"
+            "assert found == ['EMAIL_ADDRESS'] and 'ramesh' not in m, (m, found)\n")
+    env = {**os.environ, "HOME": str(tmp_path), "USERPROFILE": str(tmp_path), "XDG_CACHE_HOME": str(tmp_path),
+           "TLDEXTRACT_CACHE": str(tmp_path / "tld")}
+    r = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, timeout=300)
+    assert r.returncode == 0, r.stderr[-2000:]
+
 def test_aadhaar_typo_masked_by_context_only():
     assert mask("Aadhaar 2345 6789 0123")[0] == "Aadhaar <IN_AADHAAR>"   # checksum fails, but next to "Aadhaar"
     assert mask("a loan of 234567890123 rupees")[1] == []                # 12 digits without context: left alone

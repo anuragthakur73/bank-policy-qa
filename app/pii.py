@@ -15,11 +15,22 @@ CUSTOM = [
     ("BANK_ACCOUNT", re.compile(r"(?i)\b(?:a/c|acct|account)\b(?:\s*(?:no\.?|number|num))?\s*[:#-]?\s*(\d{9,18})\b")),
 ]
 
+def _email_check_offline():
+    """ADR-023: Presidio's EmailRecognizer validates the domain with tldextract, whose default downloads the Public
+    Suffix List from publicsuffix.org on first use (found by CI, Week 7 S1). Use the list bundled with tldextract
+    instead: masking makes no network call, and a locked-down bank PC cannot stall on it."""
+    import types
+    import tldextract
+    from presidio_analyzer.predefined_recognizers.generic import email_recognizer
+    email_recognizer.tldextract = types.SimpleNamespace(
+        extract=tldextract.TLDExtract(suffix_list_urls=(), cache_dir=None))
+
 @lru_cache
 def _recognizers():
     import logging
     logging.getLogger("presidio-analyzer").setLevel(logging.ERROR)
     from presidio_analyzer import predefined_recognizers as pr
+    _email_check_offline()
     rs = [pr.InPanRecognizer(), pr.InAadhaarRecognizer(), pr.InPassportRecognizer(), pr.InVoterRecognizer(),
           pr.InVehicleRegistrationRecognizer(), pr.InGstinRecognizer(), pr.CreditCardRecognizer(),
           pr.EmailRecognizer(), pr.PhoneRecognizer(supported_regions=("IN",))]

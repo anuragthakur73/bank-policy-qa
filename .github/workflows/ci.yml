@@ -1,0 +1,56 @@
+# CI (Week 7 S1): offline test suite on every push and pull request.
+# No API keys, no Qdrant, no network inside tests (pytest-socket blocks it).
+# The 5 parser tests skip because data/raw (RBI PDFs) is not in the repo.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        id: py
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Whole venv cached (incl. the ~425 MB spaCy model), keyed on exact Python version + lock file.
+      # Cache hit: no download. Any change to requirements.txt rebuilds it.
+      - name: Restore virtualenv
+        id: venv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py${{ steps.py.outputs.python-version }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies (cache miss only)
+        if: steps.venv.outputs.cache-hit != 'true'
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt
+
+      - name: Check spaCy model loads (ADR-021 masking fails closed without it)
+        run: .venv/bin/python -c "import spacy; spacy.load('en_core_web_lg'); print('en_core_web_lg OK')"
+
+      - name: Run offline tests
+        env:
+          ANTHROPIC_API_KEY: ""
+          OPENAI_API_KEY: ""
+          QDRANT_URL: ""
+          QDRANT_API_KEY: ""
+        run: .venv/bin/python -m pytest -q -rs --disable-socket --allow-unix-socket
