@@ -405,16 +405,23 @@ rules:
     rule: >-
       The Regional Credit Head may approve these deviations, recording the reason and the
       mitigating strength: FOIR up to 5 percentage points above DB-VL-008; credit score from
-      680 to 699; the income multiple in DB-VL-006 up to 10% higher. No more than two
+      680 to 699; the income multiple in DB-VL-006 up to 10% higher; income up to 10% below the
+      minimum in DB-VL-004; loan amount up to 10% above the maximum in DB-VL-006. No more than two
       deviations are allowed in one loan. No deviation is permitted on the 90% finance limit
-      (DB-VL-007), maturity age (DB-VL-003), vehicles covered (DB-VL-001), foreclosure charges
-      (DB-VL-012), penal charges (DB-VL-013), the KFS (DB-VL-018) or repossession (DB-VL-019).
-    params: {approver: regional_credit_head, max_deviations: 2}
+      (DB-VL-007), maturity age (DB-VL-003), tenure (DB-VL-009), vehicles covered (DB-VL-001),
+      foreclosure charges (DB-VL-012), penal charges (DB-VL-013), the KFS (DB-VL-018) or
+      repossession (DB-VL-019).
+    params:
+      approver: regional_credit_head
+      max_deviations: 2
+      allowed: {foir_pp: 5, score_floor: 680, income_multiple_pct: 10, income_below_min_pct: 10,
+                amount_above_max_pct: 10}
+      prohibited_rule_ids: [DB-VL-001, DB-VL-003, DB-VL-007, DB-VL-009, DB-VL-012, DB-VL-013, DB-VL-018, DB-VL-019]
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [synthetic]
     review: ok
-    review_note: "Reviewed 27 Nov 2026: accepted as drafted"
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted. Anurag 28 Nov 2026: income and loan amount made deviable (10% limits, as home loan); car keeps its own limits (no age deviation); tenure NOT deviable - Claude's reading of Anurag's 27 Nov decision that 7 years is the only maximum, to confirm."
 
   - rule_id: DB-VL-021
     section: governance

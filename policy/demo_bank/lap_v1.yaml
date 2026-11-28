@@ -358,16 +358,22 @@ rules:
     rule: >-
       The Regional Credit Head may approve these deviations, recording the reason and the
       mitigating strength: maturity age up to 2 years beyond DB-LAP-003; FOIR up to 5 percentage
-      points above DB-LAP-008; credit score from 700 to 719. No more than two deviations are
-      allowed in one loan. No deviation is permitted on LTV (DB-LAP-007), prohibited purposes
+      points above DB-LAP-008; credit score from 700 to 719; income up to 10% below the minimum in
+      DB-LAP-004; loan amount up to 10% above the maximum in DB-LAP-006; tenure up to 2 years
+      beyond the maximum in DB-LAP-009. No more than two deviations are allowed in one loan. No deviation is permitted on LTV (DB-LAP-007), prohibited purposes
       (DB-LAP-001), excluded properties (DB-LAP-015), prepayment (DB-LAP-013), penal charges
       (DB-LAP-014) or the KFS (DB-LAP-018).
-    params: {approver: regional_credit_head, max_deviations: 2}
+    params:
+      approver: regional_credit_head
+      max_deviations: 2
+      allowed: {age_years: 2, foir_pp: 5, score_floor: 700, income_below_min_pct: 10,
+                amount_above_max_pct: 10, tenure_years: 2}
+      prohibited_rule_ids: [DB-LAP-001, DB-LAP-007, DB-LAP-013, DB-LAP-014, DB-LAP-015, DB-LAP-018]
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [synthetic]
     review: ok
-    review_note: "Reviewed 24 Nov 2026: accepted as drafted"
+    review_note: "Reviewed 24 Nov 2026: accepted as drafted. Anurag 28 Nov 2026: income, loan amount and tenure (and, for home loan, residual life) made deviable by the Regional Credit Head; limits as proposed by Claude and accepted (income 10% below minimum, amount 10% above maximum, tenure 2 years); same structure as home loan, LAP keeps its own score band."
 
   - rule_id: DB-LAP-020
     section: governance

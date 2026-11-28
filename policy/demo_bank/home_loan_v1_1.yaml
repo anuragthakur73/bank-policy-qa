@@ -616,19 +616,23 @@ rules:
     rule: >-
       The Regional Credit Head may approve these deviations, recording the reason and the
       mitigating strength: maturity age up to 2 years beyond DB-HL-004; FOIR up to 5
-      percentage points above DB-HL-011; credit score from 680 to 699. No more than two
-      deviations are allowed in one loan. No deviation is permitted on LTV (DB-HL-009,
+      percentage points above DB-HL-011; credit score from 680 to 699; income up to 10% below
+      the minimum in DB-HL-005; loan amount up to 10% above the maximum in DB-HL-008; tenure up
+      to 2 years beyond the maximum in DB-HL-012; residual life of the building up to 2 years
+      short of DB-HL-021. No more than two deviations are allowed in one loan. No deviation is permitted on LTV (DB-HL-009,
       DB-HL-010), prepayment (DB-HL-017), penal charges (DB-HL-018), KFS (DB-HL-025) or
       any other rule that implements an RBI requirement.
     params:
       approver: regional_credit_head
       max_deviations_per_loan: 2
-      allowed: {age_years: 2, foir_pp: 5, score_floor: 680}
+      allowed: {age_years: 2, foir_pp: 5, score_floor: 680, income_below_min_pct: 10,
+                amount_above_max_pct: 10, tenure_years: 2, residual_life_years: 2}
       prohibited_rule_ids: [DB-HL-009, DB-HL-010, DB-HL-017, DB-HL-018, DB-HL-025]
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [synthetic]
     review: ok
+    review_note: "Anurag 28 Nov 2026: income, loan amount and tenure (and, for home loan, residual life) made deviable by the Regional Credit Head; limits as proposed by Claude and accepted (income 10% below minimum, amount 10% above maximum, tenure 2 years). v1.0 (approved, from 1 Dec 2026) is unchanged."
 
   - rule_id: DB-HL-031
     section: governance

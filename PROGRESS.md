@@ -307,3 +307,14 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
   golden_v2_2 count; the golden_v2_3 runs score 23/23 (c07 scorer fix, x04 headline dropped). Corrected.
 - Report found its own bug first: v01 failed because the stored answer includes the "not in force" notice.
 - Tests: 186 passed (3 new in tests/test_report.py; skipped where spaCy is missing).
+
+## Week 6 · after S5: deviation decisions for 1B (28 Nov 2026, Anurag)
+- Income, loan amount, tenure and residual life made deviable (Regional Credit Head); limits: income 10% below
+  minimum, amount 10% above maximum, tenure +2 years, residual life 2 years short. Car and LAP: same structure, own
+  limits (LAP score band 700-719; car: no age deviation). Car tenure NOT deviable (Claude's reading of the 27 Nov
+  "7 years is the only maximum" decision; to confirm).
+- Edited in place (drafts, schema rule 4): DB-HL-030 (home loan v1.1), DB-LAP-019, DB-VL-020 - text, machine-readable
+  allowed / prohibited_rule_ids, review notes. Home loan v1.0 (approved, from 1 Dec 2026) unchanged.
+- tests/test_policy_diff.py: DB-HL-030 now in the v1.0 -> v1.1 changes. Tests 186 passed.
+- To do on Windows: re-index the policy (python -m ingest.index_policy) and regenerate + review the v1.0 -> v1.1
+  circular (python -m app.policy_diff ...); golden questions p12 and l06 (deviations) unaffected.
