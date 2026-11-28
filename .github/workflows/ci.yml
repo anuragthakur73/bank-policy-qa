@@ -20,11 +20,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python 3.12
         id: py
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -32,7 +32,7 @@ jobs:
       # Cache hit: no download. Any change to requirements.txt rebuilds it.
       - name: Restore virtualenv
         id: venv
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .venv
           key: venv-${{ runner.os }}-py${{ steps.py.outputs.python-version }}-${{ hashFiles('requirements.txt') }}
