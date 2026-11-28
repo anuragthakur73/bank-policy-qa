@@ -48,7 +48,9 @@ Seven discovery interviews with branch and retail-credit staff (Nov 2026) change
 - **Personal data masked first.** The question is masked before the embedding call, the search, the model and the
   audit log ([ADR-015](docs/adr/015-pii-masking.md), [ADR-021](docs/adr/021-name-and-address-masking.md)).
 - **Operable.** `/v1` API with OpenAPI docs, kill switch to search-only mode, audit log of every request with
-  cost, latency per stage and retries ([ADR-013](docs/adr/013-retrieval-api-v1.md)).
+  cost, latency per stage and retries ([ADR-013](docs/adr/013-retrieval-api-v1.md)). For the loan-file checker:
+  rules in force on a date with their machine-readable values, read from the policy files rather than searched,
+  and a masking endpoint ([ADR-022](docs/adr/022-v1-rules-and-mask.md)).
 
 ## Screens
 
@@ -113,7 +115,7 @@ flowchart LR
   C1 & C2 --> RT
 
   UI["Streamlit screen<br/>product, as-on date,<br/>feedback"] --> M
-  B1["Project 1B / 2<br/>loan-file agent"] --> API["FastAPI /v1<br/>health, retrieve, answer"]
+  B1["Project 1B / 2<br/>loan-file agent"] --> API["FastAPI /v1<br/>health, retrieve, answer,<br/>rules, mask"]
   API --> M
   EVAL["eval/run_eval<br/>golden set, 77 Qs"] --> M
   F --> LOG[("audit.jsonl<br/>masked question, answer,<br/>cost, stage timings")]
@@ -180,6 +182,7 @@ $env:PRODUCT_CONTEXT = "text"; python -m eval.run_eval; Remove-Item Env:PRODUCT_
 | [019](docs/adr/019-citation-link-phrases.md) | Citation links use a phrase unique on RBI's page and inside one block | accepted |
 | [020](docs/adr/020-retry-when-bank-rule-named-not-cited.md) | Retry when a bank-rule answer names a rule but cites none | deferred: measured, 0 cases so far |
 | [021](docs/adr/021-name-and-address-masking.md) | Mask person names and addresses (spaCy + rules), fail closed | accepted |
+| [022](docs/adr/022-v1-rules-and-mask.md) | `/v1` for 1B: rules by ID and date from the policy files (never search), params on chunks, `/v1/mask` | accepted |
 | [023](docs/adr/023-ci-offline-tests.md) | CI on every push: complete lock file, Python 3.12, tests blocked from the network | accepted |
 
 ## What went wrong, and what it taught

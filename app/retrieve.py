@@ -27,7 +27,7 @@ from qdrant_client.http.exceptions import ResponseHandlingException
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from app import keyword
 
-CONTRACT_VERSION = "v0.6"
+CONTRACT_VERSION = "v0.7"          # v0.7 (Week 7 S2, ADR-022): params + rule_section on policy chunks; /v1/rules, /v1/mask
 MODES = ("vector", "hybrid", "hybrid_lc")   # hybrid_lc = same idea built with LangChain (app/retrieve_lc.py)
 N_CANDIDATES = 20                           # each search's shortlist before fusion
 FIELDS = ("doc_id", "clause_no", "title", "chapter", "section", "section_anchor",
