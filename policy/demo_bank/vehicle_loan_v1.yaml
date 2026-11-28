@@ -421,7 +421,7 @@ rules:
     vs_rbi: not_applicable
     design_basis: [synthetic]
     review: ok
-    review_note: "Reviewed 27 Nov 2026: accepted as drafted. Anurag 28 Nov 2026: income and loan amount made deviable (10% limits, as home loan); car keeps its own limits (no age deviation); tenure NOT deviable - Claude's reading of Anurag's 27 Nov decision that 7 years is the only maximum, to confirm."
+    review_note: "Reviewed 27 Nov 2026: accepted as drafted. Anurag 28 Nov 2026: income and loan amount made deviable (10% limits, as home loan); car keeps its own limits (no age deviation); tenure NOT deviable - confirmed by Anurag 28 Nov 2026 (7 years is the only maximum, 27 Nov)."
 
   - rule_id: DB-VL-021
     section: governance
