@@ -1,0 +1,66 @@
+# 1B rule snapshots (Week 8 S2, ADR-024): is Project 1B (loan-precheck) checking loan files against the rules this
+# repo serves? Compares loan-precheck/rules_snapshot/ (main) with this repo's GET /v1/rules, in-process, using 1B's
+# own check(). Red = a policy here changed and 1B's saved copies were not refreshed (or were edited by hand).
+# Runs on every push and PR here (a policy change shows red on the commit that made it), daily (catches changes on
+# 1B's side), and by hand (re-run after refreshing 1B's snapshots).
+name: 1B snapshots
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 3 * * *"          # 08:47 IST daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: 1b-snapshots-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check out loan-precheck (public, read only)
+        uses: actions/checkout@v7
+        with:
+          repository: anuragthakur73/loan-precheck
+          ref: main
+          path: _1b
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        id: py
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # Same cache key as ci.yml: a hit reuses the venv the test job built.
+      - name: Restore virtualenv
+        id: venv
+        uses: actions/cache@v6
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py${{ steps.py.outputs.python-version }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies (cache miss only)
+        if: steps.venv.outputs.cache-hit != 'true'
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt
+
+      - name: 1B snapshots match this repo's /v1/rules
+        env:
+          ANTHROPIC_API_KEY: ""
+          OPENAI_API_KEY: ""
+          QDRANT_URL: ""
+          QDRANT_API_KEY: ""
+        run: |
+          echo "loan-precheck at $(git -C _1b rev-parse --short HEAD)"
+          .venv/bin/python -m eval.check_1b_snapshots --precheck _1b

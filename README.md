@@ -1,6 +1,6 @@
 # bank-policy-qa
 
-[![CI](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/ci.yml/badge.svg)](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/ci.yml)
+[![CI](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/ci.yml/badge.svg)](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/ci.yml) [![1B snapshots](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/1b-snapshots.yml/badge.svg)](https://github.com/anuragthakur73/bank-policy-qa/actions/workflows/1b-snapshots.yml)
 
 **Cited answers to lending-policy questions for Indian bank staff: the bank's own rule first, the RBI clause it
 implements next, and a refusal when the documents don't support an answer.**
@@ -153,6 +153,7 @@ Use it:
 streamlit run ui/streamlit_app.py           # the staff screen
 uvicorn app.api:app --port 8000             # the /v1 API; OpenAPI docs at http://127.0.0.1:8000/docs
 python -m pytest -q                         # offline tests, no API keys needed (CI adds --disable-socket)
+python -m eval.check_1b_snapshots            # 1B's saved rules (../loan-precheck) == this repo's /v1/rules? (CI: 1B snapshots)
 python -m eval.run_eval                     # golden set, product given (about 8 min, about $0.09)
 $env:PRODUCT_CONTEXT = "text"; python -m eval.run_eval; Remove-Item Env:PRODUCT_CONTEXT
 ```
@@ -184,6 +185,7 @@ $env:PRODUCT_CONTEXT = "text"; python -m eval.run_eval; Remove-Item Env:PRODUCT_
 | [021](docs/adr/021-name-and-address-masking.md) | Mask person names and addresses (spaCy + rules), fail closed | accepted |
 | [022](docs/adr/022-v1-rules-and-mask.md) | `/v1` for 1B: rules by ID and date from the policy files (never search), params on chunks, `/v1/mask` | accepted |
 | [023](docs/adr/023-ci-offline-tests.md) | CI on every push: complete lock file, Python 3.12, tests blocked from the network | accepted |
+| [024](docs/adr/024-1b-snapshot-drift-ci.md) | CI job: fail when Project 1B's saved rules no longer match this repo's `/v1/rules` | accepted |
 
 ## What went wrong, and what it taught
 
