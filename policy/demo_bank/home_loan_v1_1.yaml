@@ -170,18 +170,22 @@ rules:
     section: amount_ltv
     title: Loan-to-value (LTV) limits
     rule: >-
-      The loan may not exceed 90% of the property cost for loans up to Rs 30 lakh, 80%
+      The loan may not exceed 90% of the property value for loans up to Rs 30 lakh, 80%
       for loans above Rs 30 lakh up to Rs 75 lakh, and 75% for loans above Rs 75 lakh.
+      The property value is the lower of the property cost (agreement value) and the
+      market value assessed by the bank's valuer.
     params:
       ltv_bands:
         - {max_loan: 3000000, max_ltv: 0.90}
         - {max_loan: 7500000, max_ltv: 0.80}
         - {max_loan: null, max_ltv: 0.75}
+      value_basis: lower_of_cost_and_valuer_market_value
     rbi_ref: {direction: CF, para: "111"}
     bank_discretion: false
     vs_rbi: equal
     design_basis: [SBI-S2, SBI-S17]
     review: ok
+    review_note: "v1.1 (Anurag 28 Nov 2026, Project 1B review): LTV on the lower of cost and the valuer's market value, so a file priced above market value cannot borrow on the higher price. Caps unchanged. v1.0 (approved, from 1 Dec 2026) unchanged: LTV on property cost."
 
   - rule_id: DB-HL-010
     section: amount_ltv
