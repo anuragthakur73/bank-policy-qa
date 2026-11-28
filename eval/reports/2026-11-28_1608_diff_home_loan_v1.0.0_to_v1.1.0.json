@@ -1,0 +1,256 @@
+{
+  "old": "policy/demo_bank/home_loan_v1.yaml",
+  "new": "policy/demo_bank/home_loan_v1_1.yaml",
+  "meta": {
+    "model": "claude-haiku-5-5",
+    "prompt_version": "diff-v2",
+    "attempts": 1,
+    "problems": [
+      []
+    ],
+    "tokens_in": 5916,
+    "tokens_out": 2324,
+    "cost_usd": 0.001754,
+    "rendered_from": "eval/reports/2026-11-28_1549_diff_home_loan_v1.0.0_to_v1.1.0.json",
+    "review": {
+      "reviewed_by": "Anurag",
+      "reviewed_on": "2026-11-28",
+      "edited": [
+        "DB-HL-001",
+        "DB-HL-003",
+        "DB-HL-004",
+        "DB-HL-009",
+        "DB-HL-014",
+        "DB-HL-025",
+        "DB-HL-028"
+      ],
+      "reasons": {
+        "DB-HL-001": "Adds two conditions (stay within the overall loan ceiling; certified cost estimate); nothing newly allowed. Model said clarified",
+        "DB-HL-003": "v1.0 already admitted individuals only; v1.1 names the excluded entities and the takeover / co-applicant cases. Model said tightened",
+        "DB-HL-004": "Keeps the staff-relevant effect (age 70 instead of 65) first; the 2256 run left it out",
+        "DB-HL-009": "Can only reduce the maximum loan (decision 28 Nov, 1B golden file F16). Model said clarified and did not say the effect",
+        "DB-HL-014": "v1.0 already let the borrower choose a higher EMI; v1.1 states it stays available when the tenure cap binds. Model said relaxed",
+        "DB-HL-025": "Model wrote 'valid for 3 working days' as if new and exact; the rule says at least 3, unchanged from v1.0",
+        "DB-HL-028": "Adds a bank duty restating RBC 358, no new condition on the customer; model said tightened"
+      }
+    }
+  },
+  "changes": [
+    {
+      "rule_id": "DB-HL-001",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "tightened",
+      "what_changed": "Finance to extend, repair or renovate a house already financed by Demo Bank must stay within the overall loan ceiling for that house and needs a cost estimate certified by an engineer or architect.",
+      "staff_action": "For renovation or extension loans on a house already financed by Demo Bank, check the total stays within the overall loan ceiling for that house and obtain an engineer or architect certified cost estimate.",
+      "model": {
+        "direction": "clarified",
+        "what_changed": "Finance to extend, repair or renovate a house already financed by Demo Bank must stay within the overall loan ceiling for that house and needs a cost estimate certified by an engineer or architect.",
+        "staff_action": "For renovation or extension loans on a house already financed by Demo Bank, check the total stays within the overall loan ceiling for that house and obtain an engineer or architect certified cost estimate."
+      }
+    },
+    {
+      "rule_id": "DB-HL-002",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "vs_rbi"
+      ],
+      "direction": "relaxed",
+      "what_changed": "Property in an unauthorised colony was not financed; it is now financed if the colony has been regularised and the development and other charges have been paid.",
+      "staff_action": "For property in an unauthorised colony, verify the colony is regularised and development and other charges are paid before processing; otherwise do not finance it.",
+      "model": {
+        "direction": "relaxed",
+        "what_changed": "Property in an unauthorised colony was not financed; it is now financed if the colony has been regularised and the development and other charges have been paid.",
+        "staff_action": "For property in an unauthorised colony, verify the colony is regularised and development and other charges are paid before processing; otherwise do not finance it."
+      }
+    },
+    {
+      "rule_id": "DB-HL-003",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "clarified",
+      "what_changed": "Only individuals may apply; partnership firms, LLPs, companies, trusts, societies and HUFs cannot be applicants or co-applicants, including on a takeover, and a partner or director may apply only in their individual capacity.",
+      "staff_action": "Reject applications or co-applications from firms, LLPs, companies, trusts, societies or HUFs, including takeovers, and accept partners or directors only as individuals.",
+      "model": {
+        "direction": "tightened",
+        "what_changed": "Only individuals may apply; partnership firms, LLPs, companies, trusts, societies and HUFs cannot be applicants or co-applicants, including on a takeover, and a partner or director may apply only in their individual capacity.",
+        "staff_action": "Reject applications or co-applications from firms, LLPs, companies, trusts, societies or HUFs, including takeovers, and accept partners or directors only as individuals."
+      }
+    },
+    {
+      "rule_id": "DB-HL-004",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "relaxed",
+      "what_changed": "Every NPS subscriber, government or private sector, now counts as pension-earning and may repay up to age 70 instead of 65; so do applicants already receiving a pension or annuity and defined-benefit employees. Proof: pension payment order, or employer certificate naming the scheme, plus the PRAN statement for NPS.",
+      "staff_action": "Classify applicants with a current or future employer monthly pension, including NPS subscribers, as pension-earning, and collect a pension payment order or employer certificate naming the scheme (with PRAN statement for NPS).",
+      "model": {
+        "direction": "relaxed",
+        "what_changed": "Pension-earning applicants are now defined to include those who already receive a pension or annuity, or who will receive a monthly pension from the employer's scheme after retirement (defined-benefit pension or NPS), with proof by pension payment order or employer certificate naming the scheme, plus PRAN statement for NPS.",
+        "staff_action": "Classify applicants with a current or future employer monthly pension, including NPS subscribers, as pension-earning, and collect a pension payment order or employer certificate naming the scheme (with PRAN statement for NPS)."
+      }
+    },
+    {
+      "rule_id": "DB-HL-009",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "tightened",
+      "what_changed": "LTV is now worked out on the lower of the property cost (agreement value) and the bank valuer's market value, instead of on cost alone. Where the valuer's figure is below the price, the maximum loan falls; the bands are unchanged.",
+      "staff_action": "Compute LTV on the lower of agreement value and the bank valuer's market value, not on property cost alone.",
+      "model": {
+        "direction": "clarified",
+        "what_changed": "LTV bands now apply to the property value, defined as the lower of the property cost (agreement value) and the market value assessed by the bank's valuer, instead of property cost.",
+        "staff_action": "Compute LTV on the lower of agreement value and the bank valuer's market value, not on property cost alone."
+      }
+    },
+    {
+      "rule_id": "DB-HL-032",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "For composite loans, the LTV band is applied to the combined plot price plus valuer-estimated construction cost; the plot part may not exceed the same LTV percentage of the plot price and is disbursed first, with construction disbursed in stages linked to progress.",
+      "staff_action": "For plot-plus-construction loans, apply LTV to the combined cost, cap the plot portion at the same percentage of plot price, disburse the plot part first, and release construction funds in stages tied to progress.",
+      "model": {
+        "direction": "new",
+        "what_changed": "For composite loans, the LTV band is applied to the combined plot price plus valuer-estimated construction cost; the plot part may not exceed the same LTV percentage of the plot price and is disbursed first, with construction disbursed in stages linked to progress.",
+        "staff_action": "For plot-plus-construction loans, apply LTV to the combined cost, cap the plot portion at the same percentage of plot price, disburse the plot part first, and release construction funds in stages tied to progress."
+      }
+    },
+    {
+      "rule_id": "DB-HL-014",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "rbi_ref"
+      ],
+      "direction": "clarified",
+      "what_changed": "If the longest tenure allowed within the maximum tenure and age limit cannot absorb a rate increase, the borrower may choose a higher EMI or a combination; a higher EMI is always available.",
+      "staff_action": "When a rate increase cannot be absorbed by tenure, offer the borrower a higher EMI or a combination of higher EMI and tenure.",
+      "model": {
+        "direction": "relaxed",
+        "what_changed": "If the longest tenure allowed within the maximum tenure and age limit cannot absorb a rate increase, the borrower may choose a higher EMI or a combination; a higher EMI is always available.",
+        "staff_action": "When a rate increase cannot be absorbed by tenure, offer the borrower a higher EMI or a combination of higher EMI and tenure."
+      }
+    },
+    {
+      "rule_id": "DB-HL-017",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The no-prepayment-charge position is now stated to appear in the sanction letter, loan agreement and Key Facts Statement, and a charge previously waived is never levied later.",
+      "staff_action": "State the no prepayment or foreclosure charge in the sanction letter, loan agreement and Key Facts Statement, and never levy a charge the bank has earlier waived.",
+      "model": {
+        "direction": "clarified",
+        "what_changed": "The no-prepayment-charge position is now stated to appear in the sanction letter, loan agreement and Key Facts Statement, and a charge previously waived is never levied later.",
+        "staff_action": "State the no prepayment or foreclosure charge in the sanction letter, loan agreement and Key Facts Statement, and never levy a charge the bank has earlier waived."
+      }
+    },
+    {
+      "rule_id": "DB-HL-018",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "The penal charge must also be published on Demo Bank's website, the borrower must be told the amount and reason each time it is levied, and no penal charge is levied on unpaid penal charges.",
+      "staff_action": "Tell the borrower the amount and reason each time a penal charge is levied, and do not levy penal charges on unpaid penal charges.",
+      "model": {
+        "direction": "clarified",
+        "what_changed": "The penal charge must also be published on Demo Bank's website, the borrower must be told the amount and reason each time it is levied, and no penal charge is levied on unpaid penal charges.",
+        "staff_action": "Tell the borrower the amount and reason each time a penal charge is levied, and do not levy penal charges on unpaid penal charges."
+      }
+    },
+    {
+      "rule_id": "DB-HL-033",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "Purchase of one floor of a residential building is financed only if the floor has its own registered title with an undivided land share, the sanctioned plan covers it as built, and it has independent access; LTV applies to that floor's value alone.",
+      "staff_action": "For individual floor purchases, verify separate registered title with undivided land share, sanctioned plan coverage and independent access, and apply LTV to that floor's value; do not finance floors without separate title.",
+      "model": {
+        "direction": "new",
+        "what_changed": "Purchase of one floor of a residential building is financed only if the floor has its own registered title with an undivided land share, the sanctioned plan covers it as built, and it has independent access; LTV applies to that floor's value alone.",
+        "staff_action": "For individual floor purchases, verify separate registered title with undivided land share, sanctioned plan coverage and independent access, and apply LTV to that floor's value; do not finance floors without separate title."
+      }
+    },
+    {
+      "rule_id": "DB-HL-034",
+      "change": "added",
+      "fields": [
+        "rule"
+      ],
+      "direction": "new",
+      "what_changed": "A borrower who owns a house may get a loan for a second self-occupied house, including on the same land; if the land is mortgaged to Demo Bank it is additional finance with combined LTV, and if mortgaged to another lender Demo Bank lends only after taking over that loan, with both EMIs counted for repayment capacity.",
+      "staff_action": "For a second house loan, check the land mortgage: add as additional finance with combined LTV if with Demo Bank, or take over the existing loan first if with another lender; include both EMIs in repayment capacity and confirm the sanctioned plan covers the second building.",
+      "model": {
+        "direction": "new",
+        "what_changed": "A borrower who owns a house may get a loan for a second self-occupied house, including on the same land; if the land is mortgaged to Demo Bank it is additional finance with combined LTV, and if mortgaged to another lender Demo Bank lends only after taking over that loan, with both EMIs counted for repayment capacity.",
+        "staff_action": "For a second house loan, check the land mortgage: add as additional finance with combined LTV if with Demo Bank, or take over the existing loan first if with another lender; include both EMIs in repayment capacity and confirm the sanctioned plan covers the second building."
+      }
+    },
+    {
+      "rule_id": "DB-HL-025",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "If the borrower accepts the KFS within its validity period (at least 3 working days, as before), Demo Bank is now bound by its terms; the KFS follows RBI's standard format and is attached to the loan agreement as a summary box.",
+      "staff_action": "Use RBI's standard KFS format, attach it to the loan agreement as a summary box, and honour its terms if the borrower accepts within the validity period.",
+      "model": {
+        "direction": "clarified",
+        "what_changed": "The KFS is valid for 3 working days and if the borrower accepts within that period Demo Bank is bound by its terms; it follows RBI's standard KFS format and is attached to the loan agreement as a summary box.",
+        "staff_action": "Use RBI's standard KFS format, attach it to the loan agreement as a summary box, and honour its terms if the borrower accepts within the 3 working day validity."
+      }
+    },
+    {
+      "rule_id": "DB-HL-028",
+      "change": "changed",
+      "fields": [
+        "rule"
+      ],
+      "direction": "clarified",
+      "what_changed": "Within 15 working days of full repayment, the bank must also file the satisfaction of charge with every registry where it was registered, such as CERSAI.",
+      "staff_action": "On full repayment, file the satisfaction of charge with every registry where the charge was registered, such as CERSAI, within the 15 working day window.",
+      "model": {
+        "direction": "clarified",
+        "what_changed": "Within 15 working days of full repayment, the bank must also file the satisfaction of charge with every registry where it was registered, such as CERSAI.",
+        "staff_action": "On full repayment, file the satisfaction of charge with every registry where the charge was registered, such as CERSAI, within the 15 working day window."
+      }
+    },
+    {
+      "rule_id": "DB-HL-030",
+      "change": "changed",
+      "fields": [
+        "rule",
+        "params"
+      ],
+      "direction": "relaxed",
+      "what_changed": "The Regional Credit Head may also approve deviations for income up to 10% below the DB-HL-005 minimum, loan amount up to 10% above the DB-HL-008 maximum, tenure up to 2 years beyond the DB-HL-012 maximum, and residual building life up to 2 years short of DB-HL-021.",
+      "staff_action": "Refer cases with income up to 10% below minimum, loan amount up to 10% above maximum, tenure up to 2 years beyond maximum, or building residual life up to 2 years short to the Regional Credit Head with recorded reason and mitigants, within the two-deviation limit.",
+      "model": {
+        "direction": "relaxed",
+        "what_changed": "The Regional Credit Head may also approve deviations for income up to 10% below the DB-HL-005 minimum, loan amount up to 10% above the DB-HL-008 maximum, tenure up to 2 years beyond the DB-HL-012 maximum, and residual building life up to 2 years short of DB-HL-021.",
+        "staff_action": "Refer cases with income up to 10% below minimum, loan amount up to 10% above maximum, tenure up to 2 years beyond maximum, or building residual life up to 2 years short to the Regional Credit Head with recorded reason and mitigants, within the two-deviation limit."
+      }
+    }
+  ]
+}

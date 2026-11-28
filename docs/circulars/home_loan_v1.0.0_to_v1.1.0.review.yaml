@@ -1,19 +1,41 @@
-# Reviewer corrections to the model-written circular (diff-v2 run 2026-11-24_2353, 12 changes). Each must pass
+# Reviewer corrections to the model-written circular (diff-v2 run 2026-11-28_1549, 14 changes). Each must pass
 # the same checks as model output. To approve: put your name in reviewed_by, then re-render:
-#   python -m app.policy_diff policy/demo_bank/home_loan_v1.yaml policy/demo_bank/home_loan_v1_1.yaml --from-report eval/reports/2026-11-24_2353_diff_home_loan_v1.0.0_to_v1.1.0.json
-# History: the 2256 run also needed DB-HL-001 -> tightened and DB-HL-003 -> clarified; the 2353 run got both right.
-reviewed_by: null
-reviewed_on: 2026-11-24
+#   python -m app.policy_diff policy/demo_bank/home_loan_v1.yaml policy/demo_bank/home_loan_v1_1.yaml --from-report eval/reports/2026-11-28_1549_diff_home_loan_v1.0.0_to_v1.1.0.json
+# History: the 24 Nov 2256 run needed DB-HL-001 -> tightened and DB-HL-003 -> clarified; the 2353 run got both right;
+# the 28 Nov 1549 run got both wrong again (the model's direction label is not stable between runs).
+# 28 Nov 1549 run: 14 lines; 7 corrected (3 carried from 24 Nov, 4 new: 001, 003, 009, 025). Proposed by Claude.
+reviewed_by: Anurag
+reviewed_on: 2026-11-28
 corrections:
+  DB-HL-001:
+    direction: tightened
+    reason: "Adds two conditions (stay within the overall loan ceiling; certified cost estimate); nothing newly allowed. Model said clarified"
+  DB-HL-003:
+    direction: clarified
+    reason: "v1.0 already admitted individuals only; v1.1 names the excluded entities and the takeover / co-applicant cases. Model said tightened"
   DB-HL-004:
     what_changed: >-
       Every NPS subscriber, government or private sector, now counts as pension-earning and may repay up to age 70
       instead of 65; so do applicants already receiving a pension or annuity and defined-benefit employees. Proof: pension
       payment order, or employer certificate naming the scheme, plus the PRAN statement for NPS.
     reason: "Keeps the staff-relevant effect (age 70 instead of 65) first; the 2256 run left it out"
+  DB-HL-009:
+    direction: tightened
+    what_changed: >-
+      LTV is now worked out on the lower of the property cost (agreement value) and the bank valuer's market value,
+      instead of on cost alone. Where the valuer's figure is below the price, the maximum loan falls; the bands are unchanged.
+    reason: "Can only reduce the maximum loan (decision 28 Nov, 1B golden file F16). Model said clarified and did not say the effect"
   DB-HL-014:
     direction: clarified
     reason: "v1.0 already let the borrower choose a higher EMI; v1.1 states it stays available when the tenure cap binds. Model said relaxed"
+  DB-HL-025:
+    what_changed: >-
+      If the borrower accepts the KFS within its validity period (at least 3 working days, as before), Demo Bank is now
+      bound by its terms; the KFS follows RBI's standard format and is attached to the loan agreement as a summary box.
+    staff_action: >-
+      Use RBI's standard KFS format, attach it to the loan agreement as a summary box, and honour its terms if the borrower
+      accepts within the validity period.
+    reason: "Model wrote 'valid for 3 working days' as if new and exact; the rule says at least 3, unchanged from v1.0"
   DB-HL-028:
     direction: clarified
     reason: "Adds a bank duty restating RBC 358, no new condition on the customer; model said tightened"

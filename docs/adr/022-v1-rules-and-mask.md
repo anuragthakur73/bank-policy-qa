@@ -14,7 +14,10 @@ Project 1B (loan-file pre-check) checks a file with code, not with the model, fo
 
 Found while building: `bank_discretion` and `section` were already on `/v1` chunks, but for policy chunks `section`
 holds the rule title and `chapter` the policy section (same field names as RBI clauses, ADR-013). The search index
-also still holds DB-HL-030 as it was before Anurag's 28 Nov change, until it is re-indexed (Week 7 S3).
+can lag the policy files until `python -m ingest.index_policy` is run again; `/v1/rules` must not depend on it.
+*Correction (28 Nov, after the live api_smoke run): an earlier version of this ADR said the index still held the
+pre-28-Nov DB-HL-030. The freshness report showed DB-HL-030 was current; the only stale rule was DB-HL-009 v1.1,
+changed later the same day (bb0502b).*
 
 ## Options for "rule by ID and date"
 | Option | Gives the version in force? | Current with the file? | Chosen |
@@ -47,7 +50,7 @@ also still holds DB-HL-030 as it was before Anurag's 28 Nov change, until it is 
   v1.0.0 and v1.1.0 with different `allowed` (test `test_f11_two_dates_two_versions_of_db_hl_030`).
 - Two sources for a rule now exist: the file (`/v1/rules`) and the index (`/v1/retrieve`). They agree after a
   re-index; `content_hash` and the smoke report show when they don't. Judgement checks via `/v1/answer` still use
-  the index, so a stale index can still affect an answer until S3 re-indexes.
+  the index, so a stale index can still affect an answer until the next re-index (api_smoke lists stale rules).
 - `content_hash` covers the text only; a params-only change shows in the smoke report (it compares params) but not
   in the hash.
 - Draft versions (home loan v1.1, LAP, car) are returned with `policy_status: draft`, as the answer path does.

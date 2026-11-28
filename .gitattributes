@@ -1,0 +1,2 @@
+* text=auto
+eval/reports/*.json -text
