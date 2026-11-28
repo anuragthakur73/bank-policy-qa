@@ -318,3 +318,5 @@ Hours: ~10/10 (Step 0 + Sessions 1–5; estimate — replace with your logged ti
 - tests/test_policy_diff.py: DB-HL-030 now in the v1.0 -> v1.1 changes. Tests 186 passed.
 - To do on Windows: re-index the policy (python -m ingest.index_policy) and regenerate + review the v1.0 -> v1.1
   circular (python -m app.policy_diff ...); golden questions p12 and l06 (deviations) unaffected.
+- 28 Nov (branch interviews): DB-VL-007 - TCS shown on the dealer invoice is not financed (Anurag). Car v1.0 is a
+  draft, edited in place with a review note. Re-index the policy with the deviation changes.

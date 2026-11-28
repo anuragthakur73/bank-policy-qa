@@ -141,19 +141,19 @@ rules:
       Demo Bank finances at most 90% of the car's on-road price for every borrower, whatever
       the credit score. The on-road price means the ex-showroom price plus registration
       charges, road tax and the first year's motor insurance, as shown on the dealer's
-      proforma invoice. Accessories, extended warranty and maintenance packages are not
-      financed. The borrower pays the remaining margin of at least 10% to the dealer and gives
+      proforma invoice. Accessories, extended warranty, maintenance packages and any tax
+      collected at source (TCS) shown on the invoice are not financed. The borrower pays the remaining margin of at least 10% to the dealer and gives
       the dealer's margin money receipt before the loan is disbursed.
     params:
       max_finance_pct_of_on_road: 0.90
       on_road_includes: [ex_showroom, registration, road_tax, first_year_insurance]
-      not_financed: [accessories, extended_warranty, maintenance_package]
+      not_financed: [accessories, extended_warranty, maintenance_package, tcs]
       margin_receipt_before_disbursement: true
     bank_discretion: true
     vs_rbi: not_applicable
     design_basis: [SBI-VL-S1, ICICI-VL-S3, synthetic]
     review: ok
-    review_note: "Anurag 27 Nov 2026: 90% for all (stricter than the 100% headline offers of SBI, ICICI and HDFC, on purpose); accessories, extended warranty and maintenance packages stay outside the on-road price"
+    review_note: "Anurag 27 Nov 2026: 90% for all (stricter than the 100% headline offers of SBI, ICICI and HDFC, on purpose); accessories, extended warranty and maintenance packages stay outside the on-road price. Anurag 28 Nov 2026 (branch interviews: officers check that TCS or extended warranty is not inside the on-road price): TCS not financed"
 
   - rule_id: DB-VL-008
     section: amount_ltv
